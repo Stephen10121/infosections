@@ -50,6 +50,19 @@ export async function load({ params, locals }) {
         return error(500, "Internal Server error.");
     }
 
+    try {
+        await locals.pb.collection('eventLists').update(eventList.id, { 
+            visits: eventList.visits + 1
+        }, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to update the visits for event list", err);
+        return error(500);
+    }
+
     return {
         events,
         name: eventList.name,
