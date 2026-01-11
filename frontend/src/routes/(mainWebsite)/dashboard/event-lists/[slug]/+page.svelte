@@ -1,10 +1,10 @@
 <script lang="ts">
     import { ArrowLeft, Copy, Link2, SquareArrowOutUpRight, Upload, X } from "@lucide/svelte";
-    import { changeIFeedSettings } from "@/endpointCalls/changeIFeedSettings.js";
+    import { changeIListSettings } from "@/endpointCalls/changeIListSettings.js";
     import { Button, buttonVariants } from "@/components/ui/button";
+    import { deleteEList } from "@/endpointCalls/deleteEList.js";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { deleteIFeed } from "@/endpointCalls/deleteIFeed.js";
-    import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
+    import NoEventListAvatar from "@/NoEventListAvatar.svelte";
     import { Switch } from "@/components/ui/switch/index.js";
     import { goto, invalidateAll } from "$app/navigation";
     import { Textarea } from "@/components/ui/textarea";
@@ -16,9 +16,6 @@
     import PrettyDate from "@/PrettyDate.svelte";
     import { toast } from "svelte-sonner";
     import Event from "@/Event.svelte";
-    import { changeIListSettings } from "@/endpointCalls/changeIListSettings.js";
-    import NoEventListAvatar from "@/NoEventListAvatar.svelte";
-    import { deleteEList } from "@/endpointCalls/deleteEList.js";
 
     let { data } = $props();
 
@@ -71,6 +68,9 @@
     $effect(() => {
         if (displaySettings && previewIFrame && previewIFrame.contentWindow) {
             previewIFrame.contentWindow.postMessage({ call: 'displaySettings', value: JSON.stringify(displaySettings) });
+            setTimeout(() => {
+                iframeLoaded();
+            }, 0);
         }
     });
 
@@ -122,6 +122,20 @@
         const success = await deleteEList(data.selectedlist.id);
         if (success) {
             goto("/dashboard/event-lists");
+        }
+    }
+
+    function iframeLoaded() {
+        try {
+           const iFrameID = document.getElementById('eventListPreviewFrame');
+            if(iFrameID) {
+                // @ts-ignore
+                iFrameID.height = "";
+                // @ts-ignore
+                iFrameID.height = iFrameID.contentWindow.document.body.scrollHeight + "px";
+            }  
+        } catch (_err) {
+            console.log("Oops. Iframe wasnt loaded.")
         }
     }
 </script>
@@ -241,50 +255,59 @@
                 <Card.Content>
                 <div class="grid grid-cols-1 gap-6">
                     <div class="flex items-center justify-between space-x-2">
-                        <Label for="showEventExtraInfo" class="flex flex-col space-y-1 items-start cursor-pointer">
-                            <span class="font-medium">Display Extra Event Information</span>
-                            <span class="text-sm text-muted-foreground">Display things like the event name, description, registration button.</span>
+                        <Label for="showEventHeader" class="flex flex-col space-y-1 items-start cursor-pointer">
+                            <span class="font-medium">Display List Header</span>
+                            <span class="text-sm text-muted-foreground">Display the "Upcoming Events" text and the description below.</span>
                         </Label>
                         <Switch
-                            id="showEventExtraInfo"
-                            bind:checked={displaySettings.showEventExtraInfo}
+                            id="showEventHeader"
+                            bind:checked={displaySettings.showUpcomingEventsTextAndDesc}
                         />
                     </div>
 
-                    {#if displaySettings.showEventExtraInfo}
-                        <div class="flex items-center justify-between space-x-2 ml-5">
-                            <Label for="showEventName" class="flex flex-col items-start space-y-1 cursor-pointer">
-                                <span class="font-medium">Event Name</span>
-                                <span class="text-sm text-muted-foreground">Show the official event name with the image.</span>
-                            </Label>
-                            <Switch
-                                id="showEventName"
-                                bind:checked={displaySettings.showEventName}
-                            />
-                        </div>
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showEventName" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Event Name</span>
+                            <span class="text-sm text-muted-foreground">Show the official event name with the image.</span>
+                        </Label>
+                        <Switch
+                            id="showEventName"
+                            bind:checked={displaySettings.showEventName}
+                        />
+                    </div>
 
-                        <div class="flex items-center justify-between space-x-2 ml-5">
-                            <Label for="showEventDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
-                                <span class="font-medium">Event Description</span>
-                                <span class="text-sm text-muted-foreground">Show the official event description IF one was applied for an event.</span>
-                            </Label>
-                            <Switch
-                                id="showEventDescription"
-                                bind:checked={displaySettings.showEventDescription}
-                            />
-                        </div>
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showEventDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Event Description</span>
+                            <span class="text-sm text-muted-foreground">Show the official event description IF one was applied for an event.</span>
+                        </Label>
+                        <Switch
+                            id="showEventDescription"
+                            bind:checked={displaySettings.showEventDescription}
+                        />
+                    </div>
 
-                        <div class="flex items-center justify-between space-x-2 ml-5">
-                            <Label for="showEventRegistration" class="flex flex-col items-start space-y-1 cursor-pointer">
-                                <span class="font-medium">Register Button</span>
-                                <span class="text-sm text-muted-foreground">If an event has a registration URL set, a link can be provided to the user.</span>
-                            </Label>
-                            <Switch
-                                id="showEventDesshowEventRegistrationcription"
-                                bind:checked={displaySettings.showEventRegistration}
-                            />
-                        </div>
-                    {/if}
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showEventRegistration" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Register Button</span>
+                            <span class="text-sm text-muted-foreground">If an event has a registration URL set, a link can be provided to the user.</span>
+                        </Label>
+                        <Switch
+                            id="showEventRegistration"
+                            bind:checked={displaySettings.showEventRegistration}
+                        />
+                    </div>
+
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="setTransparentBackground" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Transparent Background</span>
+                            <span class="text-sm text-muted-foreground">Sets the background of the iframe window to transparent. But remember to set your iframe arguments to enable transparency.</span>
+                        </Label>
+                        <Switch
+                            id="setTransparentBackground"
+                            bind:checked={displaySettings.setTransparentBackground}
+                        />
+                    </div>
                 </div>
                 </Card.Content>
             </Card.Root>
@@ -295,15 +318,17 @@
                     <Card.Description>See the current changes in this preview before saving the settings.</Card.Description>
                 </Card.Header>
                 <Card.Content>
-                    <div class="w-full h-96">
+                    <div class="w-full">
                         <iframe     
                             bind:this={previewIFrame}
+                            onload={iframeLoaded}
+                            style="background: none transparent; border: none;"
                             allowtransparency
-                            style="background: none;height:100%"
                             width="100%"
                             height="100%"
                             src="/elistPreview/{data.selectedlist.id}"
                             title="Event List Preview"
+                            id="eventListPreviewFrame"
                             frameborder="0"
                         ></iframe>
                     </div>

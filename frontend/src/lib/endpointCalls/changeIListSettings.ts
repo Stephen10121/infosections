@@ -1,4 +1,4 @@
-import type { ImageFeedCustomizations, ImageFeedFilters } from "@/utils";
+import type { ImageFeedFilters, ImageListCustomizations } from "@/utils";
 import { toast } from "svelte-sonner";
 
 type Success = boolean
@@ -9,7 +9,7 @@ export async function changeIListSettings(
     description: string,
     avatarLink: string,
     uploadedAvatar: File | null,
-    displaySettings: ImageFeedCustomizations,
+    displaySettings: ImageListCustomizations,
     filterSettings: ImageFeedFilters
 ): Promise<Success> {
     const data = new FormData();

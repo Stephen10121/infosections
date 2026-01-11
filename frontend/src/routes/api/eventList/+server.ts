@@ -1,4 +1,4 @@
-import { defaultImageFeedCustomizations, type EventListDBModel, type ImageFeedCustomizations, type ImageFeedDBModel, type ImageFeedFilters } from "@/utils.js";
+import { defaultImageListCustomizations, type EventListDBModel, type ImageFeedFilters, type ImageListCustomizations } from "@/utils.js";
 import { error, json } from "@sveltejs/kit";
 import { config } from "dotenv";
 import type { RecordModel } from "pocketbase";
@@ -68,7 +68,7 @@ export async function PATCH({ locals, request }) {
         return error(400, "Missing Data.");
     }
 
-    let parsedDisplaySettings: ImageFeedCustomizations;
+    let parsedDisplaySettings: ImageListCustomizations;
     try {
         parsedDisplaySettings = JSON.parse(displaySettings.toString());
     } catch (_) {
@@ -181,7 +181,7 @@ export async function POST({ locals, request }) {
             "name": name.toString(),
             "description": description.toString(),
             "owner": locals.user.id,
-            "displaySettings": defaultImageFeedCustomizations,
+            "displaySettings": defaultImageListCustomizations,
             "filters": {
                 "hideUnpublished": true,
                 "onlyShowFeatured": true

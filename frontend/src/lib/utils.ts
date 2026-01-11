@@ -139,7 +139,7 @@ export interface EventListDBModel extends RecordModel {
 	logo: string,
 	visits: number,
 	description: string,
-	displaySettings: ImageFeedCustomizations,
+	displaySettings: ImageListCustomizations,
 	created: string,
 	updated: string,
 	filters: ImageFeedFilters
@@ -194,6 +194,22 @@ export type ImageFeedCustomizations = {
 	showEventRegistration: boolean,
 	feedDurationMS: number,
 	feedAnimationType: "slideshow" | "list",
+}
+
+export type ImageListCustomizations = {
+	showEventName: boolean,
+	showEventDescription: boolean,
+	showEventRegistration: boolean,
+	showUpcomingEventsTextAndDesc: boolean,
+	setTransparentBackground: boolean
+}
+
+export const defaultImageListCustomizations: ImageListCustomizations = {
+	showEventName: true,
+	showEventDescription: true,
+	showEventRegistration: true,
+	showUpcomingEventsTextAndDesc: false,
+	setTransparentBackground: false
 }
 
 export const defaultImageFeedCustomizations: ImageFeedCustomizations = {
