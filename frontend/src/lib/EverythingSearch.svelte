@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalendarDBModel, ImageFeedDBModel } from "./utils";
+    import type { CalendarDBModel, EventListDBModel, ImageFeedDBModel } from "./utils";
     import Badge from "./components/ui/badge/badge.svelte";
     import * as Kbd from "$lib/components/ui/kbd/index.js";
     import { Input } from "@/components/ui/input";
@@ -8,16 +8,18 @@
 
     let { 
         calendars,
-        imageFeeds
+        imageFeeds,
+        eventLists
     }: {
         calendars: CalendarDBModel[],
-        imageFeeds: ImageFeedDBModel[]
+        imageFeeds: ImageFeedDBModel[],
+        eventLists: EventListDBModel[],
     } = $props();
 
     let everythingInput: HTMLInputElement | null = $state(null);
     let everythingInputFocused = $state(false);
 
-    type FilteredTermsList = ({type: "calendar", data: CalendarDBModel } | { type: "image-feed", data: ImageFeedDBModel })
+    type FilteredTermsList = ({type: "calendar", data: CalendarDBModel } | { type: "image-feed", data: ImageFeedDBModel } | {type: "event-list", data: EventListDBModel })
 
     let filteredTerms: FilteredTermsList[] = $state([]);
     let arrowDownIndex = $state(-1);
@@ -47,6 +49,15 @@
             imageFeeds[i].description.toLowerCase().includes(searchTerm) ||
             "image feed".includes(searchTerm)) {
                 newFilteredTerms.push({ type: "image-feed", data: imageFeeds[i] });
+            }
+        }
+
+        for (let i=0;i<eventLists.length;i++) {
+            if (eventLists[i].id.toLowerCase().includes(searchTerm) ||
+            eventLists[i].name.toLowerCase().includes(searchTerm) ||
+            eventLists[i].description.toLowerCase().includes(searchTerm) ||
+            "event list".includes(searchTerm)) {
+                newFilteredTerms.push({ type: "event-list", data: eventLists[i] });
             }
         }
 
@@ -86,7 +97,7 @@
         }
 
         if (event.key === "Enter" && arrowDownIndex !== -1) {
-            goto(`/dashboard/${filteredTerms[arrowDownIndex - 1].type === "calendar" ? "calendars" : "image-feeds"}/${filteredTerms[arrowDownIndex - 1].data.id}`);
+            goto(`/dashboard/${filteredTerms[arrowDownIndex - 1].type === "calendar" ? "calendars" : filteredTerms[arrowDownIndex - 1].type === "event-list" ? "event-lists" : "image-feeds"}/${filteredTerms[arrowDownIndex - 1].data.id}`);
             resetSearch();
         }
     }
@@ -117,13 +128,15 @@
             {#each filteredTerms as term, index (`filteredSearchTerms${term.data.id}`)}
                 <a
                     onclick={resetSearch}
-                    href="/dashboard/{term.type === "calendar" ? "calendars" : "image-feeds"}/{term.data.id}"
+                    href="/dashboard/{term.type === "calendar" ? "calendars" : term.type === "event-list" ? "event-lists" : "image-feeds"}/{term.data.id}"
                     class="w-full px-4 py-3 hover:bg-accent/50 transition-colors text-left flex flex-col gap-1 rounded-md {arrowDownIndex - 1 === index ? "bg-accent/70" : ""}"
                 >
                     <div class="flex items-center justify-between">
                         <span class="font-medium text-foreground underline">{term.data.name}</span>
                         {#if term.type === "calendar"}
                             <Badge variant="outline">Calendar</Badge>
+                        {:else if term.type === "event-list"}
+                            <Badge variant="outline">Event List</Badge>
                         {:else}
                             <Badge variant="outline">Image Feed</Badge>
                         {/if}

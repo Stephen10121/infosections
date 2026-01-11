@@ -1,18 +1,18 @@
 <script lang="ts">
-    import { type CalendarDBModel, type ImageFeedDBModel } from "@/utils";
+    import { type CalendarDBModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import EverythingSearch from "@/EverythingSearch.svelte";
     import { Button } from "@/components/ui/button";
     import { Bell, Settings } from "@lucide/svelte";
 
-    let { calendars, imageFeeds }: { calendars: CalendarDBModel[], imageFeeds: ImageFeedDBModel[] } = $props();
+    let { calendars, imageFeeds, eventLists }: { calendars: CalendarDBModel[], imageFeeds: ImageFeedDBModel[], eventLists: EventListDBModel[] } = $props();
 </script>
 
 <header class="h-16 border-b border-border bg-card">
     <div class="flex h-full items-center gap-4 px-4">
         <div class="flex-1 relative flex items-center gap-4">
             <Sidebar.Trigger class="w-9 h-9" />
-            <EverythingSearch {calendars} {imageFeeds} />
+            <EverythingSearch {calendars} {imageFeeds} {eventLists} />
         </div>
 
         <div class="flex items-center gap-2">

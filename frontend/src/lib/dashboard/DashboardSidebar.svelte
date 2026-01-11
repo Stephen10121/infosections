@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
     import { capitalizeFirstLetter, type UserModel } from "@/utils";
@@ -27,6 +27,7 @@
       { title: "Home", icon: Home, url: "/dashboard" },
       { title: "Calendars", icon: Calendar, url: "/dashboard/calendars"  },
       { title: "Image Feeds", icon: GalleryHorizontalEnd, url: "/dashboard/image-feeds" },
+      { title: "Event Lists", icon: LayoutList, url: "/dashboard/event-lists" }
     ];
 
     let userAccountDropdownOpen = $state(false);
@@ -61,7 +62,7 @@
             <Sidebar.GroupLabel>Dashboard</Sidebar.GroupLabel>
             <Sidebar.Menu>
                 {#each navigation as item (item.title)}
-                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"}>
+                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") || (pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"}>
                         {#snippet child({ props })}
                             <a href={item.url} {...props}>
                                 {#if item.icon}

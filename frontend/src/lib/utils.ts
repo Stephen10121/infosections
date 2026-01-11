@@ -133,6 +133,18 @@ export interface ImageFeedDBModel extends RecordModel {
 	filters: ImageFeedFilters
 }
 
+export interface EventListDBModel extends RecordModel {
+	name: string,
+	owner: string,
+	logo: string,
+	visits: number,
+	description: string,
+	displaySettings: ImageFeedCustomizations,
+	created: string,
+	updated: string,
+	filters: ImageFeedFilters
+}
+
 // Dont you dare judge
 export function toggleFullScreen() {
 	const elem = document.documentElement
