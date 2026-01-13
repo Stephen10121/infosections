@@ -19,6 +19,7 @@ export async function load({ locals, url }) {
                 hasAccess: user.hasAccess,
                 pathname: url.pathname,
                 stripeUrl: process.env.STRIPE_URL!,
+                stripeFreeTrialUrl: process.env.STRIPE_FREE_TRIAL_URL!,
                 stripeCustomerPortal: process.env.STRIPE_CUSTOMER_PORTAL_LINK!
             }
         } catch (err) {
@@ -29,6 +30,7 @@ export async function load({ locals, url }) {
     }
     return {
         pathname: url.pathname,
+        stripeFreeTrialUrl: process.env.STRIPE_FREE_TRIAL_URL!,
         stripeUrl: process.env.STRIPE_URL!,
         stripeCustomerPortal: process.env.STRIPE_CUSTOMER_PORTAL_LINK!
     }

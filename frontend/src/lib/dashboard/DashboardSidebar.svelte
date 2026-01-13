@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
     import { capitalizeFirstLetter, type UserModel } from "@/utils";
@@ -14,12 +14,14 @@
         user,
         pathname,
         stripeUrl,
+        stripeFreeTrialUrl,
         userAvatar,
         stripeCustomerPortal
     }: {
         user: UserModel,
         pathname: string,
         stripeUrl: string,
+        stripeFreeTrialUrl: string,
         userAvatar: string,
         stripeCustomerPortal: string
     } = $props();
@@ -149,14 +151,26 @@
                                     {/snippet}
                                 </DropdownMenu.Item>
                             {:else}
-                                <DropdownMenu.Item>
-                                    {#snippet child({ props })}
-                                        {#if user.userEmail}
-                                            <a class="w-full h-full" href="{stripeUrl}?prefilled_email={user.userEmail}" target="_blank" {...props}>
+                                {#if user.userEmail}
+                                    <DropdownMenu.Item>
+                                        {#snippet child({ props })}
+                                            <a class="w-full h-full" href="{stripeUrl}?prefilled_email={user.userEmail}" {...props}>
                                                 <CreditCardIcon class="data-highlighted:text-primary" />
                                                 Setup Payments
                                             </a>
-                                        {:else}
+                                        {/snippet}
+                                    </DropdownMenu.Item>
+                                    <DropdownMenu.Item>
+                                        {#snippet child({ props })}
+                                            <a class="w-full h-full" href="{stripeFreeTrialUrl}?prefilled_email={user.userEmail}" {...props}>
+                                                <Gift class="data-highlighted:text-primary" />
+                                                Free Trial
+                                            </a>
+                                        {/snippet}
+                                    </DropdownMenu.Item>
+                                {:else}
+                                    <DropdownMenu.Item>
+                                        {#snippet child({ props })}
                                             <button style="width:100%;" {...props} onclick={() => {
                                                 userAccountDropdownOpen = false;
                                                 emailNotSetDialog.set(true);
@@ -164,9 +178,9 @@
                                                 <CreditCardIcon class="data-highlighted:text-primary" />
                                                 Setup Payments
                                             </button>
-                                        {/if}
-                                    {/snippet}
-                                </DropdownMenu.Item>
+                                        {/snippet}
+                                    </DropdownMenu.Item>
+                                {/if}
                             {/if}
                             <DropdownMenu.Item>
                                 {#snippet child({ props })}

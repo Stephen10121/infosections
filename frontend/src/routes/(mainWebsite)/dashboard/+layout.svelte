@@ -20,6 +20,7 @@
 		userAvatar={data.avatar}
 		pathname={data.pathname}
 		stripeUrl={data.stripeUrl}
+		stripeFreeTrialUrl={data.stripeFreeTrialUrl}
 		stripeCustomerPortal={data.stripeCustomerPortal}
 	/>
 
