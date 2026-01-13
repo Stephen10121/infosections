@@ -6,10 +6,24 @@
     import DashboardSidebar from '@/dashboard/DashboardSidebar.svelte';
     import SetEmailPopup from '@/dashboard/SetEmailPopup.svelte';
     import { emailNotSetDialog } from '@/store.js';
+    import { afterNavigate } from '$app/navigation';
+    import { browser } from '$app/environment';
 
 	let { children, data } = $props();
 
 	emailNotSetDialog.set(!data.user.userEmail);
+
+	afterNavigate(() => {
+		if (browser) {
+			const element = document.getElementById('ascrollableelement'); 
+			if (element) {
+				element.scrollTo({ top: 0, behavior: 'smooth' });
+			} else {
+				// Fallback for default window scroll
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+		}
+	});
 </script>
 
 <SetEmailPopup />
@@ -27,7 +41,7 @@
 	<div class="flex-1 flex flex-col h-full">
 		<DashboardHeader calendars={data.calendars} imageFeeds={data.imageFeeds} eventLists={data.eventLists} />
 
-		<main class="flex-1 p-6 space-y-6 mainPage relative h-full">
+		<main class="flex-1 p-6 space-y-6 mainPage relative h-full" id="ascrollableelement">
 			{#if navigating.complete !== null}
 				<DashboardIsNavigating />
 			{/if}

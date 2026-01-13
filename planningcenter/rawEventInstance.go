@@ -41,6 +41,7 @@ type EventInstance struct {
 		CompactRecurrenceDescription string `json:"compact_recurrence_description"`
 		CreatedAt                    string `json:"created_at"`
 		EndsAt                       string `json:"ends_at"`
+		ImageUrl                     string `json:"image_url"`
 		Location                     string `json:"location"`
 		PublishedEndsAt              string `json:"published_ends_at"`
 		PublishedStartsAt            string `json:"published_starts_at"`

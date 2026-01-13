@@ -122,5 +122,5 @@ export async function GET({ locals, url, cookies }) {
         }
     }
 
-    return redirect(303, "/dashboard/calendars");
+    return redirect(303, "/dashboard");
 }

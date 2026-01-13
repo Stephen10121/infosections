@@ -2,13 +2,10 @@
     import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-    import { capitalizeFirstLetter, type UserModel } from "@/utils";
+    import { capitalizeFirstLetter, refreshingEvents, type UserModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
     import { emailNotSetDialog } from "@/store";
-    import { updateSpecificUserEvents } from "@/endpointCalls/updateSpecificUserEvents";
-    import { toast } from "svelte-sonner";
-    import { invalidateAll } from "$app/navigation";
 
     let { 
         user,
@@ -36,19 +33,6 @@
     ];
 
     let userAccountDropdownOpen = $state(false);
-
-    async function refreshingEvents() {
-        const refreshingToast = toast.loading("Refreshing events.");
-        const ok = await updateSpecificUserEvents();
-        if (ok) {
-            await invalidateAll();
-            toast.dismiss(refreshingToast);
-            toast.success("Refreshed Events");
-        } else {
-            toast.dismiss(refreshingToast);
-            toast.error("Failed to refresh Events");
-        }
-    }
 </script>
 
 <Sidebar.Root collapsible="icon" class="bg-card">

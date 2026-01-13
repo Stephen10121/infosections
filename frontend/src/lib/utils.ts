@@ -1,6 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import type { RecordModel } from "pocketbase";
+import { toast } from "svelte-sonner";
 import { twMerge } from "tailwind-merge";
+import { updateSpecificUserEvents } from "./endpointCalls/updateSpecificUserEvents";
+import { invalidateAll } from "$app/navigation";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -90,6 +93,7 @@ export interface EventDBModel extends RecordModel {
 	startTime: string,
 	endTime: string,
 	featured: boolean,
+	recurrence: string,
 	visibleInChurchCenter: boolean
 }
 
@@ -240,6 +244,7 @@ export interface UserModel extends RecordModel {
 	accessLevel: "none" | "standard" | "premium",
 	refreshTokenExpires: number,
 	accessTokenExpires: number
+	lastEventsFetch: string
 }
 
 export function capitalizeFirstLetter(str: string) {
@@ -247,4 +252,95 @@ export function capitalizeFirstLetter(str: string) {
     return str; // Handle non-string inputs or empty strings
   }
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function timeAgo(dateParam: Date | string | number) {
+    if (!dateParam) {
+        return null;
+    }
+
+    const date = new Date(dateParam); // Ensure it's a Date object
+    const now = new Date();
+	//@ts-ignore
+    const diffInMs = now - date; // Difference in milliseconds
+
+    const seconds = Math.round(diffInMs / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    // Less than a minute ago
+    if (seconds < 60) {
+        return `${seconds} second${seconds === 1 ? '' : 's'} ago`;
+    }
+    // Less than an hour ago
+    if (minutes < 60) {
+        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    }
+    // Less than 24 hours ago (a day ago)
+    if (hours < 24) {
+        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    }
+    // Less than a month ago (e.g., 1 day ago, 5 days ago)
+    if (days < 30) { // Approximating a month as 30 days
+        return `${days} day${days === 1 ? '' : 's'} ago`;
+    }
+
+    // Older than a month, return formatted date
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+	//@ts-ignore
+    return date.toLocaleDateString(undefined, options); // Use default locale
+}
+
+export function timeWhen(dateParam: Date | string | number) {
+    if (!dateParam) {
+        return null;
+    }
+
+    const date = new Date(dateParam); // Ensure it's a Date object
+    const now = new Date();
+	//@ts-ignore
+    const diffInMs = date - now; // Difference in milliseconds
+
+    const seconds = Math.round(diffInMs / 1000);
+    const minutes = Math.round(seconds / 60);
+    const hours = Math.round(minutes / 60);
+    const days = Math.round(hours / 24);
+
+    // Less than a minute ago
+    if (seconds < 60) {
+        return `${seconds} second${seconds === 1 ? '' : 's'}`;
+    }
+    // Less than an hour ago
+    if (minutes < 60) {
+        return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+    }
+    // Less than 24 hours ago (a day ago)
+    if (hours < 24) {
+        return `${hours} hour${hours === 1 ? '' : 's'}`;
+    }
+    // Less than a month ago (e.g., 1 day ago, 5 days ago)
+    if (days < 30) { // Approximating a month as 30 days
+        return `${days} day${days === 1 ? '' : 's'}`;
+    }
+
+    // Older than a month, return formatted date
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+	//@ts-ignore
+    return date.toLocaleDateString(undefined, options); // Use default locale
+}
+
+export async function refreshingEvents() {
+	const refreshingToast = toast.loading("Refreshing events.");
+	const ok = await updateSpecificUserEvents();
+	if (ok) {
+		await invalidateAll();
+		toast.dismiss(refreshingToast);
+		toast.success("Refreshed Events");
+	} else {
+		toast.dismiss(refreshingToast);
+		toast.error("Failed to refresh Events");
+	}
 }

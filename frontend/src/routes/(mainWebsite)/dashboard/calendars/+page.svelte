@@ -12,11 +12,13 @@
     import { cn } from "@/utils";
     import { toast } from "svelte-sonner";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
-    import { goto, invalidateAll } from "$app/navigation";
+    import { afterNavigate, goto, invalidateAll } from "$app/navigation";
     import { deleteCalendar } from "@/endpointCalls/deleteCalendar.js";
     import { Switch } from "@/components/ui/switch/index.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
     import { createCalendar } from "@/endpointCalls/createCalendar.js";
+    import { browser } from "$app/environment";
+    import { page } from "$app/stores";
 
     let { data } = $props();
 
@@ -71,6 +73,12 @@
             invalidateAll();
         }
     }
+
+    afterNavigate(() => {
+		if (browser) {
+            newCalendarDialogOpen = $page.url.searchParams.get("new") === "1";
+		}
+	});
 </script>
 
 <svelte:head>

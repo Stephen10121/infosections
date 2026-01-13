@@ -1,6 +1,8 @@
 package automations
 
 import (
+	"time"
+
 	"github.com/Stephen10121/infosections/functions"
 	"github.com/pocketbase/pocketbase"
 )
@@ -24,5 +26,17 @@ func UpdateEventInstances(app *pocketbase.PocketBase) {
 			"user", users[i].GetString("name"),
 		)
 		functions.GetAndStoreNextThreeEvents(users[i].Id, app)
+
+		record, err := app.FindRecordById("users", users[i].Id)
+		if err != nil {
+			continue
+		}
+
+		record.Set("lastEventsFetch", time.Now())
+
+		err = app.Save(record)
+		if err != nil {
+			continue
+		}
 	}
 }

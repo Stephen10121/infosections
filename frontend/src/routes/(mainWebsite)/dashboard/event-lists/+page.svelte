@@ -10,11 +10,13 @@
     import * as Dialog from "@/components/ui/dialog/index";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
-    import { invalidateAll } from "$app/navigation";
+    import { afterNavigate, invalidateAll } from "$app/navigation";
     import { Label } from "@/components/ui/label";
     import { Input } from "@/components/ui/input";
     import { toast } from "svelte-sonner";
     import { cn } from "@/utils";
+    import { browser } from "$app/environment";
+    import { page } from "$app/stores";
 
     let { data } = $props();
 
@@ -67,6 +69,12 @@
             invalidateAll();
         }
     }
+
+    afterNavigate(() => {
+		if (browser) {
+            newEListDialogOpen = $page.url.searchParams.get("new") === "1";
+		}
+	});
 </script>
 
 <svelte:head>

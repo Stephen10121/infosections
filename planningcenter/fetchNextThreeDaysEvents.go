@@ -101,6 +101,12 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 			continue
 		}
 
+		imageURL := eventItself.ImageUrl
+
+		if len(responseJson.Data[i].Attributes.ImageUrl) > 0 {
+			imageURL = responseJson.Data[i].Attributes.ImageUrl
+		}
+
 		fetchedEvents = append(fetchedEvents, Event{
 			InstanceId:           responseJson.Data[i].Id,
 			StartTime:            responseJson.Data[i].Attributes.StartsAt,
@@ -111,7 +117,8 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 			Resources:            resources,
 			Tags:                 tags,
 			Description:          eventItself.Summary,
-			ImageURL:             eventItself.ImageUrl,
+			Recurrence:           responseJson.Data[i].Attributes.Recurrence,
+			ImageURL:             imageURL,
 			Featured:             eventItself.Featured,
 			VisibleInChuchCenter: eventItself.VisibleInChuchCenter,
 			RegistrationURL:      eventItself.RegistrationURL,
