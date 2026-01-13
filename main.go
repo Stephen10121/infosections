@@ -19,6 +19,7 @@ func main() {
 	app.OnServe().BindFunc(func(se *core.ServeEvent) error {
 		enpoints.UserHasSubscribed(se, app)
 		enpoints.NewUserLoggedIn(se, app)
+		enpoints.UpdateSpecificUserEvents(se, app)
 		webhooks.HandleWebhookEndpoint(se, app)
 
 		tests.CreateWebhook(se, app)

@@ -140,6 +140,4 @@ func GetAndStoreNextThreeEvents(userId string, app *pocketbase.PocketBase) {
 			}
 		}
 	}
-
-	return
 }
