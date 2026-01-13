@@ -31,7 +31,12 @@
         if (data.user && data.user.userEmail) {
             window.location.replace(data.stripeUrl + "?prefilled_email=" + data.user.userEmail);
         }
-    }}>Pay $1 a month.</Button>
+    }}>Pay $6 a month.</Button>
+    <Button onclick={() => {
+        if (data.user && data.user.userEmail) {
+            window.location.replace(data.stripeFreeTrialUrl + "?prefilled_email=" + data.user.userEmail);
+        }
+    }}>Free Trial.</Button>
 {/if}
 
 {#if emailNotSet}
