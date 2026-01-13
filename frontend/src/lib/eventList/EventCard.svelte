@@ -33,7 +33,7 @@
 
             {#if event.registrationURL && displaySettings.showEventRegistration}
                 <div>
-                    <Button class="w-full md:w-auto">
+                    <Button class="w-full md:w-auto" variant="outline">
                         <a href={event.registrationURL} target="_blank" rel="noopener noreferrer">Register Now</a>
                     </Button>
                 </div>
