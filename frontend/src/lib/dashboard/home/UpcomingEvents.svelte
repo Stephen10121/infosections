@@ -52,27 +52,27 @@
                 </div>
             {/each}
         {:else}
-                <Empty.Root>
-                    <Empty.Header>
-                        <Empty.Media variant="icon">
-                        <Calendar />
-                        </Empty.Media>
-                        <Empty.Title>No Events Today</Empty.Title>
-                        <Empty.Description>
-                            You haven't created any events for today. Get started by going to planning center and create an event.
-                        </Empty.Description>
-                    </Empty.Header>
-                    <Empty.Content>
-                        <div class="flex gap-2">
-                        <Button href="https://calendar.planningcenteronline.com/" target="_blank">Create Event</Button>
-                        </div>
-                    </Empty.Content>
-                    <Button variant="link" class="text-muted-foreground" size="sm">
-                        <a href="https://pcocalendar.zendesk.com/hc/en-us/articles/360016189514-Create-an-event" target="_blank">
-                        Learn More <ArrowUpRightIcon class="inline" />
-                        </a>
-                    </Button>
-                </Empty.Root>
+            <Empty.Root>
+                <Empty.Header>
+                    <Empty.Media variant="icon">
+                    <Calendar />
+                    </Empty.Media>
+                    <Empty.Title>No Events Today</Empty.Title>
+                    <Empty.Description>
+                        You haven't created any events for today. Get started by going to planning center and create an event.
+                    </Empty.Description>
+                </Empty.Header>
+                <Empty.Content>
+                    <div class="flex gap-2">
+                    <Button href="https://calendar.planningcenteronline.com/" target="_blank">Create Event</Button>
+                    </div>
+                </Empty.Content>
+                <Button variant="link" class="text-muted-foreground" size="sm">
+                    <a href="https://pcocalendar.zendesk.com/hc/en-us/articles/360016189514-Create-an-event" target="_blank">
+                    Learn More <ArrowUpRightIcon class="inline" />
+                    </a>
+                </Button>
+            </Empty.Root>
         {/if}
     </div>
     </Card.Content>
