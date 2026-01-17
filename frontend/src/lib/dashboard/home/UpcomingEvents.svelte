@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { Button } from "@/components/ui/button";
     import * as Card from "@/components/ui/card/index";
     import Time from "@/Time.svelte";
     import { dateRangeOverlaps, type EventDBModel } from "@/utils";
-    import { ArrowRight, MapPin, Clock, Calendar } from "@lucide/svelte";
+    import { MapPin, Clock, Calendar, ArrowUpRightIcon } from "@lucide/svelte";
     import { Temporal } from "temporal-polyfill";
+    import * as Empty from "$lib/components/ui/empty/index.js";
+    import { Button } from "@/components/ui/button";
 
     let { events }: { events: EventDBModel[] } = $props();
 
@@ -15,44 +16,6 @@
     let todaysEvents = $derived(events.filter((event) => {
         return dateRangeOverlaps(today.toInstant().epochMilliseconds, nextDay.toInstant().epochMilliseconds, (new Date(event.startTime)).valueOf(), (new Date(event.endTime)).valueOf())
     }));
-
-    const upcomingEvents = [
-        {
-            id: 1,
-            name: "Sunday Service",
-            location: "Main Campus",
-            date: "Jan 14, 2026",
-            time: "9:00 AM",
-        },
-        {
-            id: 2,
-            name: "Youth Group Meeting",
-            location: "Youth Building",
-            date: "Jan 15, 2026",
-            time: "6:30 PM",
-        },
-        {
-            id: 3,
-            name: "Community Outreach",
-            location: "Downtown Hall",
-            date: "Jan 18, 2026",
-            time: "10:00 AM",
-        },
-        {
-            id: 4,
-            name: "Leadership Training",
-            location: "Community Center",
-            date: "Jan 20, 2026",
-            time: "7:00 PM",
-        },
-        {
-            id: 5,
-            name: "Worship Night",
-            location: "Main Campus",
-            date: "Jan 22, 2026",
-            time: "7:00 PM",
-        },
-    ]
 </script>
 
 <Card.Root>
@@ -64,29 +27,53 @@
     </Card.Header>
     <Card.Content>
     <div class="space-y-3">
-        {#each todaysEvents as event (`upcomingevent${event.id}`)}
-            <div class="flex items-center gap-4 rounded-lg border border-border p-4 transition-colors hover:bg-accent">
-                <div class="flex h-12 w-12 flex-col items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Calendar class="h-5 w-5" />
-                </div>
+        {#if todaysEvents.length > 0}
+            {#each todaysEvents as event (`upcomingevent${event.id}`)}
+                <div class="flex items-center gap-4 rounded-lg border border-border p-4 transition-colors hover:bg-accent">
+                    <div class="flex h-12 w-12 flex-col items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Calendar class="h-5 w-5" />
+                    </div>
 
-                <div class="flex-1 min-w-0">
-                    <h4 class="font-medium truncate">{event.name}</h4>
-                    <div class="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        {#if event.location}
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-medium truncate">{event.name}</h4>
+                        <div class="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                            {#if event.location}
+                                <span class="flex items-center gap-1">
+                                    <MapPin class="h-3 w-3" />
+                                    {event.location.split("-")[0]}
+                                </span>
+                            {/if}
                             <span class="flex items-center gap-1">
-                                <MapPin class="h-3 w-3" />
-                                {event.location.split("-")[0]}
+                                <Clock class="h-3 w-3" />
+                                <Time date={Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone)} useAMPM />
                             </span>
-                        {/if}
-                        <span class="flex items-center gap-1">
-                            <Clock class="h-3 w-3" />
-                            <Time date={Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone)} useAMPM />
-                        </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {/each}
+            {/each}
+        {:else}
+                <Empty.Root>
+                    <Empty.Header>
+                        <Empty.Media variant="icon">
+                        <Calendar />
+                        </Empty.Media>
+                        <Empty.Title>No Events Today</Empty.Title>
+                        <Empty.Description>
+                            You haven't created any events for today. Get started by going to planning center and create an event.
+                        </Empty.Description>
+                    </Empty.Header>
+                    <Empty.Content>
+                        <div class="flex gap-2">
+                        <Button href="https://calendar.planningcenteronline.com/" target="_blank">Create Event</Button>
+                        </div>
+                    </Empty.Content>
+                    <Button variant="link" class="text-muted-foreground" size="sm">
+                        <a href="https://pcocalendar.zendesk.com/hc/en-us/articles/360016189514-Create-an-event" target="_blank">
+                        Learn More <ArrowUpRightIcon class="inline" />
+                        </a>
+                    </Button>
+                </Empty.Root>
+        {/if}
     </div>
     </Card.Content>
 </Card.Root>
