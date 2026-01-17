@@ -7,6 +7,10 @@ import { newUserLoggedIn } from "@/newUserLoggedIn";
 
 config();
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function GET({ locals, url, cookies }) {
     const expectedState = cookies.get("state");
     const expectedVerifier = cookies.get("verifier");
@@ -36,6 +40,7 @@ export async function GET({ locals, url, cookies }) {
 
     let provider: AuthProviderInfo;
     try {
+        sleep(500); // Testing something out. I know itll be in prod
         const authMethods = await locals.pb.collection("users").listAuthMethods({
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
