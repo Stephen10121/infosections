@@ -213,18 +213,18 @@
                 </Card.Header>
 
                 <Card.Content>
-                <p class="text-sm text-muted-foreground mb-4">{calendar.description}</p>
+                    <p class="text-sm text-muted-foreground mb-4">{calendar.description}</p>
 
-                <div class="flex items-center justify-between pt-4 border-t border-border">
-                    <div class="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users class="h-4 w-4" />
-                        <span>{calendar.visits} Visit{calendar.visits === 1 ? "" : "s"}</span>
+                    <div class="flex items-center justify-between pt-4 border-t border-border">
+                        <div class="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Users class="h-4 w-4" />
+                            <span>{calendar.visits} Visit{calendar.visits === 1 ? "" : "s"}</span>
+                        </div>
+
+                        <Button variant="outline" size="sm" href="/dashboard/calendars/{calendar.id}">
+                            View Details
+                        </Button>
                     </div>
-
-                    <Button variant="outline" size="sm" href="/dashboard/calendars/{calendar.id}">
-                        View Details
-                    </Button>
-                </div>
                 </Card.Content>
             </Card.Root>
         {/each}

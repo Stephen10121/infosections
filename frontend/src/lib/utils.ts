@@ -192,7 +192,10 @@ export type CalendarCustomizations = {
 	showDescription: boolean
 }
 
-export type CalendarFilters = unknown;
+export type CalendarFilters = {
+	onlyShowFeatured: boolean,
+	hideUnpublished: boolean
+};
 
 export type ImageFeedCustomizations = {
 	showEventExtraInfo: boolean,

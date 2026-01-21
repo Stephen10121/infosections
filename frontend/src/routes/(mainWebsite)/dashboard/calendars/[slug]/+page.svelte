@@ -33,6 +33,8 @@
     let calendarDescription = $derived(data.selectedCalendar.description);
     let passwordEnabled = $derived(data.selectedCalendar.passwordEnabled);
     let displaySettings = $state(data.selectedCalendar.displaySettings);
+    let filterSettingsRef = $derived(data.selectedCalendar.filters);
+    let filterSettings = $state(data.selectedCalendar.filters);
     let saveChangesToast: string | number | null = $state(null);
     let calendarName = $derived(data.selectedCalendar.name);
     let newPassword = $state("");
@@ -47,8 +49,9 @@
         const descriptionChanged = calendarDescription !== data.selectedCalendar.description;
         const passwordScreenMessageChanged = passwordScreenMessage !== data.selectedCalendar.passwordScreenMessage;
         const displaySettingsChanged = JSON.stringify(displaySettings) !== JSON.stringify(displaySettingsRef);
+        const filterSettingsChanged = JSON.stringify(filterSettings) !== JSON.stringify(filterSettingsRef);
 
-        const saveRequired = passwordEnableHasChanged || newAvatarUploaded || currentAvatarRemoved || (passwordEnabled && newPasswordCreated) || nameChanged || descriptionChanged || (passwordEnabled && passwordScreenMessageChanged) || displaySettingsChanged;
+        const saveRequired = passwordEnableHasChanged || newAvatarUploaded || currentAvatarRemoved || (passwordEnabled && newPasswordCreated) || nameChanged || descriptionChanged || (passwordEnabled && passwordScreenMessageChanged) || displaySettingsChanged || filterSettingsChanged;
     
         if (saveRequired) {
             if (saveChangesToast === null) {
@@ -72,6 +75,10 @@
 
     $effect(() => {
         displaySettings = displaySettingsRef;
+    });
+
+    $effect(() => {
+        filterSettings = filterSettingsRef;
     });
 
     function handleRemoveAvatar() {
@@ -103,7 +110,7 @@
     async function saveChanges() {
         savingChanges = true;
         const savingChangesToast = toast.loading("Saving changes!");
-        const success = await changeCalendarSettings(data.selectedCalendar.id, calendarName, calendarDescription, passwordEnabled, newPassword, avatarLink, uploadNewAvatar, passwordScreenMessage, displaySettings);
+        const success = await changeCalendarSettings(data.selectedCalendar.id, calendarName, calendarDescription, passwordEnabled, newPassword, avatarLink, uploadNewAvatar, passwordScreenMessage, displaySettings, filterSettings);
         newPassword = "";
         savingChanges = false;
         if (success) {
@@ -324,6 +331,7 @@
         </Card.Root>
 
         <Event calendarCustomizations={displaySettings} event={{
+            recurrence: "",
             id: "blankEvent",
             name: "Event Info Preview",
             location: "Home - 1234 Main Street, Vancouver WA",
@@ -363,6 +371,37 @@
             collectionId: "",
             collectionName: ""
         }} currentDay={nowDate} timeZone={Temporal.Now.timeZoneId()} />
+
+        <Card.Root>
+            <Card.Header>
+                <Card.Title>Filter Settings</Card.Title>
+                <Card.Description>Choose what kind of events you want to show in the feed.</Card.Description>
+            </Card.Header>
+            <Card.Content>
+            <div class="grid grid-cols-1 gap-6">
+                <div class="flex items-center justify-between space-x-2">
+                    <Label for="onlyShowFeatured" class="flex flex-col items-start space-y-1 cursor-pointer">
+                        <span class="font-medium">Only Featured Events</span>
+                        <span class="text-sm text-muted-foreground">Show only the events that are set to featured.</span>
+                    </Label>
+                    <Switch
+                        id="onlyShowFeatured"
+                        bind:checked={filterSettings.onlyShowFeatured}
+                    />
+                </div>
+                <div class="flex items-center justify-between space-x-2">
+                    <Label for="hideUnpublished" class="flex flex-col items-start space-y-1 cursor-pointer">
+                        <span class="font-medium">Hide Unpublished Events</span>
+                        <span class="text-sm text-muted-foreground">Hide the events that are not visible in the church center.</span>
+                    </Label>
+                    <Switch
+                        id="hideUnpublished"
+                        bind:checked={filterSettings.hideUnpublished}
+                    />
+                </div>
+            </div>
+            </Card.Content>
+        </Card.Root>
 
         <Card.Root>
             <Card.Header>

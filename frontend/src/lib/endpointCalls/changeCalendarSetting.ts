@@ -1,4 +1,4 @@
-import type { CalendarCustomizations } from "@/utils";
+import type { CalendarCustomizations, CalendarFilters } from "@/utils";
 import { toast } from "svelte-sonner";
 
 type Success = boolean
@@ -12,7 +12,8 @@ export async function changeCalendarSettings(
     avatarLink: string,
     uploadedAvatar: File | null,
     passwordScreenMessage: string,
-    displaySettings: CalendarCustomizations
+    displaySettings: CalendarCustomizations,
+    filters: CalendarFilters
 ): Promise<Success> {
     const data = new FormData();
 
@@ -25,6 +26,7 @@ export async function changeCalendarSettings(
     data.append("avatarLink", avatarLink);
     data.append("passwordScreenMessage", passwordScreenMessage);
     data.append("displaySettings", JSON.stringify(displaySettings));
+    data.append("filters", JSON.stringify(filters));
 
     const response = await fetch('/api/calendar', {
         method: 'PATCH',

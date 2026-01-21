@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { ArrowLeft, Copy, GalleryHorizontal, LayoutGrid, Link2, List, SquareArrowOutUpRight, Upload, X } from "@lucide/svelte";
+    import { ArrowLeft, Copy, Link2, SquareArrowOutUpRight, Upload, X } from "@lucide/svelte";
     import { changeIFeedSettings } from "@/endpointCalls/changeIFeedSettings.js";
-    import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import { Button, buttonVariants } from "@/components/ui/button";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import { deleteIFeed } from "@/endpointCalls/deleteIFeed.js";
