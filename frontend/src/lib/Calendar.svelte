@@ -2,10 +2,20 @@
     import { invalidateAll } from "$app/navigation";
     import { onMount } from "svelte";
     import Day from "./Day.svelte";
-    import type { CalendarCustomizations, EventDBModel } from "./utils";
+    import type { CalendarCustomizations, CalendarFilters, EventDBModel } from "./utils";
     import { Temporal } from 'temporal-polyfill';
 
-    let { events, displaySettings, timeZone }: { events: EventDBModel[], displaySettings: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();
+    let {
+        events,
+        displaySettings,
+        timeZone,
+        filters
+    }: {
+        events: EventDBModel[],
+        displaySettings: CalendarCustomizations,
+        timeZone: Temporal.TimeZoneLike,
+        filters: CalendarFilters
+    } = $props();
 
     let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
 

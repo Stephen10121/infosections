@@ -1,4 +1,4 @@
-import type { CustomImageIFeedDBModel, EventDBModel, ImageFeedDBModel } from "@/utils";
+import type { CalendarCustomizations, CalendarFilters, CustomImageIFeedDBModel, EventDBModel, ImageFeedDBModel } from "@/utils";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 
@@ -8,6 +8,8 @@ export async function load({ params, locals }) {
     let imageFeed: ImageFeedDBModel;
     try {
         imageFeed = await locals.pb.collection('imageFeeds').getOne(params.slug, {
+            expand: "additionalCalendars",
+            fields: "*,expand.additionalCalendars.displaySettings,expand.additionalCalendars.filters,expand.additionalCalendars.id",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -16,6 +18,8 @@ export async function load({ params, locals }) {
         console.log("Image Feed not found.", err);
         return error(404, "Image Feed Not Found");
     }
+
+    const additionalCalendars: {displaySettings: CalendarCustomizations, filters: CalendarFilters, id: string}[] = imageFeed.expand ? imageFeed.expand.additionalCalendars : [];
 
     const today = new Date();
     const now = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}-${(today.getDate()-2).toString().padStart(2, '0')}`;
@@ -78,6 +82,7 @@ export async function load({ params, locals }) {
         logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo),
         displaySettings: imageFeed.displaySettings,
         description: imageFeed.description,
-        apiServer: process.env.PB_URL!
+        apiServer: process.env.PB_URL!,
+        additionalCalendars
     }
 }

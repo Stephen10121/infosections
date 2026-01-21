@@ -117,7 +117,7 @@ export interface CalendarDBModel extends RecordModel {
 	owner: string,
 	logo: string,
 	visits: number,
-	filters: unknown,
+	filters: CalendarFilters,
 	description: string,
 	passwordScreenMessage: string,
 	displaySettings: CalendarCustomizations,
@@ -134,7 +134,8 @@ export interface ImageFeedDBModel extends RecordModel {
 	displaySettings: ImageFeedCustomizations,
 	created: string,
 	updated: string,
-	filters: ImageFeedFilters
+	filters: ImageFeedFilters,
+	additionalCalendars: string[]
 }
 
 export interface EventListDBModel extends RecordModel {
@@ -190,6 +191,8 @@ export type CalendarCustomizations = {
 	showRooms: boolean,
 	showDescription: boolean
 }
+
+export type CalendarFilters = unknown;
 
 export type ImageFeedCustomizations = {
 	showEventExtraInfo: boolean,

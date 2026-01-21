@@ -5,12 +5,15 @@
     import type { CarouselAPI } from "@/components/ui/carousel/context.js";
     import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import { Temporal } from "temporal-polyfill";
+    import Calendar from '@/Calendar.svelte';
 
     let { data } = $props();
 
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
     let api = $state<CarouselAPI>();
+
+    $inspect(data.additionalCalendars);
 </script>
 
 <svelte:head>
@@ -79,6 +82,16 @@
                                 </div>
                             </div>
                         {/if}
+                    </AspectRatio>
+                </Carousel.Item>
+            {/each}
+            {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
+                <Carousel.Item class="w-screen h-screen">
+                    <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
+                        <!-- <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
+                            <Calendar events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                        </div> -->
+                        <iframe width="100%" height="100%" title="Additional Calendar" src="https://infosections.com/cal/{additionalCalendar.id}"></iframe>
                     </AspectRatio>
                 </Carousel.Item>
             {/each}
