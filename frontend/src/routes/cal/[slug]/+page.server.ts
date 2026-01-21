@@ -38,6 +38,14 @@ export async function load({ params, locals, cookies }) {
             filter += ` && owner="${calendar.owner}"`;
         }
 
+        if (calendar.filters.onlyShowFeatured) {
+            filter += " && featured=true"
+        }
+
+        if (calendar.filters.hideUnpublished) {
+            filter += " && visibleInChurchCenter=true"
+        }
+
         events = await locals.pb.collection('events').getFullList({
             filter,
             sort: 'startTime',
