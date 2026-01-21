@@ -531,7 +531,7 @@
                         <Dialog.Header>
                             <Dialog.Title>Are you sure absolutely sure?</Dialog.Title>
                             <Dialog.Description>
-                                This action cannot be undone. This will permanently delete this calendar from our servers. All links relying on this calendar will not work.
+                                This action cannot be undone. This will permanently delete this calendar from our servers. All links or image feeds relying on this calendar will not work.
                             </Dialog.Description>
                             <Dialog.Footer>
                                 <Button variant="destructive" onclick={deleteCal}>Confirm Delete</Button>
