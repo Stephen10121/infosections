@@ -12,8 +12,6 @@
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
     let api = $state<CarouselAPI>();
-
-    $inspect(data.additionalCalendars);
 </script>
 
 <svelte:head>
@@ -40,32 +38,34 @@
     >
         <Carousel.Content class="w-screen h-screen">
             {#each data.events as event (`anEvent${event.id}`)}
-                {#if today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()}
-                    <Carousel.Item class="w-screen h-screen">
-                        <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                            <img src={event.imageURL} alt={event.name} class="w-full h-full">
-                            {#if data.displaySettings.showEventExtraInfo && (data.displaySettings.showEventName || (data.displaySettings.showEventDescription && event.description.length > 0) || (data.displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
-                                <div class="extrastuff overflow-hidden">
-                                    <div class="info">
-                                        {#if data.displaySettings.showEventName}
-                                            <h2 class="text-2xl">{event.name}</h2>
-                                        {/if}
+                {#if !(!event.featured && data.filters.onlyShowFeatured) && !(!event.visibleInChurchCenter && data.filters.hideUnpublished) && event.imageURL.length > 0}
+                    {#if today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()}
+                        <Carousel.Item class="w-screen h-screen">
+                            <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
+                                <img src={event.imageURL} alt={event.name} class="w-full h-full">
+                                {#if data.displaySettings.showEventExtraInfo && (data.displaySettings.showEventName || (data.displaySettings.showEventDescription && event.description.length > 0) || (data.displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
+                                    <div class="extrastuff overflow-hidden">
+                                        <div class="info">
+                                            {#if data.displaySettings.showEventName}
+                                                <h2 class="text-2xl">{event.name}</h2>
+                                            {/if}
 
-                                        {#if data.displaySettings.showEventDescription && event.description.length > 0}
-                                            <p class="text-sm">{event.description}</p>
-                                        {/if}
+                                            {#if data.displaySettings.showEventDescription && event.description.length > 0}
+                                                <p class="text-sm">{event.description}</p>
+                                            {/if}
 
-                                        {#if data.displaySettings.showEventRegistration && event.registrationURL.length !== 0}
-                                            <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
-                                                Register Now
-                                                <SquareArrowOutUpRight class="h-4 w-4" />
-                                            </a>
-                                        {/if}
+                                            {#if data.displaySettings.showEventRegistration && event.registrationURL.length !== 0}
+                                                <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
+                                                    Register Now
+                                                    <SquareArrowOutUpRight class="h-4 w-4" />
+                                                </a>
+                                            {/if}
+                                        </div>
                                     </div>
-                                </div>
-                            {/if}
-                        </AspectRatio>
-                    </Carousel.Item>
+                                {/if}
+                            </AspectRatio>
+                        </Carousel.Item>
+                    {/if}
                 {/if}
             {/each}
             {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
@@ -88,10 +88,9 @@
             {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
                 <Carousel.Item class="w-screen h-screen">
                     <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <!-- <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
-                            <Calendar events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
-                        </div> -->
-                        <iframe width="100%" height="100%" title="Additional Calendar" src="https://infosections.com/cal/{additionalCalendar.id}"></iframe>
+                        <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
+                            <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                        </div>
                     </AspectRatio>
                 </Carousel.Item>
             {/each}

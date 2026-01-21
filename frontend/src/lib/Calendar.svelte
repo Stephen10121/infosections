@@ -9,12 +9,14 @@
         events,
         displaySettings,
         timeZone,
-        filters
+        filters,
+        autoUpdate = true
     }: {
         events: EventDBModel[],
         displaySettings: CalendarCustomizations,
         timeZone: Temporal.TimeZoneLike,
-        filters: CalendarFilters
+        filters: CalendarFilters,
+        autoUpdate?: boolean
     } = $props();
 
     let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
@@ -41,7 +43,8 @@
     });
 
     onMount(() => {
-        const updater = setInterval(updatePage, 20000);
+        const updater = autoUpdate ? setInterval(updatePage, 20000) : undefined;
+
         return () => {
             clearInterval(updater);
         }
@@ -50,8 +53,8 @@
 
 <div class="dark mx-auto">
     <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations}  day={today} />
-        <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations}  day={tomorrow} />
-        <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations}  day={thirdDay} />
+        <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} day={today} />
+        <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} day={tomorrow} />
+        <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} day={thirdDay} />
     </div>
 </div>

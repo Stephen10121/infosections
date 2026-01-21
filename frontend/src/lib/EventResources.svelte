@@ -8,7 +8,7 @@
     let rooms: Exclude<EventDBModel["resources"], null> = $state([]);
 
     $effect(() => {
-        if (resources !== null) {
+        if (resources && resources !== null) {
             try {
                 res = resources.filter((resource) => resource.kind === "Resource");
                 rooms = resources.filter((resource) => resource.kind === "Room");
