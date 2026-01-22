@@ -17,6 +17,7 @@
     import { toast } from "svelte-sonner";
     import Event from "@/Event.svelte";
     import CustomImages from "@/ifeedslug/CustomImages.svelte";
+    import IncludedCalendars from "@/IncludedCalendars.svelte";
 
     let { data } = $props();
 
@@ -352,6 +353,7 @@
                 </div>
                 </Card.Content>
             </Card.Root>
+
             <Card.Root>
                 <Card.Header>
                     <Card.Title>Additional Images</Card.Title>
@@ -359,6 +361,16 @@
                 </Card.Header>
                 <Card.Content>
                     <CustomImages customImages={data.customImages} apiServer={data.apiServer} imageFeeds={data.imageFeeds} currentFeedID={data.selectedfeed.id} />
+                </Card.Content>
+            </Card.Root>
+
+            <Card.Root>
+                <Card.Header>
+                    <Card.Title>Included Calendars</Card.Title>
+                    <Card.Description>You can also include 1 or more calendars that you have created in the <span><a class="underline" href="/dashboard/calendars">calendars page!</a></span> (Changes not reflected in Ifeed preview!)</Card.Description>
+                </Card.Header>
+                <Card.Content>
+                    <IncludedCalendars iFeedId={data.selectedfeed.id} pb_url={data.pb_url} includedCalendars={data.selectedfeed.additionalCalendars} calendars={data.calendars} />
                 </Card.Content>
             </Card.Root>
         </div>
