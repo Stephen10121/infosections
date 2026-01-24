@@ -25,13 +25,15 @@ export async function load({ params, locals }) {
     let visibleInChurchCenterEventRequired = false;
     let featuredEventRequired = false;
 
-    for (let i=0;i<additionalCalendars.length;i++) {
-        if (additionalCalendars[i].filters.onlyShowFeatured === false) {
-            featuredEventRequired = true;
-        }
-
-        if (additionalCalendars[i].filters.hideUnpublished === false) {
-            visibleInChurchCenterEventRequired = true;
+    if (additionalCalendars) {
+        for (let i=0;i<additionalCalendars.length;i++) {
+            if (additionalCalendars[i].filters.onlyShowFeatured === false) {
+                featuredEventRequired = true;
+            }
+    
+            if (additionalCalendars[i].filters.hideUnpublished === false) {
+                visibleInChurchCenterEventRequired = true;
+            }
         }
     }
 

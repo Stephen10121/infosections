@@ -85,15 +85,17 @@
                     </AspectRatio>
                 </Carousel.Item>
             {/each}
-            {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
-                <Carousel.Item class="w-screen h-screen">
-                    <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
-                            <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
-                        </div>
-                    </AspectRatio>
-                </Carousel.Item>
-            {/each}
+            {#if data.additionalCalendars}
+                {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
+                    <Carousel.Item class="w-screen h-screen">
+                        <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
+                            <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
+                                <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                            </div>
+                        </AspectRatio>
+                    </Carousel.Item>
+                {/each}
+            {/if}
         </Carousel.Content>
     </Carousel.Root>
 </div>
