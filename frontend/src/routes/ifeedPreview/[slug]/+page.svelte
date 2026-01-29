@@ -124,7 +124,8 @@
                                 <p>Id: {event.id}</p>
                                 <p>Recurring Id: {event.recEventId}</p>
                                 <p>Name: {event.name}</p>
-                                <p>Link href: {event.registrationURL}</p>
+                                <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
+                                <p>Image href: <a href="{event.imageURL}" class="underline" target="_blank">here</a></p>
                             </div>
                         {/if}
                     </AspectRatio>
@@ -149,7 +150,7 @@
                                 <p>Type: Custom Image</p>
                                 <p>Id: {customImage.id}</p>
                                 <p>Show Link: {customImage.showLink}</p>
-                                <p>Link href: {customImage.registrationURL}</p>
+                                <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
                             </div>
                         {/if}
                     </AspectRatio>
