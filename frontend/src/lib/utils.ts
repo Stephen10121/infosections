@@ -82,6 +82,7 @@ export type EventTagsType = {
 }
 
 export interface EventDBModel extends RecordModel {
+	recEventId: string,
 	name: string,
 	description: string,
 	imageURL: string,
