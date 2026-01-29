@@ -14,6 +14,7 @@
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
     let api = $state<CarouselAPI>();
+    let debugToggle = $state(false);
 
     let eventIdUsed: string[] = [];
 
@@ -43,10 +44,10 @@
         try {
             if (event.data.call === "displaySettings") {
                 displaySettings = JSON.parse(event.data.value);
-            }
-
-            if (event.data.call === "reloadPage") {
+            } else if (event.data.call === "reloadPage") {
                 window.location.reload();
+            } else if (event.data.call === "toggleDebug") {
+                debugToggle = event.data.value === "1"
             }
         } catch(err) {
             console.log("Failed to recieve date from the parent container");
@@ -117,6 +118,15 @@
                                 </div>
                             </div>
                         {/if}
+                        {#if debugToggle}
+                            <div class="debugger">
+                                <p>Type: Event</p>
+                                <p>Id: {event.id}</p>
+                                <p>Recurring Id: {event.recEventId}</p>
+                                <p>Name: {event.showLink}</p>
+                                <p>Link href: {event.registrationURL}</p>
+                            </div>
+                        {/if}
                     </AspectRatio>
                 </Carousel.Item>
             {/each}
@@ -134,6 +144,14 @@
                                 </div>
                             </div>
                         {/if}
+                        {#if debugToggle}
+                            <div class="debugger">
+                                <p>Type: Custom Image</p>
+                                <p>Id: {customImage.id}</p>
+                                <p>Show Link: {customImage.showLink}</p>
+                                <p>Link href: {customImage.registrationURL}</p>
+                            </div>
+                        {/if}
                     </AspectRatio>
                 </Carousel.Item>
             {/each}
@@ -144,6 +162,12 @@
                             <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
                                 <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
                             </div>
+                            {#if debugToggle}
+                            <div class="debugger">
+                                <p>Type: Calendar</p>
+                                <p>Id: {additionalCalendar.id}</p>
+                            </div>
+                        {/if}
                         </AspectRatio>
                     </Carousel.Item>
                 {/each}
@@ -155,6 +179,16 @@
 <style>
     :global(*) {
         box-sizing: border-box;
+        /* Standard property */
+        user-drag: none;
+        /* WebKit (Chrome, Safari, newer Opera) */
+        -webkit-user-drag: none;
+        /* Firefox (older versions) */
+        -moz-user-drag: none;
+        /* Internet Explorer (older versions) */
+        -ms-user-drag: none;
+        -webkit-user-select: none; /* Safari */
+        user-select: none; /* Standard syntax */
     }
 
     :global(body) {
@@ -183,6 +217,15 @@
         align-items: flex-end;
         justify-content: space-between;
         padding: 10px;
+    }
+
+    .debugger {
+        padding: 10px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #000000b6;
+        color: white;
     }
 
     .info {

@@ -123,6 +123,17 @@
 <style>
     :global(*) {
         box-sizing: border-box;
+        box-sizing: border-box;
+        /* Standard property */
+        user-drag: none;
+        /* WebKit (Chrome, Safari, newer Opera) */
+        -webkit-user-drag: none;
+        /* Firefox (older versions) */
+        -moz-user-drag: none;
+        /* Internet Explorer (older versions) */
+        -ms-user-drag: none;
+        -webkit-user-select: none; /* Safari */
+        user-select: none; /* Standard syntax */
     }
 
     :global(body) {
