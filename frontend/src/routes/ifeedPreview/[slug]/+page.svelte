@@ -44,6 +44,10 @@
             if (event.data.call === "displaySettings") {
                 displaySettings = JSON.parse(event.data.value);
             }
+
+            if (event.data.call === "reloadPage") {
+                window.location.reload();
+            }
         } catch(err) {
             console.log("Failed to recieve date from the parent container");
             console.log(err);
