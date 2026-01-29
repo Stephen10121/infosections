@@ -150,7 +150,7 @@
                                 <p>Type: Custom Image</p>
                                 <p>Id: {customImage.id}</p>
                                 <p>Show Link: {customImage.showLink}</p>
-                                <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
+                                <p>Link href: <a href="{customImage.registrationURL}" class="underline" target="_blank">here</a></p>
                             </div>
                         {/if}
                     </AspectRatio>
