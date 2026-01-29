@@ -60,7 +60,7 @@ export async function load({ params, locals }) {
         events = await locals.pb.collection('events').getFullList({
             filter,
             sort: 'startTime',
-            fields: "id,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: "id,recEventId,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -81,7 +81,7 @@ export async function load({ params, locals }) {
 
         customEvents = await locals.pb.collection('customImageIfeed').getFullList({
             filter,
-            fields: "id,picture,registrationURL,created,updated,collectionId,showLink,linkText",
+            fields: "id,recEventId,picture,registrationURL,created,updated,collectionId,showLink,linkText",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }

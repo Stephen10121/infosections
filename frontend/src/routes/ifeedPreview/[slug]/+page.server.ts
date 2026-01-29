@@ -60,7 +60,7 @@ export async function load({ params, locals }) {
         events = await locals.pb.collection('events').getFullList({
             filter,
             sort: 'startTime',
-            fields: "id,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: "id,recEventId,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
