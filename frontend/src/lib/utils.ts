@@ -233,7 +233,14 @@ export const defaultImageFeedCustomizations: ImageFeedCustomizations = {
 
 export type ImageFeedFilters = {
 	onlyShowFeatured: boolean,
-	hideUnpublished: boolean
+	hideUnpublished: boolean,
+	hideRecurringEvents: boolean,
+}
+
+export const defaultImageFeedFilters: ImageFeedFilters = {
+	onlyShowFeatured: true,
+	hideUnpublished: true,
+	hideRecurringEvents: false,
 }
 
 export interface UserModel extends RecordModel {

@@ -1,4 +1,4 @@
-import { defaultImageFeedCustomizations, type ImageFeedCustomizations, type ImageFeedDBModel, type ImageFeedFilters } from "@/utils.js";
+import { defaultImageFeedCustomizations, defaultImageFeedFilters, type ImageFeedCustomizations, type ImageFeedDBModel, type ImageFeedFilters } from "@/utils.js";
 import { error, json } from "@sveltejs/kit";
 import { config } from "dotenv";
 import type { RecordModel } from "pocketbase";
@@ -182,10 +182,7 @@ export async function POST({ locals, request }) {
             "description": description.toString(),
             "owner": locals.user.id,
             "displaySettings": defaultImageFeedCustomizations,
-            "filters": {
-                "hideUnpublished": true,
-                "onlyShowFeatured": true
-            }
+            "filters": defaultImageFeedFilters
         };
 
         await locals.pb.collection('imageFeeds').create(data, {
