@@ -123,7 +123,7 @@
                                 <p>Type: Event</p>
                                 <p>Id: {event.id}</p>
                                 <p>Recurring Id: {event.recEventId}</p>
-                                <p>Name: {event.showLink}</p>
+                                <p>Name: {event.name}</p>
                                 <p>Link href: {event.registrationURL}</p>
                             </div>
                         {/if}
