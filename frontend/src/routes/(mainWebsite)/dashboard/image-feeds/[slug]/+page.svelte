@@ -323,6 +323,20 @@
                             frameborder="0"
                         ></iframe>
                     </div>
+                    <div class="flex items-center justify-between space-x-2 mt-5">
+                        <Label for="showDebugger" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Debugger</span>
+                            <span class="text-sm text-muted-foreground">Show extra information in the ifeed preview.</span>
+                        </Label>
+                        <Switch
+                            id="showDebugger"
+                            onCheckedChange={(checked) => {
+                                if (displaySettings && previewIFrame && previewIFrame.contentWindow) {
+                                    previewIFrame.contentWindow.postMessage({ call: 'toggleDebug', value: checked ? "1" : "0" });
+                                }
+                            }}
+                        />
+                    </div>
                 </Card.Content>
             </Card.Root>
 
