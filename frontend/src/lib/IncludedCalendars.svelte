@@ -8,6 +8,7 @@
     import { type CalendarDBModel } from "@/utils";
     import { CalendarDays } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
+    import ACalToAdd from "./ACalToAdd.svelte";
 
     let { 
         includedCalendars,
@@ -96,21 +97,34 @@
             </Dialog.Description>
         </Dialog.Header>
         <div class="grid gap-4 py-4">
-            {#each calendars as calendar (`acalendartoadd${calendar.id}`)}
-                {#if !includedCalendars.includes(calendar.id)}
-                    <div>
-                        <input
-                            type="checkbox"
-                            name="caltoadd{calendar.id}"
-                            id="caltoadd{calendar.id}"
-                            onchange={(event) => addToCalsToAdd(event, calendar.id)}
-                        />
-                        <label for="caltoadd{calendar.id}">
-                            {calendar.name}
-                        </label>
-                    </div>
-                {/if}
-            {/each}
+            {#if includedCalendars.length === calendars.length}
+                <Empty.Root>
+                    <Empty.Header>
+                        <Empty.Media variant="icon">
+                        <CalendarDays />
+                        </Empty.Media>
+                        <Empty.Title>No {#if calendars.length !== 0}Extra{/if} Calendars</Empty.Title>
+                        <Empty.Description>
+                            {#if calendars.length === 0}
+                                You haven't created any calendars yet, create one and then include it here.
+                            {:else}
+                                You already included all you current calendars, create a new one and then include it here.
+                            {/if}
+                        </Empty.Description>
+                    </Empty.Header>
+                    <Empty.Content>
+                        <div class="flex gap-2">
+                            <Button href="/dashboard/calendars?new=1">Create A Calendar</Button>
+                        </div>
+                    </Empty.Content>
+                </Empty.Root>
+            {:else}
+                {#each calendars as calendar (`acalendartoadd${calendar.id}`)}
+                    {#if !includedCalendars.includes(calendar.id)}
+                        <ACalToAdd {calendar} {addToCalsToAdd} />
+                    {/if}
+                {/each}
+            {/if}
         </div>
         <Dialog.Footer>
             <Button onclick={includeCalendar}>Add</Button>
