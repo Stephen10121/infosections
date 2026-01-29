@@ -92,6 +92,7 @@ func GetAndStoreNextThreeEvents(userId string, app *pocketbase.PocketBase) {
 		if err != nil {
 			newEventRecord := core.NewRecord(collection)
 			newEventRecord.Set("id", events[i].InstanceId)
+			newEventRecord.Set("recEventId", events[i].RecEventId)
 			newEventRecord.Set("startTime", events[i].StartTime)
 			newEventRecord.Set("endTime", events[i].EndTime)
 			newEventRecord.Set("name", events[i].Name)
@@ -118,6 +119,7 @@ func GetAndStoreNextThreeEvents(userId string, app *pocketbase.PocketBase) {
 			}
 		} else {
 			existingRecord.Set("startTime", events[i].StartTime)
+			existingRecord.Set("recEventId", events[i].RecEventId)
 			existingRecord.Set("endTime", events[i].EndTime)
 			existingRecord.Set("name", events[i].Name)
 			existingRecord.Set("location", events[i].Location)

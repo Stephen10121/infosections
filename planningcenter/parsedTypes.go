@@ -20,6 +20,7 @@ type EventTag struct {
 }
 
 type Event struct {
+	RecEventId           string               `json:"recEventId"`
 	InstanceId           string               `json:"instanceId"`
 	StartTime            string               `json:"startTime"`
 	EndTime              string               `json:"endTime"`

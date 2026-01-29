@@ -108,6 +108,7 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 		}
 
 		fetchedEvents = append(fetchedEvents, Event{
+			RecEventId:           responseJson.Data[i].Relationships.Event.Data.Id,
 			InstanceId:           responseJson.Data[i].Id,
 			StartTime:            responseJson.Data[i].Attributes.StartsAt,
 			EndTime:              eventTime[len(eventTime)-1].EndTime,
