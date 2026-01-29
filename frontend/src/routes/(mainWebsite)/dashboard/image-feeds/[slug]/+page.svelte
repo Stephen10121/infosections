@@ -350,6 +350,16 @@
                             bind:checked={filterSettings.hideUnpublished}
                         />
                     </div>
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="hideRecurring" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Hide Recurring Events</span>
+                            <span class="text-sm text-muted-foreground">Hide events that are recurring but show only the first instance of the event in the feed.</span>
+                        </Label>
+                        <Switch
+                            id="hideRecurring"
+                            bind:checked={filterSettings.hideRecurringEvents}
+                        />
+                    </div>
                 </div>
                 </Card.Content>
             </Card.Root>
