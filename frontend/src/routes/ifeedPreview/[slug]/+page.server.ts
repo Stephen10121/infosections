@@ -21,30 +21,46 @@ export async function load({ params, locals }) {
 
     const additionalCalendars: {displaySettings: CalendarCustomizations, filters: CalendarFilters, id: string}[] = imageFeed.expand ? imageFeed.expand.additionalCalendars : [];
 
+    // These variables and the for loop checks if any of the cals need to access a private event. If so, we need to change the event fetch filtering.
+    let visibleInChurchCenterEventRequired = false;
+    let featuredEventRequired = false;
+
+    if (additionalCalendars) {
+        for (let i=0;i<additionalCalendars.length;i++) {
+            if (additionalCalendars[i].filters.onlyShowFeatured === false) {
+                featuredEventRequired = true;
+            }
+    
+            if (additionalCalendars[i].filters.hideUnpublished === false) {
+                visibleInChurchCenterEventRequired = true;
+            }
+        }
+    }
+    
     const today = new Date();
     const now = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}-${(today.getDate()-2).toString().padStart(2, '0')}`;
 
     let events: EventDBModel[] = [];
     try {
-        let filter = `startTime > "${now}" && imageURL != ""`;
+        let filter = `startTime > "${now}"`;
 
         // This filter shows all events for the testing dev feed.
         if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
             filter += ` && owner = "${imageFeed.owner}"`;
         }
 
-        if (imageFeed.filters.onlyShowFeatured) {
-            filter += " && featured = true"
+        if (imageFeed.filters.onlyShowFeatured && !featuredEventRequired) {
+            filter += " && featured=true"
         }
 
-        if (imageFeed.filters.hideUnpublished) {
-            filter += " && visibleInChurchCenter = true"
+        if (imageFeed.filters.hideUnpublished && !visibleInChurchCenterEventRequired) {
+            filter += " && visibleInChurchCenter=true"
         }
 
         events = await locals.pb.collection('events').getFullList({
             filter,
             sort: 'startTime',
-            fields: "id,name,description,imageURL,registrationURL,location,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: "id,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -83,6 +99,7 @@ export async function load({ params, locals }) {
         displaySettings: imageFeed.displaySettings,
         description: imageFeed.description,
         apiServer: process.env.PB_URL!,
-        additionalCalendars
+        additionalCalendars,
+        filters: imageFeed.filters
     }
 }

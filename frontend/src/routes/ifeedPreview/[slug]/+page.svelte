@@ -5,6 +5,7 @@
     import type { CarouselAPI } from "@/components/ui/carousel/context.js";
     import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import { Temporal } from "temporal-polyfill";
+    import Calendar from '@/Calendar.svelte';
 
     let { data } = $props();
 
@@ -47,25 +48,25 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-{#if displaySettings.feedAnimationType === "slideshow"}
-    <div class="h-screen w-screen">
-        <Carousel.Root
-            setApi={(emblaApi) => (api = emblaApi)}
-            opts={{
-                loop: true,
-            }}
-            plugins={[Autoplay({
-                delay: data.displaySettings.feedDurationMS,
-                playOnInit: true,
-                stopOnFocusIn: false,
-                stopOnInteraction: false,
-                stopOnMouseEnter: false,
-                stopOnLastSnap: false,
-            })]}
-            class="w-full h-full"
-        >
-            <Carousel.Content class="w-screen h-screen">
-                {#each data.events as event (`anEvent${event.id}`)}
+<div class="h-screen w-screen">
+    <Carousel.Root
+        setApi={(emblaApi) => (api = emblaApi)}
+        opts={{
+            loop: true,
+        }}
+        plugins={[Autoplay({
+            delay: data.displaySettings.feedDurationMS,
+            playOnInit: true,
+            stopOnFocusIn: false,
+            stopOnInteraction: false,
+            stopOnMouseEnter: false,
+            stopOnLastSnap: false,
+        })]}
+        class="w-full h-full"
+    >
+        <Carousel.Content class="w-screen h-screen">
+            {#each data.events as event (`anEvent${event.id}`)}
+                {#if !(!event.featured && data.filters.onlyShowFeatured) && !(!event.visibleInChurchCenter && data.filters.hideUnpublished) && event.imageURL.length > 0}
                     {#if today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()}
                         <Carousel.Item class="w-screen h-screen">
                             <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
@@ -93,58 +94,39 @@
                             </AspectRatio>
                         </Carousel.Item>
                     {/if}
-                {/each}
-                {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
+                {/if}
+            {/each}
+            {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
+                <Carousel.Item class="w-screen h-screen">
+                    <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
+                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.name} class="w-full h-full">
+                        {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
+                            <div class="extrastuff overflow-hidden">
+                                <div class="info">
+                                    <a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
+                                        {customImage.linkText}
+                                        <SquareArrowOutUpRight class="h-4 w-4" />
+                                    </a>
+                                </div>
+                            </div>
+                        {/if}
+                    </AspectRatio>
+                </Carousel.Item>
+            {/each}
+            {#if data.additionalCalendars}
+                {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
                     <Carousel.Item class="w-screen h-screen">
                         <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                            <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.name} class="w-full h-full">
-                            {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
-                                <div class="extrastuff overflow-hidden">
-                                    <div class="info">
-                                        <a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
-                                            {customImage.linkText}
-                                            <SquareArrowOutUpRight class="h-4 w-4" />
-                                        </a>
-                                    </div>
-                                </div>
-                            {/if}
+                            <div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
+                                <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                            </div>
                         </AspectRatio>
                     </Carousel.Item>
                 {/each}
-            </Carousel.Content>
-        </Carousel.Root>
-    </div>
-{:else}
-    <div class="flex flex-col gap-5 p-5 listView">
-        {#each data.events as event, index (`anEventList${event.id}`)}
-            {#if today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()}
-                <div class="border listViewItem {index % 2 !== 0 ? "backwards" : ""} border-black">
-                    <div class="img-container">
-                        <img src={event.imageURL} alt={event.name} class="aspect-video w-full">
-                    </div>
-                    {#if displaySettings.showEventExtraInfo && (displaySettings.showEventName || (displaySettings.showEventDescription && event.description.length > 0) || (displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
-                        <div class="extra-info w-full h-full flex items-center justify-center flex-col">
-                            {#if displaySettings.showEventName}
-                                <h2 class="text-2xl">{event.name}</h2>
-                            {/if}
-
-                            {#if displaySettings.showEventDescription && event.description.length > 0}
-                                <p class="text-sm">{event.description}</p>
-                            {/if}
-
-                            {#if displaySettings.showEventRegistration && event.registrationURL.length !== 0}
-                                <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
-                                    Register Now
-                                    <SquareArrowOutUpRight class="h-4 w-4" />
-                                </a>
-                            {/if}
-                        </div>
-                    {/if}
-                </div>
             {/if}
-        {/each}
-    </div>
-{/if}
+        </Carousel.Content>
+    </Carousel.Root>
+</div>
 
 <style>
     :global(*) {
@@ -164,29 +146,6 @@
         max-height: 100vh;
         width: calc(min(100vw, 100vh * 16 / 9));
         height: calc(min(100vh, 100vw * 9 / 16));
-    }
-
-    .listView {
-        padding: 5px;
-    }
-
-    .listViewItem {
-        display: grid;
-        grid-template-columns: 5fr 3fr;
-        grid-template-areas:"imgcontain extrainfo";
-    }
-
-    .listViewItem.backwards {
-        grid-template-columns: 3fr 5fr;
-        grid-template-areas: "extrainfo imgcontain";
-    }
-
-    .img-container {
-        grid-area: imgcontain;
-    }
-
-    .extra-info {
-        grid-area: extrainfo;
     }
 
     .extrastuff {
