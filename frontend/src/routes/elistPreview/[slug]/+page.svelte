@@ -7,17 +7,41 @@
     let displaySettings = $derived(data.displaySettings);
 
     let timeZone = $state(Temporal.Now.timeZoneId());
+    let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
+
+    let eventIdUsed: string[] = [];
 
     function parentSentMessage(event: MessageEvent) {
         try {
             if (event.data.call === "displaySettings") {
                 displaySettings = JSON.parse(event.data.value);
+            } else if (event.data.call === "reloadPage") {
+                window.location.reload();
             }
         } catch(err) {
             console.log("Failed to recieve date from the parent container");
             console.log(err);
         }
     }
+
+    let events = $derived(data.events.filter((event, index) => {
+        if (index === 0) {
+            eventIdUsed = [];
+        }
+
+        if (today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()) {
+            if (data.filters.hideRecurringEvents) {
+                if (!eventIdUsed.includes(event.recEventId)) {
+                    eventIdUsed.push(event.recEventId);
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }));
 </script>
 
 <svelte:head>
@@ -40,7 +64,7 @@
         {/if}
     
         <div class="flex flex-col gap-4">
-            {#each data.events as event (`anEvent${event.id}`)}
+            {#each events as event (`anEvent${event.id}`)}
                 <EventCard event={event} {timeZone} {displaySettings} />
             {/each}
         </div>

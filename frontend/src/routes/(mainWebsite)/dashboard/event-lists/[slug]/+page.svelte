@@ -113,6 +113,9 @@
         if (success) {
             clearFileInput(document.getElementById("imageUploaderIList"));
             uploadNewAvatar = null;
+            if (previewIFrame && previewIFrame.contentWindow) {
+                previewIFrame.contentWindow.postMessage({ call: 'reloadPage' });
+            }
             await invalidateAll();
         }
         toast.dismiss(savingChangesToast);
