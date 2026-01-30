@@ -1,4 +1,4 @@
-import { defaultImageListCustomizations, type EventListDBModel, type ImageFeedFilters, type ImageListCustomizations } from "@/utils.js";
+import { defaultEventListFilters, defaultImageListCustomizations, type EventListDBModel, type ImageFeedFilters, type ImageListCustomizations } from "@/utils.js";
 import { error, json } from "@sveltejs/kit";
 import { config } from "dotenv";
 import type { RecordModel } from "pocketbase";
@@ -182,10 +182,7 @@ export async function POST({ locals, request }) {
             "description": description.toString(),
             "owner": locals.user.id,
             "displaySettings": defaultImageListCustomizations,
-            "filters": {
-                "hideUnpublished": true,
-                "onlyShowFeatured": true
-            }
+            "filters": defaultEventListFilters
         };
 
         await locals.pb.collection('eventLists').create(data, {

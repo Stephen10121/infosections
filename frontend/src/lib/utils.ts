@@ -148,7 +148,7 @@ export interface EventListDBModel extends RecordModel {
 	displaySettings: ImageListCustomizations,
 	created: string,
 	updated: string,
-	filters: ImageFeedFilters
+	filters: EventListFilters
 }
 
 // Dont you dare judge
@@ -238,7 +238,15 @@ export type ImageFeedFilters = {
 	hideRecurringEvents: boolean,
 }
 
+export type EventListFilters = ImageFeedFilters;
+
 export const defaultImageFeedFilters: ImageFeedFilters = {
+	onlyShowFeatured: true,
+	hideUnpublished: true,
+	hideRecurringEvents: false,
+}
+
+export const defaultEventListFilters: EventListFilters = {
 	onlyShowFeatured: true,
 	hideUnpublished: true,
 	hideRecurringEvents: false,
