@@ -40,7 +40,7 @@ export async function load({ params, locals }) {
         events = await locals.pb.collection('events').getFullList({
             filter,
             sort: 'startTime',
-            fields: "id,name,description,imageURL,registrationURL,location,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: "id,recEventId,name,description,imageURL,registrationURL,location,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -56,6 +56,7 @@ export async function load({ params, locals }) {
         logoLink: locals.pb.files.getURL(eventList, eventList.logo),
         displaySettings: eventList.displaySettings,
         description: eventList.description,
-        apiServer: process.env.PB_URL!
+        apiServer: process.env.PB_URL!,
+        filters: eventList.filters
     }
 }
