@@ -4,7 +4,7 @@
     import Day from "./Day.svelte";
     import type { CalendarCustomizations, CalendarFilters, EventDBModel } from "./utils";
     import { Temporal } from 'temporal-polyfill';
-    import MonthCalView from "./MonthCalView.svelte";
+    import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
 
     let {
         events,
@@ -54,7 +54,7 @@
 </script>
 
 {#if calendarCustomizations.viewType === "month"}
-    <MonthCalView {events} currentDate={today} />
+    <MonthCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} />
 {:else}
     <div class="dark mx-auto p-6">
         <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">

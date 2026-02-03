@@ -1,16 +1,22 @@
 <script lang="ts">
-    import { cn, getEventsForDate, isSameDay, type EventDBModel } from "./utils";
+    import MonthCalViewDayEvent from "./MonthCalViewDayEvent.svelte";
+import Time from "../../Time.svelte";
+    import { cn, getEventsForDate, isSameDay, type CalendarCustomizations, type EventDBModel } from "../../utils";
     import { Temporal } from "temporal-polyfill";
 
     let {
         index,
         events,
         day,
+        timeZone,
+        calendarCustomizations,
         currentDate
     }: {
         index: number,
         events: EventDBModel[],
         day: Temporal.ZonedDateTime,
+        timeZone: Temporal.TimeZoneLike,
+        calendarCustomizations: CalendarCustomizations,
         currentDate: Temporal.ZonedDateTime
     } = $props();
 
@@ -40,13 +46,8 @@
     </div>
 
     <div class="space-y-0.5">
-    {#each dayEvents as event (`aneventfortheday${event.id}`)}
-        <div
-            class="text-xs px-1 py-0.5 rounded truncate border border-[#333333] dark rounded-md bg-foreground text-white"
-            title={event.name}
-        >
-            {event.name}
-        </div>
-    {/each}
+        {#each dayEvents as event (`aneventfortheday${event.id}`)}
+            <MonthCalViewDayEvent {event} {timeZone} {calendarCustomizations} />
+        {/each}
     </div>
 </div>

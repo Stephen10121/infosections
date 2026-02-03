@@ -1,14 +1,18 @@
 <script lang="ts">
     import { Temporal } from "temporal-polyfill";
     import MonthCalViewDay from "./MonthCalViewDay.svelte";
-    import { getDaysInMonth, type EventDBModel } from "./utils";
+    import { getDaysInMonth, type CalendarCustomizations, type EventDBModel } from "../../utils";
 
     let {
         events,
         currentDate,
+        timeZone,
+        calendarCustomizations
     }: {
         events: EventDBModel[],
-        currentDate: Temporal.ZonedDateTime
+        currentDate: Temporal.ZonedDateTime,
+        timeZone: Temporal.TimeZoneLike,
+        calendarCustomizations: CalendarCustomizations
     } = $props();
     
     let days = $derived(getDaysInMonth(currentDate))
@@ -26,7 +30,7 @@
 
         <div class="grid grid-cols-7 h-full">
             {#each days as day, index (`adayinmonth${index}`)}
-                <MonthCalViewDay {index} {events} {day} {currentDate} />
+                <MonthCalViewDay {index} {events} {day} {currentDate} {timeZone} {calendarCustomizations} />
             {/each}
         </div>
     </div>
