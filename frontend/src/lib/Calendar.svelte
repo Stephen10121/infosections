@@ -53,9 +53,9 @@
 </script>
 
 {#if calendarCustomizations.viewType === "month"}
-    <MonthCalView {events} />
+    <MonthCalView {events} currentDate={today} {timeZone} />
 {:else}
-    <div class="dark mx-auto">
+    <div class="dark mx-auto p-6">
         <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} day={today} />
             <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} day={tomorrow} />

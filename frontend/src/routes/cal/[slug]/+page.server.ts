@@ -31,7 +31,9 @@ export async function load({ params, locals, cookies }) {
 
     let events: EventDBModel[] = [];
     try {
-        let filter = `startTime >= "${seventyTwoHoursAgoStr}" && startTime <= "${seventyTwoHoursLaterStr}"`;
+        // let filter = `startTime >= "${seventyTwoHoursAgoStr}" && startTime <= "${seventyTwoHoursLaterStr}"`;
+        let filter = `startTime >= "${seventyTwoHoursAgoStr}"`;
+
 
         // This filter shows all events for the testing dev cal.
         if (calendar.id !== "sdinfaplylaesst") {

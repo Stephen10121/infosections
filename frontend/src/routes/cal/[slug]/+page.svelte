@@ -25,7 +25,7 @@
     <link rel="shortcut icon" href={data.logoLink} type="image/x-icon">
 </svelte:head>
 
-<div id="cal-root" class="dark min-h-screen w-full p-6 bg-background relative">
+<div id="cal-root" class="dark min-h-screen w-full bg-background relative">
     <Calendar events={data.events} displaySettings={data.displaySettings} timeZone={timeZone} filters={data.filters} />
     <Popover.Root>
         <Popover.Trigger class="absolute bottom-1 right-1 z-50 {invisibleTooltip ? "opacity-0" : "text-muted-foreground bg-foreground"} rounded p-2" style={invisibleTooltip ? "border:none;" : "border: 1px solid #333333"}>
