@@ -396,9 +396,7 @@ export function getDaysInMonth(date: Temporal.ZonedDateTime): Temporal.ZonedDate
 	
 	// Add days of current month
 	for (let i = 0; i <= lastDay.day - 1; i++) {
-		const d = firstDay.add({ days: i });
-		days.push(d);
-		console.log(`${d.year}/${d.month}/${d.day}`);
+		days.push(firstDay.add({ days: i }));
 	}
 
 	let rowsRequired = 6;
