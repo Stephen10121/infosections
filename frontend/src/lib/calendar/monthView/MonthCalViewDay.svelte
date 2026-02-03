@@ -47,7 +47,7 @@ import Time from "../../Time.svelte";
 
     <div class="space-y-0.5">
         {#each dayEvents as event (`aneventfortheday${event.id}`)}
-            <MonthCalViewDayEvent {event} {timeZone} {calendarCustomizations} />
+            <MonthCalViewDayEvent {event} {timeZone} {calendarCustomizations} currentDay={day} />
         {/each}
     </div>
 </div>
