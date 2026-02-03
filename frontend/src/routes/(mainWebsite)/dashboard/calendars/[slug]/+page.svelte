@@ -333,6 +333,7 @@
         <Event calendarCustomizations={displaySettings} event={{
             recurrence: "",
             id: "blankEvent",
+            recEventId: "blankRecEvent",
             name: "Event Info Preview",
             location: "Home - 1234 Main Street, Vancouver WA",
             registrationURL: "",
