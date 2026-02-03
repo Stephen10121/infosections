@@ -5,15 +5,13 @@
 
     let {
         events,
-        timeZone,
         currentDate,
     }: {
         events: EventDBModel[],
-        timeZone: Temporal.TimeZoneLike,
         currentDate: Temporal.ZonedDateTime
     } = $props();
     
-    let days = $derived(getDaysInMonth(currentDate, timeZone))
+    let days = $derived(getDaysInMonth(currentDate))
 </script>
 
 <div class="dark h-full">

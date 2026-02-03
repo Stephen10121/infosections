@@ -380,41 +380,41 @@ export async function refreshingEvents() {
 	}
 }
 
-export function getDaysInMonth(date: Temporal.ZonedDateTime, timeZone: Temporal.TimeZoneLike): Temporal.ZonedDateTime[] {
-	const year = date.year;
-	const month = date.month;
-
+export function getDaysInMonth(date: Temporal.ZonedDateTime): Temporal.ZonedDateTime[] {
 	const firstDay = date.with({ day: 1 });
 	const lastDay = date.with({ day: date.daysInMonth });
 	
-	const days: Temporal.ZonedDateTime[] = []
+	const days: Temporal.ZonedDateTime[] = [];
 	
 	// Add days from previous month to start on Sunday
-	const startDayOfWeek = 7 - firstDay.dayOfWeek
-	for (let i = startDayOfWeek - 1; i >= 1; i--) {
-		const prevDate = Temporal.Now.zonedDateTimeISO(timeZone).subtract({ days: i }).startOfDay() //new Date(year, month, -i)
+	const startDayOfWeek = firstDay.dayOfWeek !== 7 ? firstDay.dayOfWeek : 0;
+
+	for (let i = startDayOfWeek; i >= 1; i--) {
+		const prevDate = firstDay.subtract({ days: i }).startOfDay() //new Date(year, month, -i)
 		days.push(prevDate)
 	}
 	
 	// Add days of current month
-	for (let i = 1; i <= lastDay.day; i++) {
-		days.push(Temporal.ZonedDateTime.from({
-			year: year,
-			month: month,
-			day: i,
-			timeZone,
-		}));
+	for (let i = 0; i <= lastDay.day - 1; i++) {
+		const d = firstDay.add({ days: i });
+		days.push(d);
+		console.log(`${d.year}/${d.month}/${d.day}`);
 	}
-	
+
+	let rowsRequired = 6;
+	if (days.length <= 35) {
+		rowsRequired -= 1;
+	}
+
+	if (days.length <= 28) {
+		rowsRequired -= 1;
+	}
+
 	// Add days from next month to complete the grid
-	const remainingDays = 42 - days.length
+	const remainingDays = (rowsRequired * 7) - days.length;
+
 	for (let i = 1; i <= remainingDays; i++) {
-		days.push(Temporal.ZonedDateTime.from({
-			year: year,
-			month: month + 1,
-			day: i,
-			timeZone,
-		}));
+		days.push(lastDay.add({ days: i }).startOfDay());
 	}
 
 	return days
