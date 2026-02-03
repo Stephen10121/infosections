@@ -1,6 +1,6 @@
 <script lang="ts">
+    import { cn, getEventsForDate, isSameDay, type EventDBModel } from "./utils";
     import { Temporal } from "temporal-polyfill";
-    import { cn, dateRangeOverlaps, type EventDBModel } from "./utils";
 
     let {
         index,
@@ -16,23 +16,7 @@
 
     let nextDay = $derived(day.add({ hours: 23, minutes: 59, seconds: 59, milliseconds: 1 }));
 
-
-    function isSameDay(date1: Temporal.ZonedDateTime, date2: Temporal.ZonedDateTime): boolean {
-        return (
-            date1.year === date2.year &&
-            date1.month === date2.month &&
-            date1.day === date2.day
-        )
-    }
-
-
-    function getEventsForDate(events: EventDBModel[]): EventDBModel[] {
-        return events.filter((event) => {
-            return dateRangeOverlaps(day.toInstant().epochMilliseconds, nextDay.toInstant().epochMilliseconds, (new Date(event.startTime)).valueOf(), (new Date(event.endTime)).valueOf())
-        })
-    }
-
-    let dayEvents = $derived(getEventsForDate(events))
+    let dayEvents = $derived(getEventsForDate(events, day, nextDay))
     let isToday = $derived(isSameDay(day, currentDate))
     let currentMonth = $derived(currentDate.month)
     let isCurrentMonth = $derived(day.month === currentMonth)

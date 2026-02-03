@@ -4,6 +4,7 @@ import { toast } from "svelte-sonner";
 import { twMerge } from "tailwind-merge";
 import { updateSpecificUserEvents } from "./endpointCalls/updateSpecificUserEvents";
 import { invalidateAll } from "$app/navigation";
+import { Temporal } from "temporal-polyfill";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -377,4 +378,58 @@ export async function refreshingEvents() {
 		toast.dismiss(refreshingToast);
 		toast.error("Failed to refresh Events");
 	}
+}
+
+export function getDaysInMonth(date: Temporal.ZonedDateTime, timeZone: Temporal.TimeZoneLike): Temporal.ZonedDateTime[] {
+	const year = date.year;
+	const month = date.month;
+
+	const firstDay = date.with({ day: 1 });
+	const lastDay = date.with({ day: date.daysInMonth });
+	
+	const days: Temporal.ZonedDateTime[] = []
+	
+	// Add days from previous month to start on Sunday
+	const startDayOfWeek = 7 - firstDay.dayOfWeek
+	for (let i = startDayOfWeek - 1; i >= 1; i--) {
+		const prevDate = Temporal.Now.zonedDateTimeISO(timeZone).subtract({ days: i }).startOfDay() //new Date(year, month, -i)
+		days.push(prevDate)
+	}
+	
+	// Add days of current month
+	for (let i = 1; i <= lastDay.day; i++) {
+		days.push(Temporal.ZonedDateTime.from({
+			year: year,
+			month: month,
+			day: i,
+			timeZone,
+		}));
+	}
+	
+	// Add days from next month to complete the grid
+	const remainingDays = 42 - days.length
+	for (let i = 1; i <= remainingDays; i++) {
+		days.push(Temporal.ZonedDateTime.from({
+			year: year,
+			month: month + 1,
+			day: i,
+			timeZone,
+		}));
+	}
+
+	return days
+}
+
+export function isSameDay(date1: Temporal.ZonedDateTime, date2: Temporal.ZonedDateTime): boolean {
+	return (
+		date1.year === date2.year &&
+		date1.month === date2.month &&
+		date1.day === date2.day
+	)
+}
+
+export function getEventsForDate(events: EventDBModel[], day: Temporal.ZonedDateTime, nextDay: Temporal.ZonedDateTime): EventDBModel[] {
+	return events.filter((event) => {
+		return dateRangeOverlaps(day.toInstant().epochMilliseconds, nextDay.toInstant().epochMilliseconds, (new Date(event.startTime)).valueOf(), (new Date(event.endTime)).valueOf())
+	})
 }

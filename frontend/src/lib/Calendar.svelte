@@ -22,10 +22,11 @@
 
     let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
 
-    let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
-    let tomorrow = $state(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay());
-    let thirdDay = $state(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay());
-    let currentTimeZone = $state(timeZone);
+    let today = $derived(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
+
+    let tomorrow = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay());
+    let thirdDay = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay());
+    let currentTimeZone = $derived(timeZone);
 
     function updatePage() {
         console.log("Updating Page.");
