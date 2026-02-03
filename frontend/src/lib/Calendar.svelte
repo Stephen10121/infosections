@@ -4,6 +4,7 @@
     import Day from "./Day.svelte";
     import type { CalendarCustomizations, CalendarFilters, EventDBModel } from "./utils";
     import { Temporal } from 'temporal-polyfill';
+    import MonthCalView from "./MonthCalView.svelte";
 
     let {
         events,
@@ -51,10 +52,14 @@
     });
 </script>
 
-<div class="dark mx-auto">
-    <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} day={today} />
-        <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} day={tomorrow} />
-        <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} day={thirdDay} />
+{#if calendarCustomizations.viewType === "month"}
+    <MonthCalView {events} />
+{:else}
+    <div class="dark mx-auto">
+        <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} day={today} />
+            <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} day={tomorrow} />
+            <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} day={thirdDay} />
+        </div>
     </div>
-</div>
+{/if}
