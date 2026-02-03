@@ -1,4 +1,4 @@
-import type { CalendarCustomizations, CalendarDBModel, CalendarFilters } from "@/utils.js";
+import { defaultCalendarCustomizations, type CalendarCustomizations, type CalendarDBModel, type CalendarFilters } from "@/utils.js";
 import { error, json } from "@sveltejs/kit";
 import { config } from "dotenv";
 import type { RecordModel } from "pocketbase";
@@ -197,15 +197,7 @@ export async function POST({ locals, request }) {
             "description": description.toString(),
             "passwordEnabled": enablePassword.toString() === "1",
             "owner": locals.user.id,
-            "displaySettings": {
-                "useAMPM": true,
-                "showResourcePathname": false,
-                "onlyShowLocationTitle": false,
-                "showLocation": true,
-                "showResources": true,
-	            "showRooms": true,
-                "showDescription": false
-            },
+            "displaySettings": defaultCalendarCustomizations,
             "filters": {
                 "hideUnpublished": true,
                 "onlyShowFeatured": true

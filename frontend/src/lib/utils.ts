@@ -184,6 +184,7 @@ export function toggleFullScreen() {
 }
 
 export type CalendarCustomizations = {
+	viewType: "3day" | "week" | "month",
 	useAMPM: boolean,
     showResourcePathname: boolean,
 	onlyShowLocationTitle: boolean,
@@ -191,6 +192,17 @@ export type CalendarCustomizations = {
 	showResources: boolean,
 	showRooms: boolean,
 	showDescription: boolean
+}
+
+export const defaultCalendarCustomizations: CalendarCustomizations = {
+	viewType: "3day",
+	useAMPM: true,
+	showResourcePathname: false,
+	onlyShowLocationTitle: false,
+	showLocation: true,
+	showResources: true,
+	showRooms: true,
+	showDescription: false
 }
 
 export type CalendarFilters = {
