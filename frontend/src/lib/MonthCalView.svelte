@@ -12,8 +12,6 @@
         timeZone: Temporal.TimeZoneLike,
         currentDate: Temporal.ZonedDateTime
     } = $props();
-
-    $inspect(currentDate);
     
     let days = $derived(getDaysInMonth(currentDate, timeZone))
 </script>
