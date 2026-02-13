@@ -55,11 +55,11 @@ func GetIncludedStructs(included []IncludedType) ([]EventItself, []EventTime, []
 }
 
 func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
-	year, month, day := time.Now().Add(-144 * time.Hour).Date()
+	year, month, _ := time.Now().Add(-144 * time.Hour).Date()
 
 	resBody, err := SendAPICall(
 		http.MethodGet,
-		"https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]="+str(year)+"-"+str(int(month))+"-"+str(day),
+		"https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]="+str(year)+"-"+str(int(month))+"-0",
 		nil,
 		userId,
 		app,

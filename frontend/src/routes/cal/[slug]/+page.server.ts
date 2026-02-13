@@ -24,10 +24,7 @@ export async function load({ params, locals, cookies }) {
     }
 
     const seventyTwoHoursAgo = new Date(Date.now() - (72 * 60 * 60 * 1000));
-    const seventyTwoHoursAgoStr = `${seventyTwoHoursAgo.getFullYear()}-${(seventyTwoHoursAgo.getMonth()+1).toString().padStart(2, '0')}-${(seventyTwoHoursAgo.getDate()-1).toString().padStart(2, '0')}`;
-
-    const seventyTwoHoursLater = new Date(Date.now() + (72 * 60 * 60 * 1000));
-    const seventyTwoHoursLaterStr = `${seventyTwoHoursLater.getFullYear()}-${(seventyTwoHoursLater.getMonth()+1).toString().padStart(2, '0')}-${(seventyTwoHoursLater.getDate()+1).toString().padStart(2, '0')}`;
+    const seventyTwoHoursAgoStr = `${seventyTwoHoursAgo.getFullYear()}-${(seventyTwoHoursAgo.getMonth()+1).toString().padStart(2, '0')}-${(seventyTwoHoursAgo.getDate()-seventyTwoHoursAgo.getDate()).toString().padStart(2, '0')}`;
 
     let events: EventDBModel[] = [];
     try {

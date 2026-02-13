@@ -1,6 +1,5 @@
 <script lang="ts">
     import MonthCalViewDayEvent from "./MonthCalViewDayEvent.svelte";
-import Time from "../../Time.svelte";
     import { cn, getEventsForDate, isSameDay, type CalendarCustomizations, type EventDBModel } from "../../utils";
     import { Temporal } from "temporal-polyfill";
 
