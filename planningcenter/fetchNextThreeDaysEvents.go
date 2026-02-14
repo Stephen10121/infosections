@@ -59,7 +59,7 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 
 	resBody, err := SendAPICall(
 		http.MethodGet,
-		"https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]="+str(year)+"-"+str(int(month))+"-0",
+		"https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]="+str(year)+"-"+str(int(month))+"-1",
 		nil,
 		userId,
 		app,

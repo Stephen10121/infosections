@@ -5,6 +5,7 @@
     import type { CalendarCustomizations, CalendarFilters, EventDBModel } from "./utils";
     import { Temporal } from 'temporal-polyfill';
     import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
+    import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
 
     let {
         events,
@@ -55,6 +56,8 @@
 
 {#if calendarCustomizations.viewType === "month"}
     <MonthCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} />
+{:else if calendarCustomizations.viewType === "week"}
+    <WeekCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} />
 {:else}
     <div class="dark mx-auto p-6">
         <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
