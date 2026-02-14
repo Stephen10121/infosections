@@ -3,10 +3,10 @@
     import { changeCalendarSettings } from "@/endpointCalls/changeCalendarSetting.js";
     import { deleteCalendar } from "@/endpointCalls/deleteCalendar.js";
     import { Button, buttonVariants } from "@/components/ui/button";
-    import { Spinner } from "$lib/components/ui/spinner/index.js";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
     import { Switch } from "@/components/ui/switch/index.js";
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
     import { goto, invalidateAll } from "$app/navigation";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
@@ -245,88 +245,102 @@
                 <Card.Description>Customize how event information is displayed</Card.Description>
             </Card.Header>
             <Card.Content>
-            <div class="grid grid-cols-1 gap-6">
-                <div class="flex items-center justify-between space-x-2">
-                    <Label for="showDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
-                        <span class="font-medium">Show Description</span>
-                        <span class="text-sm text-muted-foreground">If a description of an event was set, you can choose if you want to display that info.</span>
-                    </Label>
-                    <Switch
-                        id="showDescription"
-                        bind:checked={displaySettings.showDescription}
-                    />
-                </div>
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="flex items-center justify-between flex-col space-y-2">
+                        <Label for="showDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">View Type</span>
+                            <span class="text-sm text-muted-foreground">You can choose a 3 day, week, or a month view option. The smaller the view, more information can be displayed.</span>
+                        </Label>
+                        <Tabs.Root bind:value={displaySettings.viewType} class="w-full">
+                            <Tabs.List class="w-full">
+                                <Tabs.Trigger value="3day">3 Day</Tabs.Trigger>
+                                <Tabs.Trigger value="week">7 Day</Tabs.Trigger>
+                                <Tabs.Trigger value="month">Month</Tabs.Trigger>
+                            </Tabs.List>
+                        </Tabs.Root>
+                    </div>
 
-                <div class="flex items-center justify-between space-x-2">
-                    <Label for="useAMPM" class="flex flex-col items-start space-y-1 cursor-pointer">
-                        <span class="font-medium">Use AM/PM Format</span>
-                        <span class="text-sm text-muted-foreground">Display times in 12-hour format</span>
-                    </Label>
-                    <Switch
-                        id="useAMPM"
-                        bind:checked={displaySettings.useAMPM}
-                    />
-                </div>
-
-                <div class="flex items-center justify-between space-x-2">
-                    <Label for="showResources" class="flex flex-col items-start space-y-1 cursor-pointer">
-                        <span class="font-medium">Show Resources</span>
-                        <span class="text-sm text-muted-foreground">Display the resources that the event needs.</span>
-                    </Label>
-                    <Switch
-                        id="showResources"
-                        bind:checked={displaySettings.showResources}
-                    />
-                </div>
-
-                {#if displaySettings.showResources}
-                    <div class="flex items-center justify-between space-x-2 ml-5">
-                        <Label for="showResourcePathname" class="flex flex-col items-start space-y-1 cursor-pointer">
-                            <span class="font-medium">Show Resource Pathname</span>
-                            <span class="text-sm text-muted-foreground">Display full resource paths</span>
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Show Description</span>
+                            <span class="text-sm text-muted-foreground">If a description of an event was set, you can choose if you want to display that info.</span>
                         </Label>
                         <Switch
-                            id="showResourcePathname"
-                            bind:checked={displaySettings.showResourcePathname}
+                            id="showDescription"
+                            bind:checked={displaySettings.showDescription}
                         />
                     </div>
-                {/if}
 
-                <div class="flex items-center justify-between space-x-2">
-                    <Label for="showRooms" class="flex flex-col items-start space-y-1 cursor-pointer">
-                        <span class="font-medium">Show Rooms</span>
-                        <span class="text-sm text-muted-foreground">Display the rooms that the event needs.</span>
-                    </Label>
-                    <Switch
-                        id="showRooms"
-                        bind:checked={displaySettings.showRooms}
-                    />
-                </div>
-
-                <div class="flex items-center justify-between space-x-2">
-                    <Label for="showLocation" class="flex flex-col space-y-1 items-start cursor-pointer">
-                        <span class="font-medium">Show Location</span>
-                        <span class="text-sm text-muted-foreground">Display location information in events</span>
-                    </Label>
-                    <Switch
-                        id="showLocation"
-                        bind:checked={displaySettings.showLocation}
-                    />
-                </div>
-
-                {#if displaySettings.showLocation}
-                    <div class="flex items-center justify-between space-x-2 ml-5">
-                        <Label for="onlyShowLocationTitle" class="flex flex-col items-start space-y-1 cursor-pointer">
-                            <span class="font-medium">Only Show Location Title</span>
-                            <span class="text-sm text-muted-foreground">Hide detailed location information</span>
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="useAMPM" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Use AM/PM Format</span>
+                            <span class="text-sm text-muted-foreground">Display times in 12-hour format</span>
                         </Label>
                         <Switch
-                            id="onlyShowLocationTitle"
-                            bind:checked={displaySettings.onlyShowLocationTitle}
+                            id="useAMPM"
+                            bind:checked={displaySettings.useAMPM}
                         />
                     </div>
-                {/if}
-            </div>
+
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showResources" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Show Resources</span>
+                            <span class="text-sm text-muted-foreground">Display the resources that the event needs.</span>
+                        </Label>
+                        <Switch
+                            id="showResources"
+                            bind:checked={displaySettings.showResources}
+                        />
+                    </div>
+
+                    {#if displaySettings.showResources}
+                        <div class="flex items-center justify-between space-x-2 ml-5">
+                            <Label for="showResourcePathname" class="flex flex-col items-start space-y-1 cursor-pointer">
+                                <span class="font-medium">Show Resource Pathname</span>
+                                <span class="text-sm text-muted-foreground">Display full resource paths</span>
+                            </Label>
+                            <Switch
+                                id="showResourcePathname"
+                                bind:checked={displaySettings.showResourcePathname}
+                            />
+                        </div>
+                    {/if}
+
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showRooms" class="flex flex-col items-start space-y-1 cursor-pointer">
+                            <span class="font-medium">Show Rooms</span>
+                            <span class="text-sm text-muted-foreground">Display the rooms that the event needs.</span>
+                        </Label>
+                        <Switch
+                            id="showRooms"
+                            bind:checked={displaySettings.showRooms}
+                        />
+                    </div>
+
+                    <div class="flex items-center justify-between space-x-2">
+                        <Label for="showLocation" class="flex flex-col space-y-1 items-start cursor-pointer">
+                            <span class="font-medium">Show Location</span>
+                            <span class="text-sm text-muted-foreground">Display location information in events</span>
+                        </Label>
+                        <Switch
+                            id="showLocation"
+                            bind:checked={displaySettings.showLocation}
+                        />
+                    </div>
+
+                    {#if displaySettings.showLocation}
+                        <div class="flex items-center justify-between space-x-2 ml-5">
+                            <Label for="onlyShowLocationTitle" class="flex flex-col items-start space-y-1 cursor-pointer">
+                                <span class="font-medium">Only Show Location Title</span>
+                                <span class="text-sm text-muted-foreground">Hide detailed location information</span>
+                            </Label>
+                            <Switch
+                                id="onlyShowLocationTitle"
+                                bind:checked={displaySettings.onlyShowLocationTitle}
+                            />
+                        </div>
+                    {/if}
+                </div>
             </Card.Content>
         </Card.Root>
 
