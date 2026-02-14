@@ -418,6 +418,14 @@ export function getDaysInMonth(date: Temporal.ZonedDateTime): Temporal.ZonedDate
 	return days
 }
 
+export function getDayRange(startDate: Temporal.ZonedDateTime, days: number): Temporal.ZonedDateTime[] {
+	const range: Temporal.ZonedDateTime[] = []
+	for (let i = 0; i < days; i++) {
+		range.push(startDate.add({ days: i }));
+	}
+	return range
+}
+
 export function isSameDay(date1: Temporal.ZonedDateTime, date2: Temporal.ZonedDateTime): boolean {
 	return (
 		date1.year === date2.year &&
