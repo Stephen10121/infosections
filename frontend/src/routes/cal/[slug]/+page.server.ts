@@ -1,6 +1,7 @@
 import type { CalendarDBModel, EventDBModel, EventDBModelPrivate } from "@/utils";
 import { error, redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
+import { Temporal } from "temporal-polyfill";
 
 config();
 
@@ -23,13 +24,14 @@ export async function load({ params, locals, cookies }) {
         }
     }
 
-    const seventyTwoHoursAgo = new Date(Date.now() - (72 * 60 * 60 * 1000));
-    const seventyTwoHoursAgoStr = `${seventyTwoHoursAgo.getFullYear()}-${(seventyTwoHoursAgo.getMonth()+1).toString().padStart(2, '0')}-${(seventyTwoHoursAgo.getDate()-seventyTwoHoursAgo.getDate()).toString().padStart(2, '0')}`;
+    let today = Temporal.Now.zonedDateTimeISO().startOfDay();
+    let monthAgo = today.subtract({ days: today.day + 7 });
+    let monthAgoStr = `${monthAgo.year}-${(monthAgo.month).toString().padStart(2, '0')}-${(monthAgo.day).toString().padStart(2, '0')}`;
 
     let events: EventDBModel[] = [];
     try {
         // let filter = `startTime >= "${seventyTwoHoursAgoStr}" && startTime <= "${seventyTwoHoursLaterStr}"`;
-        let filter = `startTime >= "${seventyTwoHoursAgoStr}"`;
+        let filter = `startTime >= "${monthAgoStr}"`;
 
 
         // This filter shows all events for the testing dev cal.
