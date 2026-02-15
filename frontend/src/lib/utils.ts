@@ -459,3 +459,26 @@ export interface DynamicURLModel extends RecordModel {
 	disableURL: boolean;
 	refs: URLRefHits[]
 }
+
+export const TIMEZONES = [
+	"America/New_York",
+	"America/Chicago",
+	"America/Denver",
+	"America/Los_Angeles",
+	"America/Phoenix",
+	"America/Anchorage",
+	"Pacific/Honolulu",
+	"Europe/London",
+	"Europe/Paris",
+	"Europe/Berlin",
+	"Europe/Moscow",
+	"Asia/Tokyo",
+	"Asia/Seoul",
+	"Asia/Shanghai",
+	"Asia/Kolkata",
+	"Asia/Dubai",
+	"Australia/Sydney",
+	"Australia/Perth",
+	"America/Sao_Paulo",
+	"Africa/Johannesburg"
+];

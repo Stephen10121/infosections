@@ -84,7 +84,7 @@
 <div class="w-full h-full space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-foreground">My Event Lists</h1>
+            <h1 class="text-2xl font-bold text-foreground">My Event Lists</h1>
             <p class="text-muted-foreground mt-1">Any upcoming events can be displayed as an event list in any project that supports iframes.</p>
         </div>
 

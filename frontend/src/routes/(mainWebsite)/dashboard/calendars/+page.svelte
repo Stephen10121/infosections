@@ -1,24 +1,24 @@
 <script lang="ts">
     import { Copy, MoreVertical, Plus, Shield, Trash2, Users } from "@lucide/svelte";
-    import * as Tooltip from "$lib/components/ui/tooltip/index.js";
     import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
+    import { deleteCalendar } from "@/endpointCalls/deleteCalendar.js";
+    import { createCalendar } from "@/endpointCalls/createCalendar.js";
     import { Button, buttonVariants } from "@/components/ui/button";
+    import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+    import { afterNavigate, invalidateAll } from "$app/navigation";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
+    import { Spinner } from "@/components/ui/spinner/index.js";
+    import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import { Switch } from "@/components/ui/switch/index.js";
     import * as Dialog from "@/components/ui/dialog/index";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
     import { Label } from "@/components/ui/label";
     import { Input } from "@/components/ui/input";
-    import { cn } from "@/utils";
-    import { toast } from "svelte-sonner";
-    import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
-    import { afterNavigate, goto, invalidateAll } from "$app/navigation";
-    import { deleteCalendar } from "@/endpointCalls/deleteCalendar.js";
-    import { Switch } from "@/components/ui/switch/index.js";
-    import { Spinner } from "@/components/ui/spinner/index.js";
-    import { createCalendar } from "@/endpointCalls/createCalendar.js";
     import { browser } from "$app/environment";
+    import { toast } from "svelte-sonner";
     import { page } from "$app/stores";
+    import { cn } from "@/utils";
 
     let { data } = $props();
 
@@ -88,72 +88,72 @@
 <div class="w-full h-full space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-foreground">My Calendars</h1>
+            <h1 class="text-2xl font-bold text-foreground">My Calendars</h1>
             <p class="text-muted-foreground mt-1">Customisable calendars that can be accessed anywhere by anyone (Unless it's password protected.)</p>
         </div>
 
         <Dialog.Root bind:open={newCalendarDialogOpen}>
-        <Dialog.Trigger class={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-            <Plus class="h-4 w-4" />
-            New Calendar
-        </Dialog.Trigger>
-        <Dialog.Content class="sm:max-w-[500px]">
-            <Dialog.Header>
-            <Dialog.Title>Create New Calendar</Dialog.Title>
-                <Dialog.Description>You can change more settings after creating the calendar.</Dialog.Description>
-            </Dialog.Header>
+            <Dialog.Trigger class={cn(buttonVariants({ variant: "default" }), "gap-2")}>
+                <Plus class="h-4 w-4" />
+                New Calendar
+            </Dialog.Trigger>
+            <Dialog.Content class="sm:max-w-[500px]">
+                <Dialog.Header>
+                <Dialog.Title>Create New Calendar</Dialog.Title>
+                    <Dialog.Description>You can change more settings after creating the calendar.</Dialog.Description>
+                </Dialog.Header>
 
-            <div class="space-y-4 py-4">
-                <div class="space-y-2">
-                    <Label for="name">Calendar Name</Label>
-                    <Input
-                    id="name"
-                    placeholder="e.g., Published Events"
-                    bind:value={newCalendarName}
-                    />
-                </div>
-
-                <div class="space-y-2">
-                    <Label for="description">Description</Label>
-                    <Textarea
-                    id="description"
-                    placeholder="Brief description of this calendar type"
-                    bind:value={newCalendarDescription}
-                    rows={3}
-                    />
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="space-y-0.5">
-                    <Label for="password-protection" class="text-base">
-                        Password Protection
-                    </Label>
-                    <p class="text-sm text-muted-foreground">Require a password to access this calendar</p>
+                <div class="space-y-4 py-4">
+                    <div class="space-y-2">
+                        <Label for="name">Calendar Name</Label>
+                        <Input
+                        id="name"
+                        placeholder="e.g., Published Events"
+                        bind:value={newCalendarName}
+                        />
                     </div>
-                    <Switch id="password-protection" bind:checked={newCalendarPasswordEnabled} />
+
+                    <div class="space-y-2">
+                        <Label for="description">Description</Label>
+                        <Textarea
+                        id="description"
+                        placeholder="Brief description of this calendar type"
+                        bind:value={newCalendarDescription}
+                        rows={3}
+                        />
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="space-y-0.5">
+                        <Label for="password-protection" class="text-base">
+                            Password Protection
+                        </Label>
+                        <p class="text-sm text-muted-foreground">Require a password to access this calendar</p>
+                        </div>
+                        <Switch id="password-protection" bind:checked={newCalendarPasswordEnabled} />
+                    </div>
+
+                    {#if newCalendarPasswordEnabled}
+                        <div class="space-y-2 pt-2">
+                            <Label for="password">Calendar Password</Label>
+                            <Input id="password" bind:value={newCalendarPassword} type="password" placeholder="Enter password" />
+                        </div>
+                    {/if}
                 </div>
 
-                {#if newCalendarPasswordEnabled}
-                    <div class="space-y-2 pt-2">
-                        <Label for="password">Calendar Password</Label>
-                        <Input id="password" bind:value={newCalendarPassword} type="password" placeholder="Enter password" />
-                    </div>
-                {/if}
-            </div>
-
-            <Dialog.Footer>
-            <Button variant="outline" onclick={() => newCalendarDialogOpen = false}>
-                Cancel
-            </Button>
-            <Button onclick={handleCreateCalendar}>
-                {#if creatingCalendar}
-                    <Spinner />
-                    Creating Calendar...
-                {:else}
-                    Create Calendar
-                {/if}
-            </Button>
-            </Dialog.Footer>
-        </Dialog.Content>
+                <Dialog.Footer>
+                <Button variant="outline" onclick={() => newCalendarDialogOpen = false}>
+                    Cancel
+                </Button>
+                <Button onclick={handleCreateCalendar}>
+                    {#if creatingCalendar}
+                        <Spinner />
+                        Creating Calendar...
+                    {:else}
+                        Create Calendar
+                    {/if}
+                </Button>
+                </Dialog.Footer>
+            </Dialog.Content>
         </Dialog.Root>
     </div>
 

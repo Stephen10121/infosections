@@ -84,7 +84,7 @@
 <div class="w-full h-full space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-foreground">My Image Feeds</h1>
+            <h1 class="text-2xl font-bold text-foreground">My Image Feeds</h1>
             <p class="text-muted-foreground mt-1">Any upcoming events containing an image, can be displayed as an image feed in any project that supports iframes.</p>
         </div>
 

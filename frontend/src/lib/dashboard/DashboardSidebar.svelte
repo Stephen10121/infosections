@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2 } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
     import { capitalizeFirstLetter, refreshingEvents, type UserModel } from "@/utils";
@@ -29,7 +29,8 @@
       { title: "Home", icon: Home, url: "/dashboard" },
       { title: "Calendars", icon: Calendar, url: "/dashboard/calendars"  },
       { title: "Image Feeds", icon: GalleryHorizontalEnd, url: "/dashboard/image-feeds" },
-      { title: "Event Lists", icon: LayoutList, url: "/dashboard/event-lists" }
+      { title: "Event Lists", icon: LayoutList, url: "/dashboard/event-lists" },
+      { title: "Dynamic URLs", url: "/dashboard/dynamic-urls", icon: Link2 },
     ];
 
     let userAccountDropdownOpen = $state(false);

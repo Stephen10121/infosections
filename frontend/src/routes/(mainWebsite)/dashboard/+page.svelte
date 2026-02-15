@@ -14,7 +14,7 @@
 
 <div class="w-full h-full space-y-6">
     <div class="flex flex-col gap-1">
-        <h1 class="text-3xl font-bold text-foreground">Hello {data.user.name}!</h1>
+        <h1 class="text-2xl font-bold text-foreground">Hello {data.user.name}!</h1>
         <p class="text-muted-foreground">Here's an overview of your events and activity.</p>
     </div>
 
