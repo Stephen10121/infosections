@@ -65,7 +65,7 @@ export async function GET({ params, locals, url }) {
 
     // The url has been disabled by the owner.
     if (record.disableURL) {
-        return error(503, "This Dynamic Link has been temporarily disabled.");
+        return error(404, "Dynamic Link not found.");
     }
 
     let linkToRedirect = record.defaultRedirectTo;
