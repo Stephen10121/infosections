@@ -439,3 +439,9 @@ export function getEventsForDate(events: EventDBModel[], day: Temporal.ZonedDate
 		return dateRangeOverlaps(day.toInstant().epochMilliseconds, nextDay.toInstant().epochMilliseconds, (new Date(event.startTime)).valueOf(), (new Date(event.endTime)).valueOf())
 	})
 }
+
+
+export interface DynamicURLModel extends RecordModel {
+	owner: string,
+	redirectTo: string
+}
