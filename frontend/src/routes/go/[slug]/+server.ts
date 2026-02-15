@@ -1,5 +1,5 @@
 import type { DynamicURLModel } from "@/utils.js";
-import { error, redirect } from "@sveltejs/kit";
+import { error, json, redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 
 config();
@@ -24,5 +24,6 @@ export async function GET({ params, locals }) {
         return error(404, "Dynamic Link not found.");
     }
 
-    return redirect(301, record.redirectTo);
+    // return json({msg: record.redirectTo});
+    return redirect(307, record.redirectTo);
 }
