@@ -440,8 +440,22 @@ export function getEventsForDate(events: EventDBModel[], day: Temporal.ZonedDate
 	})
 }
 
+export type WeekSheetTimeSlot = {
+    startMinute: number;
+    endMinute: number;
+    link: string;
+}
+
+export type URLRefHits = { name: string, hits: number }
 
 export interface DynamicURLModel extends RecordModel {
 	owner: string,
-	redirectTo: string
+	defaultRedirectTo: string
+	timeZone: Temporal.TimeZoneLike
+	weekSheet: WeekSheetTimeSlot[][],
+	enableWeekSheet: boolean,
+	overrideRedirectTo: string
+	enableOverrideRedirect: boolean,
+	disableURL: boolean;
+	refs: URLRefHits[]
 }
