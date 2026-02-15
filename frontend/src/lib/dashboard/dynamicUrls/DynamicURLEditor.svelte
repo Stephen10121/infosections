@@ -1,17 +1,18 @@
 <script lang="ts">
+    import { deleteDynamicURL } from "@/endpointCalls/dynamicUrl/deleteDynamicURL";
     import { updateDynamicURL } from "@/endpointCalls/dynamicUrl/updateDynamicURL";
+    import { cn, TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Switch } from "$lib/components/ui/switch/index.js";
     import * as Table from "$lib/components/ui/table/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { AlertTriangle, Trash2 } from "@lucide/svelte";
-    import { cn, TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import { Button } from "@/components/ui/button";
     import { invalidateAll } from "$app/navigation";
     import { Badge } from "@/components/ui/badge";
     import { toast } from "svelte-sonner";
-    import { deleteDynamicURL } from "@/endpointCalls/dynamicUrl/deleteDynamicURL";
+    import WeekSheetGrid from "./WeekSheetGrid.svelte";
 
     async function deleteIt() {
         const loading = toast.loading("Deleting Dynamic URL");
@@ -36,6 +37,7 @@
     let enableOverride = $derived(url.enableOverrideRedirect);
     let overrideURL = $derived(url.overrideRedirectTo);
     let enableWeeklySchedule = $derived(url.enableWeekSheet);
+    let weekSheet = $derived(url.weekSheet);
 
     let saveRequired = $state(false);
 
@@ -46,13 +48,15 @@
         const enableOverrideChanged = enableOverride !== url.enableOverrideRedirect;
         const overrideURLChanged = overrideURL !== url.overrideRedirectTo;
         const enableWeeklyScheduleChanged = enableWeeklySchedule !== url.enableWeekSheet;
+        const weekSheetChanged = weekSheet !== url.weekSheet;
 
         saveRequired = defaultRedirectURLChanged ||
             currentTzChanged ||
             disableURLChanged ||
             enableOverrideChanged ||
             ( enableOverride && overrideURLChanged ) ||
-            enableWeeklyScheduleChanged;
+            enableWeeklyScheduleChanged ||
+            weekSheetChanged;
     });
 
     async function update() {
@@ -61,7 +65,7 @@
             url.id,
             defaultRedirectURL,
             currentTz,
-            url.weekSheet,
+            weekSheet,
             enableWeeklySchedule,
             overrideURL,
             enableOverride,
@@ -178,12 +182,12 @@
                     onCheckedChange={(checked) => enableWeeklySchedule = checked}
                 />
             </div>
-            <!-- {#if url.enableWeekSheet}
-            <WeekSheetGrid
-                weekSheet={url.weekSheet}
-                onChange={(weekSheet) => onUpdate({ weekSheet })}
-            />
-            {/if} -->
+            {#if url.enableWeekSheet}
+                <WeekSheetGrid
+                    weekSheet={weekSheet}
+                    onchange={(newWeekSheet) => weekSheet = newWeekSheet}
+                />
+            {/if}
         </div>
     </section>
 
