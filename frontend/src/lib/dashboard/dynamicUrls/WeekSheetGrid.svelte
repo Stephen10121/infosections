@@ -7,7 +7,7 @@
 	import { Input } from "@/components/ui/input";
 	import WeekSheetDaySlot from "./WeekSheetDaySlot.svelte";
 
-	const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+	const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 	const TOTAL_MINUTES = 1440
 	const SNAP_INTERVAL = 15
 	const HOUR_HEIGHT = 48 // px per hour
