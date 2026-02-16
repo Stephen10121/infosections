@@ -6,6 +6,7 @@
     import { cn, type DynamicURLModel } from "@/utils.js";
     import * as Card from "@/components/ui/card/index";
     import { Badge } from "@/components/ui/badge";
+    import { onMount } from "svelte";
 
     let { openId = $bindable(), url, websiteURL }: { openId: string | null, url: DynamicURLModel, websiteURL: string } = $props();
 
@@ -31,6 +32,10 @@
 
     let saveRequired = $state(false);
     let saveRequiredClosed = $state(false);
+
+    $effect(() => {
+        if (!saveRequired) saveRequiredClosed = false;
+    });
 </script>
 
 <Collapsible.Root
@@ -67,7 +72,7 @@
                         {#if saveRequiredClosed}
                             <Badge variant="destructive" class="text-xs shrink-0">
                                 <TriangleAlert class="h-3 w-3 mr-1" />
-                                Save Required
+                                Unsaved Changes
                             </Badge>
                         {/if}
                     </div>

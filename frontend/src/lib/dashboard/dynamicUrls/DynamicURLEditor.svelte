@@ -79,7 +79,7 @@
 
 <div class="p-4 lg:p-6 space-y-8 relative">
     {#if saveRequired}
-        <Card.Root class="sticky top-1 z-40 rounded">
+        <Card.Root class="sticky top-1 z-40 rounded border-red-500">
             <Card.Header>
                 <Card.Title>Save Changes?</Card.Title>
                 <Card.Description>All the changes you made are not yet saved.</Card.Description>

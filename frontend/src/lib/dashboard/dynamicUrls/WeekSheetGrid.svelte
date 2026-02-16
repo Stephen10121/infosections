@@ -255,7 +255,11 @@
 		Click and drag on the grid to create time blocks. Click a block to edit or delete it.
 	</p>
 
-	<div class="rounded-lg border border-border overflow-hidden bg-card">
+	<div class="rounded-lg border border-border bg-card max-h-[500px] overflow-y-scroll
+            [&::-webkit-scrollbar]:w-2 
+            [&::-webkit-scrollbar-track]:bg-gray-100 
+            [&::-webkit-scrollbar-thumb]:bg-gray-300 
+            hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
 		<div class="grid border-b border-border" style="grid-template-columns: 56px repeat(7, 1fr);">
 			<div class="p-2"></div>
 			{#each DAY_LABELS as day (`aDay${day}`)}
