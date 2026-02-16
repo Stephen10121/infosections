@@ -252,7 +252,7 @@
 
 <div class="space-y-3">
 	<p class="text-xs text-muted-foreground">
-		Click and drag on the grid to create time blocks. Click a block to edit or delete it. !!!!!(Alpha. Expect things to break here.)!!!!!
+		Click and drag on the grid to create time blocks. Click a block to edit or delete it.
 	</p>
 
 	<div class="rounded-lg border border-border overflow-hidden bg-card">
