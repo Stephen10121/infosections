@@ -187,7 +187,6 @@
                     weekSheet={weekSheet}
                     onchange={(newWeekSheet) => {
                         weekSheet = newWeekSheet;
-                        console.log("wow");
                     }}
                 />
             {/if}
