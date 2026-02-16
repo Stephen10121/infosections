@@ -325,7 +325,7 @@
         <div class="overflow-y-auto max-h-[500px]" style="scrollbar-gutter:stable">
           <div bind:this={gridRef} class="grid relative" style="grid-template-columns: 56px repeat(7, 1fr)">
             <div class="relative" style="height: {GRID_HEIGHT}px;">
-              {#each { length: 24 }, i}
+              {#each { length: 24 } as _, i (`hourHeight${i}`)}
                 <div
                   class="absolute w-full text-right pr-2 text-[10px] text-muted-foreground leading-none"
                   style="top: {i * HOUR_HEIGHT - 5}px;"
@@ -408,6 +408,7 @@
             bind:value={weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].link}
             onkeydown={(e) => {
               if (selectedSlot) {
+                //@ts-ignore
                 weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].link = e.target.value
               }
             }}
