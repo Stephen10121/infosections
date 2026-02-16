@@ -103,7 +103,7 @@
 
     <div class="space-y-3">
         {#each data.dynamic_urls as dynamic_url (`aDynamicURL${dynamic_url.id}`)}
-            <SingleDynamicURL bind:openId={openId} url={dynamic_url} />
+            <SingleDynamicURL bind:openId={openId} url={dynamic_url} websiteURL={data.websiteURL} />
         {/each}
 
         {#if data.dynamic_urls.length === 0}

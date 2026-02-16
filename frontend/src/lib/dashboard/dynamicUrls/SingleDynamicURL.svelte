@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { BarChart3, ChevronDown, ExternalLink, Globe, Link2, ShieldAlert, ShieldOff } from "@lucide/svelte";
+    import { BarChart3, ChevronDown, ExternalLink, Globe, Link2, ShieldAlert, ShieldOff, TriangleAlert } from "@lucide/svelte";
     import * as Collapsible from "$lib/components/ui/collapsible/index.js";
     import DynamicURLEditor from "./DynamicURLEditor.svelte";
     import { buttonVariants } from "@/components/ui/button";
@@ -7,7 +7,7 @@
     import * as Card from "@/components/ui/card/index";
     import { Badge } from "@/components/ui/badge";
 
-    let { openId = $bindable(), url }: { openId: string | null, url: DynamicURLModel } = $props();
+    let { openId = $bindable(), url, websiteURL }: { openId: string | null, url: DynamicURLModel, websiteURL: string } = $props();
 
     function getStatusInfo(url: DynamicURLModel) {
         if (url.disableURL) return { label: "Disabled", variant: "destructive" as const, icon: ShieldOff }
@@ -28,17 +28,25 @@
     let totalHits = $derived(getTotalHits(url));
     let slotCount = $derived(getTimeSlotCount(url));
     let isOpen = $derived(openId === url.id);
+
+    let saveRequired = $state(false);
+    let saveRequiredClosed = $state(false);
 </script>
 
 <Collapsible.Root
     open={isOpen}
-    onOpenChange={(open) => openId = (open ? url.id : null)}
+    onOpenChange={(open) => {
+        openId = (open ? url.id : null);
+        saveRequiredClosed = saveRequired ? true : false;
+    }}
 >
     <Card.Root
         class={cn(
             "transition-colors p-0 gap-0",
             isOpen && "ring-1 ring-primary/30",
             url.disableURL && "opacity-60",
+            saveRequired && "outline-4 outline-ring/50",
+            saveRequiredClosed && "outline-red-500/50"
         )}
     >
         <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "h-full" })}>
@@ -56,12 +64,16 @@
                             <status.icon class="h-3 w-3 mr-1" />
                             {status.label}
                         </Badge>
+                        {#if saveRequiredClosed}
+                            <Badge variant="destructive" class="text-xs shrink-0">
+                                <TriangleAlert class="h-3 w-3 mr-1" />
+                                Save Required
+                            </Badge>
+                        {/if}
                     </div>
                     <p class="text-xs text-muted-foreground mt-0.5 truncate flex items-center gap-1">
                         <ExternalLink class="h-3 w-3" />
-                        {url.enableOverrideRedirect
-                            ? url.overrideRedirectTo || "No override URL set"
-                            : url.defaultRedirectTo || "No default URL set"}
+                        {websiteURL}/go/{url.id}
                     </p>
                 </div>
 
@@ -86,7 +98,7 @@
 
         <Collapsible.Content>
             <div class="border-t border-border">
-                <DynamicURLEditor url={url} />
+                <DynamicURLEditor url={url} bind:saveRequired />
             </div>
         </Collapsible.Content>
     </Card.Root>

@@ -8,11 +8,12 @@
     import { Label } from "$lib/components/ui/label/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { AlertTriangle, Trash2 } from "@lucide/svelte";
+    import WeekSheetGrid from "./WeekSheetGrid.svelte";
+    import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
     import { invalidateAll } from "$app/navigation";
     import { Badge } from "@/components/ui/badge";
     import { toast } from "svelte-sonner";
-    import WeekSheetGrid from "./WeekSheetGrid.svelte";
 
     async function deleteIt() {
         const loading = toast.loading("Deleting Dynamic URL");
@@ -25,7 +26,7 @@
         }
     }
 
-    let { url }: { url: DynamicURLModel } = $props();
+    let { url, saveRequired = $bindable() }: { url: DynamicURLModel, saveRequired: boolean } = $props();
 
     let confirmDelete = $state(false);
     let totalHits = $derived(url.refs.reduce((sum, ref) => sum + ref.hits, 0));
@@ -38,8 +39,6 @@
     let overrideURL = $derived(url.overrideRedirectTo);
     let enableWeeklySchedule = $derived(url.enableWeekSheet);
     let weekSheet = $derived(url.weekSheet);
-
-    let saveRequired = $state(false);
 
     $effect(() => {
         const defaultRedirectURLChanged = defaultRedirectURL !== url.defaultRedirectTo;
@@ -78,12 +77,17 @@
     }
 </script>
 
-<div class="p-4 lg:p-6 space-y-8 relative { saveRequired ? "outline-4 outline-ring/50 rounded-2xl" : ""}">
+<div class="p-4 lg:p-6 space-y-8 relative">
     {#if saveRequired}
-        <div class="sticky top-1 z-40 p-5 bg-ring/80 rounded flex items-center justify-between">
-            <p class="text-md text-foreground">Save Changes?</p>
-            <Button onclick={update}>Save</Button>
-        </div>
+        <Card.Root class="sticky top-1 z-40 rounded">
+            <Card.Header>
+                <Card.Title>Save Changes?</Card.Title>
+                <Card.Description>All the changes you made are not yet saved.</Card.Description>
+                <Card.Action>
+                    <Button onclick={update}>Save</Button>
+                </Card.Action>
+            </Card.Header>
+        </Card.Root>
     {/if}
     <section class="space-y-4">
         <h3 class="text-sm font-semibold text-foreground uppercase tracking-wider">General Settings</h3>

@@ -18,6 +18,7 @@ export async function load({ parent, locals }) {
     }) as DynamicURLModel[];
 
     return {
-        dynamic_urls
+        dynamic_urls,
+        websiteURL: process.env.VITE_WEBSITE_URL!
     }
 }
