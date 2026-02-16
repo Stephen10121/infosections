@@ -94,8 +94,8 @@ export async function GET({ params, locals, url }) {
     }
 
     recordRefHit(url, record, locals);
-    return json({
-        linkToRedirect,
-    });
-    // return redirect(307, linkToRedirect);
+    // return json({
+    //     linkToRedirect,
+    // });
+    return redirect(307, linkToRedirect);
 }
