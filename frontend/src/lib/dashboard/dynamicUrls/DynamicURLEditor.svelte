@@ -80,7 +80,7 @@
 
 <div class="p-4 lg:p-6 space-y-8 relative { saveRequired ? "outline-4 outline-ring/50 rounded-2xl" : ""}">
     {#if saveRequired}
-        <div class="sticky p-5 bg-ring/50 rounded flex items-center justify-between">
+        <div class="sticky top-1 z-40 p-5 bg-ring/80 rounded flex items-center justify-between">
             <p class="text-md text-foreground">Save Changes?</p>
             <Button onclick={update}>Save</Button>
         </div>
@@ -182,10 +182,13 @@
                     onCheckedChange={(checked) => enableWeeklySchedule = checked}
                 />
             </div>
-            {#if url.enableWeekSheet}
+            {#if enableWeeklySchedule}
                 <WeekSheetGrid
                     weekSheet={weekSheet}
-                    onchange={(newWeekSheet) => weekSheet = newWeekSheet}
+                    onchange={(newWeekSheet) => {
+                        weekSheet = newWeekSheet;
+                        console.log("wow");
+                    }}
                 />
             {/if}
         </div>
