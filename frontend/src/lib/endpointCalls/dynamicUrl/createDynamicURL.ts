@@ -22,7 +22,11 @@ export async function createDynamicURL(
         toast.success("Successfully created dynamic URL.");
         return true;
     } else {
-        toast.error("Failed to create dynamic URL.");
+        if (response.status === 409) {
+            toast.error(`"${id}" URL ID is already taken!`);
+        } else {
+            toast.error("Failed to create dynamic URL.");
+        }
         console.log(response);
 
         return false;
