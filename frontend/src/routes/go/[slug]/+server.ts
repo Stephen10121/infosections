@@ -1,5 +1,5 @@
 import type { DynamicURLModel, URLRefHits, WeekSheetTimeSlot } from "@/utils.js";
-import { error, json, redirect } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 import { Temporal } from "temporal-polyfill";
 
@@ -97,5 +97,13 @@ export async function GET({ params, locals, url }) {
     // return json({
     //     linkToRedirect,
     // });
-    return redirect(307, linkToRedirect);
+    
+    return new Response(undefined, {
+        status: 307,
+        
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Location": linkToRedirect
+        }
+    });
 }
