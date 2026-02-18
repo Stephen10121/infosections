@@ -103,6 +103,7 @@ export async function GET({ params, locals, url }) {
         
         headers: {
             "Access-Control-Allow-Origin": "*",
+            "Access-Control-Expose-Headers": "Location",
             "Location": linkToRedirect
         }
     });
