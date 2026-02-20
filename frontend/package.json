@@ -42,6 +42,7 @@
 		"dotenv": "^17.2.3",
 		"mode-watcher": "^1.1.0",
 		"pocketbase": "^0.26.2",
-		"stripe": "^18.0.0"
+		"stripe": "^18.0.0",
+		"valibot": "^1.2.0"
 	}
 }
