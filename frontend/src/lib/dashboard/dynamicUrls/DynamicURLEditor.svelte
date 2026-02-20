@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { deleteDynamicURL } from "@/endpointCalls/dynamicUrl/deleteDynamicURL";
-    import { updateDynamicURL } from "@/endpointCalls/dynamicUrl/updateDynamicURL";
+    import { deleteDynamicURLCommand, updateDynamicURLCommand } from "../../../routes/(mainWebsite)/dashboard/dynamic-urls/data.remote";
     import { cn, TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Switch } from "$lib/components/ui/switch/index.js";
@@ -17,12 +16,20 @@
 
     async function deleteIt() {
         const loading = toast.loading("Deleting Dynamic URL");
-        const success = await deleteDynamicURL(
-            url.id,
-        );
-        toast.dismiss(loading);
-        if (success) {
-            invalidateAll();
+        try {
+            const response = await deleteDynamicURLCommand({
+                id: url.id
+            });
+            toast.dismiss(loading);
+            if (response.error) {
+                toast.error(response.msg);
+            } else {
+                toast.success(response.msg);
+                invalidateAll();
+            }
+        } catch(err) {
+            console.log(err);
+            toast.error("An error has occured.");
         }
     }
 
@@ -60,19 +67,28 @@
 
     async function update() {
         const loading = toast.loading("Updating Dynamic URL");
-        const success = await updateDynamicURL(
-            url.id,
-            defaultRedirectURL,
-            currentTz,
-            weekSheet,
-            enableWeeklySchedule,
-            overrideURL,
-            enableOverride,
-            disableURL
-        );
-        toast.dismiss(loading);
-        if (success) {
-            invalidateAll();
+        try {
+            const response = await updateDynamicURLCommand({
+                id: url.id,
+                defaultRedirectTo: defaultRedirectURL,
+                timeZone: currentTz,
+                weekSheet,
+                enableWeekSheet: enableWeeklySchedule,
+                overrideRedirectTo: overrideURL,
+                enableOverrideRedirect: enableOverride,
+                disableURL
+            });
+            toast.dismiss(loading);
+            if (response.error) {
+                toast.error(response.msg);
+            } else {
+                toast.success(response.msg);
+                invalidateAll();
+            }
+        } catch (err) {
+            toast.dismiss(loading);
+            console.log(err);
+            toast.error("An error has occured.");
         }
     }
 </script>
