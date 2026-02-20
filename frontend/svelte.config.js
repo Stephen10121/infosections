@@ -16,6 +16,7 @@ const config = {
 			"@/*": "./src/lib/*"
 		},
 		csrf: {
+			checkOrigin: false,
 			trustedOrigins: ["https://tailorcal.com", "http://localhost:5173", "https://api.tailorcal.com", "https://www.tailorcal.com", "https://infosections.com", "https://www.infosections.com", "https://api.infosections.com"]
 		},
 		experimental: {
