@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { createDynamicURL } from "@/endpointCalls/dynamicUrl/createDynamicURL.js";
     import SingleDynamicURL from "@/dashboard/dynamicUrls/SingleDynamicURL.svelte";
     import { TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
+    import { createDynamicURLCommand } from "./data.remote.js";
     import { Label } from "@/components/ui/label/index.js";
     import { Input } from "@/components/ui/input/index.js";
     import * as Dialog from "@/components/ui/dialog/index";
@@ -39,17 +39,30 @@
     async function handleCreateDynamicURL() {
         if (newDynamicURLID && newDynamicURLDefaultRedirectTo) {
             creatingDynamicURL = true;
-            const success = await createDynamicURL(newDynamicURLID, newDynamicURLDefaultRedirectTo, timeZone);
-            creatingDynamicURL = false;
-            if (success) {
-                newDynamicURLOpen = false;
-                newDynamicURLID = "";
-                newDynamicURLDefaultRedirectTo = "";
-                timeZone = Temporal.Now.timeZoneId();
+            try {
+                const response = await createDynamicURLCommand({
+                    id: newDynamicURLID,
+                    defaultRedirectTo: newDynamicURLDefaultRedirectTo,
+                    timeZone: timeZone
+                });
+                creatingDynamicURL = false;
+                if (response.error) {
+                    toast.error(response.msg);
+                } else {
+                    toast.success(response.msg);
+                    newDynamicURLOpen = false;
+                    newDynamicURLID = "";
+                    newDynamicURLDefaultRedirectTo = "";
+                    timeZone = Temporal.Now.timeZoneId();
 
-                let updating = toast.info("Updating Dynamic URL List");
-                await invalidateAll();
-                toast.dismiss(updating);
+                    let updating = toast.info("Updating Dynamic URL List");
+                    await invalidateAll();
+                    toast.dismiss(updating);
+                }
+            } catch (err) {
+                creatingDynamicURL = false;
+                console.log("errrrrr", err);
+                toast.error("An error has occured.");
             }
         } else {
             toast.error("Missing Fields.");
