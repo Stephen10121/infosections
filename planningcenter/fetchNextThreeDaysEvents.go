@@ -57,7 +57,7 @@ func GetIncludedStructs(included []IncludedType) ([]EventItself, []EventTime, []
 func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 	year, month, day := time.Now().AddDate(0, 0, -30).Date()
 
-	apiURL := "https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]=" + str(year) + "-" + str(int(month)) + str(day)
+	apiURL := "https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]=" + str(year) + "-" + str(int(month)) + "-" + str(day)
 
 	app.Logger().Info(
 		"Fetching events from this URL.",
