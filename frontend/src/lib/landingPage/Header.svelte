@@ -17,10 +17,9 @@
                 <a href="#about" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About</a>
             </nav>
 
-            <div class="flex gap-1">
-                <form method="post">
-                    <Button type="submit" class="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
-                </form>
+            <div class="flex gap-3 items-center">
+                <Button href="/signup" class="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                <Button href="/signin" variant="outline">Login</Button>
             </div>
         </div>
     </div>

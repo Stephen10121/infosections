@@ -14,12 +14,12 @@
                 free trial today—no credit card required.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <form method="post" class="sm:w-fit w-full">
-                <Button size="lg" type="submit" class="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+            <div class="sm:w-fit w-full">
+                <Button size="lg" href="/signup?free_trial=1" class="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                     Start Free Trial
                     <ArrowRight class="ml-2 h-4 w-4" />
                 </Button>
-            </form>
+            </div>
             <Button
                 size="lg"
                 variant="outline"

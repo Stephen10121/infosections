@@ -13,6 +13,9 @@ export const actions = {
         locals.pb.authStore.clear();
         const authMethods = await locals.pb.collection('users').listAuthMethods();
 
+        // console.log(authMethods.oauth2.providers);
+        // return redirect(307, "/");
+
         if (!authMethods.oauth2.enabled) {
             return {
                 authProviders: '',
@@ -52,6 +55,6 @@ export const actions = {
 
         const newUrl = url2.toString();
 
-        return redirect(302, newUrl);
+        return redirect(307, newUrl);
     }
 };
