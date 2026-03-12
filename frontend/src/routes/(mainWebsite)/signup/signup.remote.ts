@@ -55,8 +55,31 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
             },
         });
 
+        const session = await stripe.checkout.sessions.create({
+            customer_email: newSignupData.email,
+            line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+            mode: 'subscription',
+            success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            customer: customer.id,
+        });
+
+        const freeTrialSession = await stripe.checkout.sessions.create({
+            customer_email: newSignupData.email,
+            line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+            mode: 'subscription',
+            success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            customer: customer.id,
+            subscription_data: {
+                trial_period_days: 14
+            }
+        });
+
         await locals.pb.collection("users").update(res.id, {
-            customerId: customer.id
+            customerId: customer.id,
+            freeTrialURL: freeTrialSession.url,
+            subscriptionURL: session.url
         }, {
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
