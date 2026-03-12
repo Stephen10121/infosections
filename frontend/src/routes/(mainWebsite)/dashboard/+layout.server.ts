@@ -22,7 +22,7 @@ export async function load({ parent, locals }) {
                 line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
                 mode: 'subscription',
                 success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                cancel_url: process.env.VITE_WEBSITE_URL!,
+                cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
                 customer: data.user.customerId,
             });
     
@@ -30,7 +30,7 @@ export async function load({ parent, locals }) {
                 line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
                 mode: 'subscription',
                 success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                cancel_url: process.env.VITE_WEBSITE_URL!,
+                cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
                 customer: data.user.customerId,
                 subscription_data: {
                     trial_period_days: 14
