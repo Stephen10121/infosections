@@ -13,7 +13,7 @@ export async function load({ params, parent }) {
     }
 
     if (!selectedCalendar) {
-        return redirect(301, "/dashboard/calendars");
+        return redirect(307, "/dashboard/calendars");
     }
 
     return {

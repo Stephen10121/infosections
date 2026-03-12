@@ -4,6 +4,7 @@ import { error, fail, invalid, redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import { ClientResponseError, type RecordModel } from "pocketbase";
 import * as v from "valibot";
+import Stripe from "stripe";
 
 config();
 
@@ -15,7 +16,7 @@ const CreateEmailPasswordSignupSchema = v.object({
 });
 
 export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, async (newSignupData, issue) => {
-    const { locals } = getRequestEvent();
+    const { locals, cookies } = getRequestEvent();
 
     if (newSignupData.password !== newSignupData.passwordConfirm) return invalid(issue.passwordConfirm("Passwords dont match."))
 
@@ -38,21 +39,42 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
             name: newSignupData.name,
             password: newSignupData.password,
             passwordConfirm: newSignupData.passwordConfirm,
-            email: newSignupData.email
+            email: newSignupData.email,
+            accessLevel: "none"
         }, {
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
         });
 
-        console.log(res);
+        const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+        const customer = await stripe.customers.create({
+            email: newSignupData.email,
+            metadata: {
+                internal_id: res.id
+            },
+        });
+
+        await locals.pb.collection("users").update(res.id, {
+            customerId: customer.id
+        }, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+
+        await locals.pb.collection('users').authWithPassword(
+            newSignupData.email,
+            newSignupData.password,
+        );
+
+        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
+            path: "/"
+        })
     } catch (err) {
-        if (err instanceof ClientResponseError) {
-            console.log(err.response.data);
-        } else {
-            return error(500, "Internal Error");
-        }
+        console.log(err);
+        return error(500, "Internal Error");
     }
 
-    redirect(303, "/");
+    redirect(303, "/dashboard");
 });

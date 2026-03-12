@@ -8,7 +8,7 @@ export async function load({ parent, locals }) {
     const data = await parent();
 
     if (!data.user) {
-        return redirect(301, "/");
+        return redirect(307, "/");
     }
 
     let calendars: CalendarDBModel[] = [];

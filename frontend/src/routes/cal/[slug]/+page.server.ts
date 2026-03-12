@@ -20,7 +20,7 @@ export async function load({ params, locals, cookies }) {
 
     if (calendar.password && calendar.passwordEnabled) {
         if (cookies.get(`cal-${params.slug}`) !== calendar.password) {
-            return redirect(301, `/cal/${params.slug}/login`);
+            return redirect(307, `/cal/${params.slug}/login`);
         }
     }
 

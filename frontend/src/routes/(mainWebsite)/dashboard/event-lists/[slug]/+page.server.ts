@@ -16,7 +16,7 @@ export async function load({ params, parent }) {
     }
 
     if (!selectedlist) {
-        return redirect(301, "/dashboard/event-lists");
+        return redirect(307, "/dashboard/event-lists");
     }
 
     return {

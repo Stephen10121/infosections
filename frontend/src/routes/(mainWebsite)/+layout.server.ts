@@ -25,7 +25,7 @@ export async function load({ locals, url }) {
         } catch (err) {
             console.log(err);
 
-            throw redirect(303, "/logout");
+            throw redirect(307, "/logout");
         }
     }
     return {

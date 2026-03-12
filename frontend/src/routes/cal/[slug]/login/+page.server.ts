@@ -18,7 +18,7 @@ export async function load({ locals, params }) {
     }
 
     if (!calendar.password) {
-        return redirect(301, `/cal/${params.slug}`);
+        return redirect(307, `/cal/${params.slug}`);
     }
 
     return {

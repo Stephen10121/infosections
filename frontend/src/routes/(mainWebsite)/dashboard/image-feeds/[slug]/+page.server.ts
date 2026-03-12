@@ -16,7 +16,7 @@ export async function load({ params, parent, locals }) {
     }
 
     if (!selectedfeed) {
-        return redirect(301, "/dashboard/image-feeds");
+        return redirect(307, "/dashboard/image-feeds");
     }
 
     let customImages: CustomImageIFeedDBModel[] = [];
