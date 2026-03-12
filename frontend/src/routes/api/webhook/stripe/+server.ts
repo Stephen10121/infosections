@@ -88,7 +88,7 @@ export async function POST({ request, locals }) {
     } catch (err) {
         console.log("[server] Error in the user subscription endpoint.", err);
 
-        return error(500);
+        return error(500, JSON.stringify(err));
     }
 
     return json({msg: "ok"});
