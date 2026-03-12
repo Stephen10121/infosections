@@ -91,7 +91,7 @@
                             >
                                 <Avatar.Root class="size-8 rounded-lg">
                                     <Avatar.Image src={userAvatar} alt={user.name} />
-                                    <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                                    <Avatar.Fallback class="rounded-lg">{user.name.split(" ").map((n) => n[0].toUpperCase()).join("")}</Avatar.Fallback>
                                 </Avatar.Root>
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
@@ -112,7 +112,7 @@
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar.Root class="size-8 rounded-lg">
                                     <Avatar.Image src={userAvatar} alt={user.name} />
-                                    <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                                    <Avatar.Fallback class="rounded-lg">{user.name.split(" ").map((n) => n[0].toUpperCase()).join("")}</Avatar.Fallback>
                                 </Avatar.Root>
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
