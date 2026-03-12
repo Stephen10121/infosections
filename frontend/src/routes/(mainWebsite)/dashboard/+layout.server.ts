@@ -12,38 +12,6 @@ export async function load({ parent, locals }) {
         return redirect(307, "/");
     }
 
-    let stripeSubscriptionUrl = "";
-    let stripeTrialSubscriptionUrl = "";
-    if (data.user.accessLevel === "none") {
-        try {
-            const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
-            
-            const session = await stripe.checkout.sessions.create({
-                line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                mode: 'subscription',
-                success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                customer: data.user.customerId,
-            });
-    
-            const freeTrialSession = await stripe.checkout.sessions.create({
-                line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                mode: 'subscription',
-                success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                customer: data.user.customerId,
-                subscription_data: {
-                    trial_period_days: 14
-                }
-            });
-    
-            stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
-            stripeSubscriptionUrl = session.url ? session.url : "";
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
     let calendars: CalendarDBModel[] = [];
     try {
         calendars = await locals.pb.collection('calendars').getFullList({
@@ -100,7 +68,7 @@ export async function load({ parent, locals }) {
         calendars,
         imageFeeds,
         eventLists,
-        stripeSubscriptionUrl,
-        stripeTrialSubscriptionUrl
+        stripeSubscriptionUrl: data.user.subscriptionURL,
+        stripeTrialSubscriptionUrl: data.user.freeTrialURL
     }
 } 

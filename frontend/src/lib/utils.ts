@@ -280,6 +280,8 @@ export interface UserModel extends RecordModel {
 	refreshTokenExpires: number,
 	accessTokenExpires: number
 	lastEventsFetch: string
+	subscriptionURL: string
+	freeTrialURL: string
 }
 
 export function capitalizeFirstLetter(str: string) {

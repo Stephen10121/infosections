@@ -32,8 +32,7 @@ export async function POST({ request, locals }) {
         switch (eventType) {
             case "checkout.session.completed":
             case "customer.subscription.updated": {
-                if (data.object.object !== "subscription") break
-
+                //@ts-ignore
                 const session = await stripe.checkout.sessions.retrieve(data.object.id, {
                     expand: ['line_items']
                 });
@@ -63,8 +62,7 @@ export async function POST({ request, locals }) {
                 break
             }
         case "customer.subscription.deleted": {
-            if (data.object.object !== "subscription") break
-
+            //@ts-ignore
             const subscription = await stripe.subscriptions.retrieve(data.object.id);
 
             const user = await locals.pb.collection('users').getFirstListItem(`customerId="${subscription.customer}"`, {

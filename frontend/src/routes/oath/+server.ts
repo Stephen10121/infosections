@@ -8,10 +8,6 @@ import Stripe from "stripe";
 
 config();
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function GET({ locals, url, cookies }) {
     const expectedState = cookies.get("state");
     const expectedVerifier = cookies.get("verifier");
@@ -92,12 +88,43 @@ export async function GET({ locals, url, cookies }) {
         const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
         const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
         if (newUserRecord.new) {
-            const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
-            const customer = await stripe.customers.create({
-                metadata: {
-                    internal_id: newUserRecord.id
-                },
-            });
+            let stripeTrialSubscriptionUrl = "";
+            let stripeSubscriptionUrl = "";
+            let stripeCustomerID = "";
+
+            try {
+                const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+                const customer = await stripe.customers.create({
+                    metadata: {
+                        internal_id: newUserRecord.id
+                    },
+                });
+
+                const session = await stripe.checkout.sessions.create({
+                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                    mode: 'subscription',
+                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    customer: customer.id,
+                });
+        
+                const freeTrialSession = await stripe.checkout.sessions.create({
+                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                    mode: 'subscription',
+                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    customer: customer.id,
+                    subscription_data: {
+                        trial_period_days: 14
+                    }
+                });
+        
+                stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
+                stripeSubscriptionUrl = session.url ? session.url : "";
+                stripeCustomerID = customer.id;
+            } catch (err) {
+                console.log(err);
+            }
             
             await locals.pb.collection("users").update(newUserRecord.id, {
                 new: false,
@@ -108,7 +135,9 @@ export async function GET({ locals, url, cookies }) {
                 refreshTokenExpires: in89Days,
                 accessTokenExpires: in2hours,
                 accessLevel: "none",
-                customerId: customer.id
+                customerId: stripeCustomerID,
+                subscriptionURL: stripeSubscriptionUrl,
+                freeTrialURL: stripeTrialSubscriptionUrl,
             }, {
                 headers: {
                     "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
