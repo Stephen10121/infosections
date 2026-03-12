@@ -5,22 +5,21 @@
     import { capitalizeFirstLetter, refreshingEvents, type UserModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
-    import { emailNotSetDialog } from "@/store";
 
     let { 
         user,
         pathname,
-        stripeUrl,
-        stripeFreeTrialUrl,
         userAvatar,
-        stripeCustomerPortal
+        stripeCustomerPortal,
+        stripeSubscriptionUrl,
+        stripeTrialSubscriptionUrl
     }: {
         user: UserModel,
         pathname: string,
-        stripeUrl: string,
-        stripeFreeTrialUrl: string,
         userAvatar: string,
-        stripeCustomerPortal: string
+        stripeCustomerPortal: string,
+        stripeSubscriptionUrl: string,
+        stripeTrialSubscriptionUrl: string
     } = $props();
 
     const sidebar = useSidebar();
@@ -136,36 +135,22 @@
                                     {/snippet}
                                 </DropdownMenu.Item>
                             {:else}
-                                {#if user.userEmail}
-                                    <DropdownMenu.Item>
-                                        {#snippet child({ props })}
-                                            <a class="w-full h-full" href="{stripeUrl}?prefilled_email={user.userEmail}" {...props}>
-                                                <CreditCardIcon class="data-highlighted:text-primary" />
-                                                Setup Payments
-                                            </a>
-                                        {/snippet}
-                                    </DropdownMenu.Item>
-                                    <DropdownMenu.Item>
-                                        {#snippet child({ props })}
-                                            <a class="w-full h-full" href="{stripeFreeTrialUrl}?prefilled_email={user.userEmail}" {...props}>
-                                                <Gift class="data-highlighted:text-primary" />
-                                                Free Trial
-                                            </a>
-                                        {/snippet}
-                                    </DropdownMenu.Item>
-                                {:else}
-                                    <DropdownMenu.Item>
-                                        {#snippet child({ props })}
-                                            <button style="width:100%;" {...props} onclick={() => {
-                                                userAccountDropdownOpen = false;
-                                                emailNotSetDialog.set(true);
-                                            }}>
-                                                <CreditCardIcon class="data-highlighted:text-primary" />
-                                                Setup Payments
-                                            </button>
-                                        {/snippet}
-                                    </DropdownMenu.Item>
-                                {/if}
+                                <DropdownMenu.Item>
+                                    {#snippet child({ props })}
+                                        <a class="w-full h-full" href={stripeSubscriptionUrl} {...props}>
+                                            <CreditCardIcon class="data-highlighted:text-primary" />
+                                            Setup Payments
+                                        </a>
+                                    {/snippet}
+                                </DropdownMenu.Item>
+                                <DropdownMenu.Item>
+                                    {#snippet child({ props })}
+                                        <a class="w-full h-full" href={stripeTrialSubscriptionUrl} {...props}>
+                                            <Gift class="data-highlighted:text-primary" />
+                                            Free Trial
+                                        </a>
+                                    {/snippet}
+                                </DropdownMenu.Item>
                             {/if}
                             <DropdownMenu.Item>
                                 {#snippet child({ props })}

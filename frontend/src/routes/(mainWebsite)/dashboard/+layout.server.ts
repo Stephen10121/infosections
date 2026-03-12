@@ -1,6 +1,7 @@
 import type { CalendarDBModel, EventDBModel, EventDBModelPrivate, EventListDBModel, ImageFeedDBModel } from '@/utils.js';
 import { redirect } from '@sveltejs/kit';
 import { config } from "dotenv";
+import Stripe from 'stripe';
 
 config();
 
@@ -9,6 +10,38 @@ export async function load({ parent, locals }) {
 
     if (!data.user) {
         return redirect(307, "/");
+    }
+
+    let stripeSubscriptionUrl = "";
+    let stripeTrialSubscriptionUrl = "";
+    if (data.user.accessLevel === "none") {
+        try {
+            const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+            
+            const session = await stripe.checkout.sessions.create({
+                line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                mode: 'subscription',
+                success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                cancel_url: process.env.VITE_WEBSITE_URL!,
+                customer: data.user.customerId,
+            });
+    
+            const freeTrialSession = await stripe.checkout.sessions.create({
+                line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                mode: 'subscription',
+                success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                cancel_url: process.env.VITE_WEBSITE_URL!,
+                customer: data.user.customerId,
+                subscription_data: {
+                    trial_period_days: 14
+                }
+            });
+    
+            stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
+            stripeSubscriptionUrl = session.url ? session.url : "";
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     let calendars: CalendarDBModel[] = [];
@@ -66,6 +99,8 @@ export async function load({ parent, locals }) {
         pb_url: process.env.PB_URL!,
         calendars,
         imageFeeds,
-        eventLists
+        eventLists,
+        stripeSubscriptionUrl,
+        stripeTrialSubscriptionUrl
     }
 } 

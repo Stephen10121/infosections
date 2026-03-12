@@ -55,6 +55,6 @@ export const actions = {
 
         const newUrl = url2.toString();
 
-        return redirect(307, newUrl);
+        return redirect(303, newUrl);
     }
 };

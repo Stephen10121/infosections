@@ -1,5 +1,4 @@
 import { goto } from "$app/navigation";
-import { emailNotSetDialog } from "@/store";
 import { toast } from "svelte-sonner";
 
 type Success = boolean
@@ -33,11 +32,7 @@ export async function createCalendar(
                 action: {
                     label: "Subscribe",
                     onClick: () => {
-                        if (userEmail) {
-                            window.location.replace(stripeUrl + "?prefilled_email=" + userEmail);
-                        } else {
-                            emailNotSetDialog.set(true);
-                        }
+                        window.location.replace(stripeUrl + "?prefilled_email=" + userEmail);
                     }
                 }
             });

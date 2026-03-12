@@ -32,18 +32,16 @@ export async function POST({ request, locals }) {
         switch (eventType) {
             case "checkout.session.completed":
             case "customer.subscription.updated": {
-                //@ts-ignore
+                if (data.object.object !== "subscription") break
+
                 const session = await stripe.checkout.sessions.retrieve(data.object.id, {
                     expand: ['line_items']
                 });
 
-                const customerId = session?.customer as string;
-                const customer = await stripe.customers.retrieve(customerId);
-
+                const customerId = session.customer;
                 const priceId = process.env.STRIPE_PRICE_ID;
 
-                //@ts-ignore
-                const user = await locals.pb.collection('users').getFirstListItem(`userEmail="${customer.email}"`, {
+                const user = await locals.pb.collection('users').getFirstListItem(`customerId="${customerId}"`, {
                     headers: {
                         "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
                     }
@@ -65,7 +63,8 @@ export async function POST({ request, locals }) {
                 break
             }
         case "customer.subscription.deleted": {
-            //@ts-ignore
+            if (data.object.object !== "subscription") break
+
             const subscription = await stripe.subscriptions.retrieve(data.object.id);
 
             const user = await locals.pb.collection('users').getFirstListItem(`customerId="${subscription.customer}"`, {
@@ -78,6 +77,7 @@ export async function POST({ request, locals }) {
 
             await locals.pb.collection('users').update(user.id, {
                 accessLevel: "none",
+                priceId: ""
             }, {
                 headers: {
                     "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!

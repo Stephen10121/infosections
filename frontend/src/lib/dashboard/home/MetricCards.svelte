@@ -15,7 +15,7 @@
         calendarsAmount: number
     } = $props();
 
-    const metrics = [
+    const metrics = $derived([
         {
             name: "Upcoming Events Synced",
             value: eventAmount,
@@ -48,7 +48,7 @@
             accent: "text-violet-500",
             bgAccent: "bg-violet-500/10",
         },
-    ]
+    ]);
 </script>
 
 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

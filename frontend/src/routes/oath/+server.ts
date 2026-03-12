@@ -4,6 +4,7 @@ import type { AuthProviderInfo, RecordAuthResponse } from "pocketbase";
 import { config } from "dotenv";
 import { fetchFileFromURL } from "$lib/utils.js";
 import { newUserLoggedIn } from "@/newUserLoggedIn";
+import Stripe from "stripe";
 
 config();
 
@@ -40,7 +41,6 @@ export async function GET({ locals, url, cookies }) {
 
     let provider: AuthProviderInfo;
     try {
-        sleep(500); // Testing something out. I know itll be in prod
         const authMethods = await locals.pb.collection("users").listAuthMethods({
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
@@ -88,11 +88,16 @@ export async function GET({ locals, url, cookies }) {
 
     const newUserRecord = locals.pb.authStore.record;
     if (newUserRecord && res.meta) {
-        // If the user doesn't login within 90 days, the token we use to fetch data from the planning center api will expire. We will send emails warning the user of this.
         const in89Days = new Date(new Date().setDate((new Date()).getDate() + 89));
         const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
         const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
         if (newUserRecord.new) {
+            const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+            const customer = await stripe.customers.create({
+                metadata: {
+                    internal_id: newUserRecord.id
+                },
+            });
             
             await locals.pb.collection("users").update(newUserRecord.id, {
                 new: false,
@@ -102,7 +107,8 @@ export async function GET({ locals, url, cookies }) {
                 refreshToken: res.meta.refreshToken,
                 refreshTokenExpires: in89Days,
                 accessTokenExpires: in2hours,
-                accessLevel: "none"
+                accessLevel: "none",
+                customerId: customer.id
             }, {
                 headers: {
                     "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!

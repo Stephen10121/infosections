@@ -4,14 +4,10 @@
     import DashboardIsNavigating from '@/dashboard/DashboardIsNavigating.svelte';
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import DashboardSidebar from '@/dashboard/DashboardSidebar.svelte';
-    import SetEmailPopup from '@/dashboard/SetEmailPopup.svelte';
-    import { emailNotSetDialog } from '@/store.js';
     import { afterNavigate } from '$app/navigation';
     import { browser } from '$app/environment';
 
 	let { children, data } = $props();
-
-	emailNotSetDialog.set(!data.user.userEmail);
 
 	afterNavigate(() => {
 		if (browser) {
@@ -26,16 +22,14 @@
 	});
 </script>
 
-<SetEmailPopup />
-
 <Sidebar.Provider class="flex min-h-screen bg-background" style="--sidebar-width: 16rem; --sidebar-width-mobile: 16rem;">
 	<DashboardSidebar
 		user={data.user}
 		userAvatar={data.avatar}
 		pathname={data.pathname}
-		stripeUrl={data.stripeUrl}
-		stripeFreeTrialUrl={data.stripeFreeTrialUrl}
 		stripeCustomerPortal={data.stripeCustomerPortal}
+		stripeSubscriptionUrl={data.stripeSubscriptionUrl}
+		stripeTrialSubscriptionUrl={data.stripeTrialSubscriptionUrl}
 	/>
 
 	<div class="flex-1 flex flex-col h-full">
