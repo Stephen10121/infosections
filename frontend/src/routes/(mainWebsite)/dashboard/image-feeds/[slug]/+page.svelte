@@ -28,10 +28,12 @@
     let uploadNewAvatarLink = $derived(uploadNewAvatar ? URL.createObjectURL(uploadNewAvatar) : null);
 
     let displaySettingsRef = $derived(data.selectedfeed.displaySettings);
+    // svelte-ignore state_referenced_locally
     let displaySettings = $state(data.selectedfeed.displaySettings);
     let iFeedDescription = $derived(data.selectedfeed.description);
     let saveChangesToast: string | number | null = $state(null);
     let filterSettingsRef = $derived(data.selectedfeed.filters);
+    // svelte-ignore state_referenced_locally
     let filterSettings = $state(data.selectedfeed.filters);
     let iFeedName = $derived(data.selectedfeed.name);
     let previewIFrame: HTMLIFrameElement | undefined = $state();

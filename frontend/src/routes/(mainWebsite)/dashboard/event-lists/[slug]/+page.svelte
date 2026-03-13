@@ -26,10 +26,12 @@
     let uploadNewAvatarLink = $derived(uploadNewAvatar ? URL.createObjectURL(uploadNewAvatar) : null);
 
     let displaySettingsRef = $derived(data.selectedlist.displaySettings);
+    // svelte-ignore state_referenced_locally
     let displaySettings = $state(data.selectedlist.displaySettings);
     let eListDescription = $derived(data.selectedlist.description);
     let saveChangesToast: string | number | null = $state(null);
     let filterSettingsRef = $derived(data.selectedlist.filters);
+    // svelte-ignore state_referenced_locally
     let filterSettings = $state(data.selectedlist.filters);
     let eListName = $derived(data.selectedlist.name);
     let previewIFrame: HTMLIFrameElement | undefined = $state();

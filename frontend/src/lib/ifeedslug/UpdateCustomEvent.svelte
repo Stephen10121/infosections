@@ -28,6 +28,7 @@
         selectedEventIndex: number,
     } = $props();
 
+    // svelte-ignore state_referenced_locally
     let includeInOtherFeeds = $state(imageFeeds.map((feed) => {
         return {
             id: feed.id,
@@ -41,8 +42,11 @@
 
     let eventPictureLink = $derived(customImages[selectedEventIndex].picture ? `${apiServer}api/files/${customImages[selectedEventIndex].collectionId}/${customImages[selectedEventIndex].id}/${customImages[selectedEventIndex].picture}` : "");
 
+    // svelte-ignore state_referenced_locally
     let linkText = $state(customImages[selectedEventIndex].linkText);
+    // svelte-ignore state_referenced_locally
     let registrationURL = $state(customImages[selectedEventIndex].registrationURL);
+    // svelte-ignore state_referenced_locally
     let showLink = $state(customImages[selectedEventIndex].showLink);
 
     function handleRemoveEventPicture() {

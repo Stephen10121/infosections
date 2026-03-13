@@ -32,8 +32,11 @@
     let displaySettingsRef = $derived(data.selectedCalendar.displaySettings);
     let calendarDescription = $derived(data.selectedCalendar.description);
     let passwordEnabled = $derived(data.selectedCalendar.passwordEnabled);
+
+    // svelte-ignore state_referenced_locally
     let displaySettings = $state(data.selectedCalendar.displaySettings);
     let filterSettingsRef = $derived(data.selectedCalendar.filters);
+    // svelte-ignore state_referenced_locally
     let filterSettings = $state(data.selectedCalendar.filters);
     let saveChangesToast: string | number | null = $state(null);
     let calendarName = $derived(data.selectedCalendar.name);
