@@ -28,7 +28,7 @@
     async function handleCreateEList() {
         if (newEListName && newEListDescription) {
             creatingEList = true;
-            const success = await createEList(newEListName, newEListDescription, data.stripeUrl, data.user.userEmail);
+            const success = await createEList(newEListName, newEListDescription, data.user.subscriptionURL);
             creatingEList = false;
             if (success) {
                 newEListDialogOpen = false;

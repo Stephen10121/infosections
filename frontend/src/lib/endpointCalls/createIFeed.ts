@@ -5,8 +5,7 @@ type Success = boolean
 export async function createIFeed(
     name: string,
     description: string,
-    stripeUrl: string,
-    userEmail: any
+    subscriptionURL: string,
 ): Promise<Success> {
     const data = new FormData();
 
@@ -27,7 +26,7 @@ export async function createIFeed(
                 action: {
                     label: "Subscribe",
                     onClick: () => {
-                        window.location.replace(stripeUrl + "?prefilled_email=" + userEmail);
+                        window.location.replace(subscriptionURL);
                     }
                 }
             });

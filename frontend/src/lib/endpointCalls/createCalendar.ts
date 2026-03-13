@@ -8,8 +8,7 @@ export async function createCalendar(
     description: string,
     enablePassword: boolean,
     newPassword: string,
-    stripeUrl: string,
-    userEmail: any
+    subscriptionURL: string,
 ): Promise<Success> {
     const data = new FormData();
 
@@ -32,7 +31,7 @@ export async function createCalendar(
                 action: {
                     label: "Subscribe",
                     onClick: () => {
-                        window.location.replace(stripeUrl + "?prefilled_email=" + userEmail);
+                        window.location.replace(subscriptionURL);
                     }
                 }
             });

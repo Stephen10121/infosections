@@ -96,7 +96,7 @@
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-medium">{user.name}</span>
-                                    <span class="truncate text-xs">{user.userEmail}</span>
+                                    <span class="truncate text-xs">{user.email}</span>
                                 </div>
                                 <ChevronsUpDownIcon class="ml-auto size-4" />
                             </Sidebar.MenuButton>
@@ -117,7 +117,7 @@
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-medium">{user.name}</span>
-                                    <span class="truncate text-xs">{user.userEmail}</span>
+                                    <span class="truncate text-xs">{user.email}</span>
                                 </div>
                             </div>
                         </DropdownMenu.Label>
@@ -128,7 +128,7 @@
                             {#if user.accessLevel !== "none"}
                                 <DropdownMenu.Item>
                                     {#snippet child({ props })}
-                                        <a class="w-full h-full" href="{stripeCustomerPortal}?prefilled_email={user.userEmail}" target="_blank" {...props}>
+                                        <a class="w-full h-full" href="{stripeCustomerPortal}?prefilled_email={user.email}" target="_blank" {...props}>
                                             <CreditCardIcon class="data-highlighted:text-primary" />
                                             Billing
                                         </a>

@@ -28,7 +28,7 @@
     async function handleCreateIFeed() {
         if (newIFeedName && newIFeedDescription) {
             creatingIFeed = true;
-            const success = await createIFeed(newIFeedName, newIFeedDescription, data.stripeUrl, data.user.userEmail);
+            const success = await createIFeed(newIFeedName, newIFeedDescription, data.user.subscriptionURL);
             creatingIFeed = false;
             if (success) {
                 newIFeedDialogOpen = false;

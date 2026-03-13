@@ -5,8 +5,7 @@ type Success = boolean
 export async function createEList(
     name: string,
     description: string,
-    stripeUrl: string,
-    userEmail: any
+    subscriptionURL: string,
 ): Promise<Success> {
     const data = new FormData();
 
@@ -27,7 +26,7 @@ export async function createEList(
                 action: {
                     label: "Subscribe",
                     onClick: () => {
-                        window.location.replace(stripeUrl + "?prefilled_email=" + userEmail);
+                        window.location.replace(subscriptionURL);
                     }
                 }
             });

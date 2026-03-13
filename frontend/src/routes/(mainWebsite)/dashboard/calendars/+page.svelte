@@ -32,7 +32,7 @@
     async function handleCreateCalendar() {
         if (newCalendarName && newCalendarDescription) {
             creatingCalendar = true;
-            const success = await createCalendar(newCalendarName, newCalendarDescription, newCalendarPasswordEnabled, newCalendarPassword, data.stripeUrl, data.user.userEmail);
+            const success = await createCalendar(newCalendarName, newCalendarDescription, newCalendarPasswordEnabled, newCalendarPassword, data.user.subscriptionURL);
             creatingCalendar = false;
             if (success) {
                 newCalendarDialogOpen = false;
