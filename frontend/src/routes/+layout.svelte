@@ -10,5 +10,5 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Toaster />
+<Toaster theme="light" />
 {@render children?.()}
