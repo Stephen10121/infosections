@@ -9,7 +9,7 @@ export async function GET({ locals }) {
     const response = await fetch(process.env.PB_URL + `updateSpecificUserEvents/${locals.user.id}`, {
         method: 'PATCH',
         headers: {
-            "X-PCO-Webhooks-Authenticity": locals.user.authToken
+            "X-PCO-Webhooks-Authenticity": locals.user.customerId
         }
     });
     if (response.ok) {

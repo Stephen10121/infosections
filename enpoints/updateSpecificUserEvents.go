@@ -12,9 +12,9 @@ import (
 func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 	se.Router.PATCH("/updateSpecificUserEvents/{id}", func(e *core.RequestEvent) error {
 		id := e.Request.PathValue("id")
-		authenticity := e.Request.Header.Get("X-PCO-Webhooks-Authenticity")
+		customerId := e.Request.Header.Get("X-PCO-Webhooks-Authenticity")
 
-		if len(id) == 0 || len(authenticity) == 0 {
+		if len(id) == 0 || len(customerId) == 0 {
 			return e.JSON(422, map[string]string{
 				"msg": "Missing parameters",
 			})
@@ -22,8 +22,8 @@ func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 
 		_, err := app.FindFirstRecordByFilter(
 			"users",
-			"id = {:id} && authToken = {:authToken}",
-			dbx.Params{"id": id, "authToken": authenticity},
+			"id = {:id} && customerId = {:customerId}",
+			dbx.Params{"id": id, "customerId": customerId},
 		)
 
 		if err != nil {
