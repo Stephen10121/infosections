@@ -2,9 +2,10 @@ import { command, form, getRequestEvent } from "$app/server";
 import { EmailSchema } from "@/valibotSchemaHelpers";
 import { error, fail, invalid, redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
-import { ClientResponseError, type RecordModel } from "pocketbase";
+import { ClientResponseError, type AuthProviderInfo, type RecordModel } from "pocketbase";
 import * as v from "valibot";
 import Stripe from "stripe";
+import { dev } from "$app/environment";
 
 config();
 
@@ -100,4 +101,58 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
     }
 
     redirect(303, "/dashboard");
+});
+
+const GoogleLoginSchema = v.object({
+    id: v.string()
+});
+
+export const googleLoginSignup = form(GoogleLoginSchema, async (id, issue) => {
+    const { locals, cookies, url } = getRequestEvent();
+    
+    locals.pb.authStore.clear();
+    const authMethods = await locals.pb.collection('users').listAuthMethods();
+
+    if (!authMethods.oauth2.enabled) {
+        return {
+            authProviders: '',
+        }
+    }
+
+    let redirectURL;
+
+    if (dev) {
+        if (url.origin.includes(".dev")) {
+            redirectURL = url.origin.replace("http", "https") + "/google_oath";
+        } else {
+            redirectURL = url.origin + "/google_oath";
+        }
+    } else {
+        redirectURL = process.env.VITE_WEBSITE_URL + "/google_oath";
+    }
+
+    let authProvider: AuthProviderInfo | undefined;
+
+    for (let i=0;i<authMethods.oauth2.providers.length;i++) {
+        if (authMethods.oauth2.providers[i].name === "google") {
+            authProvider = authMethods.oauth2.providers[i];
+        }
+    }
+
+    if (!authProvider) return invalid(issue.id("Google Login is not working right now!"));
+    
+    const authProviderRedirect = `${authProvider.authURL}${redirectURL}`;
+
+    const state = authProvider.state;
+    const verifier = authProvider.codeVerifier;
+
+    cookies.set('state', state, {
+        path: "/"
+    });
+
+    cookies.set('verifier', verifier, {
+        path: "/"
+    });
+
+    return redirect(303, authProviderRedirect);
 });
