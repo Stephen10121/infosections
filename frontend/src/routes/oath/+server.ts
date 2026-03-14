@@ -8,12 +8,15 @@ import Stripe from "stripe";
 config();
 
 export async function GET({ locals, url, cookies }) {
-    const expectedState = cookies.get("state");
-    const expectedVerifier = cookies.get("verifier");
+    const expectedState = cookies.get("integrationState");
+    const expectedVerifier = cookies.get("integrationVerifier");
+    const expectedName = cookies.get("integrationName")
 
-    if (!expectedState || !expectedVerifier) {
+    if (!expectedState || !expectedVerifier || !expectedName) {
         return redirect(303, "/");
     }
+
+    if (!locals.user) return redirect(303, "/");
 
     let redirectURL;
 
@@ -34,9 +37,9 @@ export async function GET({ locals, url, cookies }) {
         return redirect(303, "/");
     }
 
-    let provider: AuthProviderInfo;
+    let provider: AuthProviderInfo | undefined;
     try {
-        const authMethods = await locals.pb.collection("users").listAuthMethods({
+        const authMethods = await locals.pb.collection("integration").listAuthMethods({
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -47,7 +50,11 @@ export async function GET({ locals, url, cookies }) {
             return redirect(303, "/");
         }
     
-        provider = authMethods.oauth2.providers[0];
+        for (let i=0;i<authMethods.oauth2.providers.length;i++) {
+            if (authMethods.oauth2.providers[i].name === expectedName) {
+                provider = authMethods.oauth2.providers[i]
+            }
+        }
     } catch (err) {
         console.log("List auth methods error.", err);
         return redirect(303, "/");
@@ -65,98 +72,38 @@ export async function GET({ locals, url, cookies }) {
     
     let res: RecordAuthResponse;
     try {
-        res = await locals.pb.collection("users").authWithOAuth2Code(provider.name, code, expectedVerifier, redirectURL, {
-            new: true
+        res = await locals.pb.collection("integration").authWithOAuth2Code(provider.name, code, expectedVerifier, redirectURL, {
+            prettyName: provider.displayName,
+            owner: locals.user.id,
+            service: provider.name,
+            status: "connected"
         }, {
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
         });
-
-        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
-            path: "/"
-        })
     } catch (err) {
         console.log("Error signing up with oath", err);
         return redirect(303, "/");
     }
 
-    const newUserRecord = locals.pb.authStore.record;
-    if (newUserRecord && res.meta) {
+    if (res.record && res.meta) {
         const in89Days = new Date(new Date().setDate((new Date()).getDate() + 89));
+        const in1hour = new Date(new Date().setHours((new Date()).getHours() + 1));
         const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
-        const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
-        if (newUserRecord.new) {
-            let stripeTrialSubscriptionUrl = "";
-            let stripeSubscriptionUrl = "";
-            let stripeCustomerID = "";
-
-            try {
-                const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
-                const customer = await stripe.customers.create({
-                    metadata: {
-                        internal_id: newUserRecord.id
-                    },
-                });
-
-                const session = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                    mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    customer: customer.id,
-                });
-        
-                const freeTrialSession = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                    mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    customer: customer.id,
-                    subscription_data: {
-                        trial_period_days: 14
-                    }
-                });
-        
-                stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
-                stripeSubscriptionUrl = session.url ? session.url : "";
-                stripeCustomerID = customer.id;
-            } catch (err) {
-                console.log(err);
-            }
             
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                new: false,
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
-                accessLevel: "none",
-                customerId: stripeCustomerID,
-                subscriptionURL: stripeSubscriptionUrl,
-                freeTrialURL: stripeTrialSubscriptionUrl,
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
-                }
-            });
-        } else {
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
-                }
-            });
+        await locals.pb.collection("integration").update(res.record.id, {
+            refreshToken: res.meta.refreshToken,
+            accessToken: res.meta.accessToken,
+            refreshTokenExpires: in89Days,
+            accessTokenExpires: in2hours,
+            lastEventsFetch: in1hour
+        }, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
         }
-    }
 
     return redirect(303, "/dashboard");
 }

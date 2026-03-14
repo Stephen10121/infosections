@@ -4,12 +4,10 @@
     import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
     import IntegrationIcon from "./IntegrationIcon.svelte";
     import { Badge } from "@/components/ui/badge";
+    import { addAnIntegration } from "../../../routes/(mainWebsite)/dashboard/integrations.remote";
+    import { toast } from "svelte-sonner";
 
     let { open = $bindable() }: { open: boolean } = $props();
-
-    function addIntegration(integration: AvailableIntegration) {
-        console.log(integration);
-    }
 </script>
 
 <Dialog.Root bind:open={open}>
@@ -22,32 +20,39 @@
     <div class="grid gap-3 py-4">
         {#each availableIntegrations as integration (`anavailableintegration${integration.id}`)}
             {@const isConnected = (await getMyIntegrations()).filter((int) => int.service === integration.id).length > 0}
-            <button
-                disabled={isConnected}
-                onclick={() => {
-                    addIntegration(integration)
-                    open = false;
-                }}
-                class={cn(
-                    "flex items-start gap-3 rounded-lg border p-3 text-left transition-colors",
-                    isConnected
-                    ? "opacity-50 cursor-not-allowed bg-muted/50"
-                    : "hover:bg-accent hover:border-accent-foreground/20 cursor-pointer"
-                )}
-            >
-                <IntegrationIcon icon={integration.icon} class="h-10 w-10 shrink-0" />
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center gap-2">
-                        <span class="font-medium text-sm">{integration.name}</span>
-                        {#if isConnected}
-                            <Badge variant="secondary" class="text-[10px]">Connected</Badge>
-                        {/if}
+            <form {...addAnIntegration.for(`anavailableintegration${integration.id}`).enhance(async ({ submit }) => {
+                let loading = toast.loading("Adding Integration", { duration: Number.POSITIVE_INFINITY });
+                await submit();
+                toast.dismiss(loading);
+            })}>
+                <input {...addAnIntegration.fields.provider.as("hidden", integration.id)} />
+                <button
+                    disabled={isConnected}
+                    onclick={() => {
+                        open = false;
+                    }}
+                    type="submit"
+                    class={cn(
+                        "flex items-start gap-3 rounded-lg border p-3 text-left transition-colors",
+                        isConnected
+                        ? "opacity-50 cursor-not-allowed bg-muted/50"
+                        : "hover:bg-accent hover:border-accent-foreground/20 cursor-pointer"
+                    )}
+                >
+                    <IntegrationIcon icon={integration.icon} class="h-10 w-10 shrink-0" />
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-sm">{integration.name}</span>
+                            {#if isConnected}
+                                <Badge variant="secondary" class="text-[10px]">Connected</Badge>
+                            {/if}
+                        </div>
+                        <p class="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                            {integration.description}
+                        </p>
                     </div>
-                    <p class="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                        {integration.description}
-                    </p>
-                </div>
-            </button>
+                </button>
+            </form>
         {/each}
     </div>
     </Dialog.Content>
