@@ -57,7 +57,6 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
         });
 
         const session = await stripe.checkout.sessions.create({
-            customer_email: newSignupData.email,
             line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
             mode: 'subscription',
             success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
@@ -66,7 +65,6 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
         });
 
         const freeTrialSession = await stripe.checkout.sessions.create({
-            customer_email: newSignupData.email,
             line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
             mode: 'subscription',
             success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",

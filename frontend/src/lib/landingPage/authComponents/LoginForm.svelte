@@ -5,7 +5,8 @@
     import * as Field from "$lib/components/ui/field/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import type { HTMLAttributes } from "svelte/elements";
-    import { createEmailPasswordSignup, googleLoginSignup } from "../../../routes/(mainWebsite)/signup/signup.remote";
+    import { emailPasswordLogin } from "../../../routes/(mainWebsite)/login/login.remote";
+    import { googleLoginSignup } from "../../../routes/(mainWebsite)/signup/signup.remote";
 
     let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 </script>
@@ -13,50 +14,30 @@
 <div class={cn("flex flex-col gap-6", className)} {...restProps}>
     <Card.Root>
         <Card.Header class="text-center">
-            <Card.Title class="text-xl">Create your account</Card.Title>
-            <Card.Description>Enter your email below to create your account</Card.Description>
+            <Card.Title class="text-xl">Log into your account</Card.Title>
+            <Card.Description>Enter your email and password below to access your account</Card.Description>
         </Card.Header>
         <Card.Content>
-            <form {...createEmailPasswordSignup}>
+            <form {...emailPasswordLogin}>
                 <Field.Group>
                     <Field.Field>
-                        <Field.Label for="name">Full Name</Field.Label>
-                        <Input id="name" {...createEmailPasswordSignup.fields.name.as("text")} />
-                        {#each createEmailPasswordSignup.fields.name.issues() as issue (`anIssueforname${issue.message}`)}
-                            <Field.Error>{issue.message}</Field.Error>
-                        {/each}
-                    </Field.Field>
-
-                    <Field.Field>
                         <Field.Label for="email">Email</Field.Label>
-                        <Input id="email" {...createEmailPasswordSignup.fields.email.as("email")} />
-                        {#each createEmailPasswordSignup.fields.email.issues() as issue (`anIssueforemail${issue.message}`)}
+                        <Input id="email" {...emailPasswordLogin.fields.email.as("email")} />
+                        {#each emailPasswordLogin.fields.email.issues() as issue (`anIssueforemail${issue.message}`)}
                             <Field.Error>{issue.message}</Field.Error>
                         {/each}
                     </Field.Field>
 
                     <Field.Field>
-                        <Field.Field class="grid grid-cols-2 gap-4">
-                            <Field.Field>
-                                <Field.Label for="password">Password</Field.Label>
-                                <Input id="password" {...createEmailPasswordSignup.fields.password.as("password")} />
-                                {#each createEmailPasswordSignup.fields.password.issues() as issue (`anIssueforpassword${issue.message}`)}
-                                    <Field.Error>{issue.message}</Field.Error>
-                                {/each}
-                            </Field.Field>
-                            <Field.Field>
-                                <Field.Label for="confirm-password">Confirm Password</Field.Label>
-                                <Input id="confirm-password" {...createEmailPasswordSignup.fields.passwordConfirm.as("password")} />
-                                {#each createEmailPasswordSignup.fields.passwordConfirm.issues() as issue (`anIssueforpasswordconfirm${issue.message}`)}
-                                    <Field.Error>{issue.message}</Field.Error>
-                                {/each}
-                            </Field.Field>
-                        </Field.Field>
-                        <Field.Description>Must be at least 8 characters long.</Field.Description>
+                        <Field.Label for="password">Password</Field.Label>
+                        <Input id="password" {...emailPasswordLogin.fields.password.as("password")} />
+                        {#each emailPasswordLogin.fields.password.issues() as issue (`anIssueforpassword${issue.message}`)}
+                            <Field.Error>{issue.message}</Field.Error>
+                        {/each}
                     </Field.Field>
 
                     <Field.Field>
-                        <Button type="submit">Create Account</Button>
+                        <Button type="submit">Login</Button>
                     </Field.Field>
                 </Field.Group>
             </form>
@@ -84,7 +65,7 @@
                     </Field.Field>
     
                     <Field.Description class="text-center">
-                        Already have an account? <a href="/login">Login</a>
+                        Don't have an account? <a href="/signup">Sign up</a>
                     </Field.Description>
                 </Field.Group>
             </form>
