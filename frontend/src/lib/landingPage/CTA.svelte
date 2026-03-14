@@ -24,6 +24,7 @@
                 size="lg"
                 variant="outline"
                 class="border-secondary-foreground/20 text-secondary-foreground hover:bg-primary-foreground/10 hover:text-secondary-foreground/70 bg-transparent"
+                href="mailto:sales@infosections.com"
             >
                 Contact Sales
             </Button>

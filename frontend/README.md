@@ -2,6 +2,13 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
+Emails i need to add:
+dmca@infosections.com
+contact@infosections.com
+privacy@infosections.com
+support@infosections.com
+sales@infosections.com
+
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
