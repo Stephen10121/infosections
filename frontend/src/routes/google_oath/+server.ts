@@ -3,7 +3,6 @@ import { redirect } from "@sveltejs/kit";
 import type { AuthProviderInfo, RecordAuthResponse } from "pocketbase";
 import { config } from "dotenv";
 import { fetchFileFromURL } from "$lib/utils.js";
-import { newUserLoggedIn } from "@/newUserLoggedIn";
 import Stripe from "stripe";
 
 config();
@@ -88,9 +87,8 @@ export async function GET({ locals, url, cookies }) {
 
     const newUserRecord = locals.pb.authStore.record;
     if (newUserRecord && res.meta) {
-        const in89Days = new Date(new Date().setDate((new Date()).getDate() + 89));
-        const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
         const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
+        
         if (newUserRecord.new) {
             let stripeTrialSubscriptionUrl = "";
             let stripeSubscriptionUrl = "";
@@ -134,10 +132,6 @@ export async function GET({ locals, url, cookies }) {
                 new: false,
                 avatar: fileResp.error ? null : fileResp.blob,
                 name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
                 accessLevel: "none",
                 customerId: stripeCustomerID,
                 subscriptionURL: stripeSubscriptionUrl,
@@ -147,17 +141,10 @@ export async function GET({ locals, url, cookies }) {
                     "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
                 }
             });
-
-            // Tells the backend that the user has subscribed.
-            await newUserLoggedIn(newUserRecord.id, newUserRecord.refreshToken);
         } else {
             await locals.pb.collection("users").update(newUserRecord.id, {
                 avatar: fileResp.error ? null : fileResp.blob,
                 name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
             }, {
                 headers: {
                     "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!

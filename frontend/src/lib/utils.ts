@@ -285,13 +285,15 @@ export interface UserModel extends RecordModel {
 }
 
 export interface IntegrationModel extends RecordModel {
+	prettyName: string,
 	owner: string,
-	service: "planningcenter"
+	service: "planningcenter" | "breeze" | "google" | "outlook"
 	refreshToken: string,
 	accessToken: string,
 	refreshTokenExpires: number,
 	accessTokenExpires: number
-	lastEventsFetch: string
+	lastEventsFetch: string,
+	status: "connected" | "syncing" | "error" | "disconnected"
 }
 
 export function capitalizeFirstLetter(str: string) {
@@ -493,4 +495,48 @@ export const TIMEZONES = [
 	"Australia/Perth",
 	"America/Sao_Paulo",
 	"Africa/Johannesburg"
+];
+
+export interface AvailableIntegration {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  icon: IntegrationModel["service"];
+  docsUrl: string;
+}
+
+export const availableIntegrations: AvailableIntegration[] = [
+	{
+		id: "planningcenter",
+		name: "Planning Center",
+		slug: "planningcenter",
+		description: "Sync events from Planning Center Calendar. Automatically imports services, events, and schedules.",
+		icon: "planningcenter",
+		docsUrl: "https://www.planningcenter.com/",
+	},
+	{
+		id: "breeze",
+		name: "Breeze ChMS",
+		slug: "breeze",
+		description: "Connect with Breeze Church Management to sync your church events and calendar.",
+		icon: "breeze",
+		docsUrl: "https://www.breezechms.com/",
+	},
+	{
+		id: "googlecalendar",
+		name: "Google Calendar",
+		slug: "google-calendar",
+		description: "Import events from Google Calendar. Supports multiple calendars and automatic sync.",
+		icon: "google",
+		docsUrl: "https://calendar.google.com/",
+	},
+	{
+		id: "outlook",
+		name: "Outlook Calendar",
+		slug: "outlook",
+		description: "Sync events from Microsoft Outlook and Office 365 calendars.",
+		icon: "outlook",
+		docsUrl: "https://outlook.com/",
+	},
 ];

@@ -1,10 +1,15 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2 } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2, Flag, RefreshCw, Plus } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-    import { capitalizeFirstLetter, refreshingEvents, type UserModel } from "@/utils";
+    import { capitalizeFirstLetter, refreshingEvents, type IntegrationModel, type UserModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
+    import { getMyIntegrations } from "../../routes/(mainWebsite)/dashboard/backend.remote";
+    import AddIntegrationDialog from "./integrations/AddIntegrationDialog.svelte";
+    import BreezeIcon from "./integrations/BreezeIcon.svelte";
+    import IntegrationInfoDialog from "./integrations/IntegrationInfoDialog.svelte";
+    import StatusBadge from "./integrations/StatusBadge.svelte";
 
     let { 
         user,
@@ -33,6 +38,8 @@
     ];
 
     let userAccountDropdownOpen = $state(false);
+    let addIntegrationDropdownOpen = $state(false);
+    let selectedIntegration: IntegrationModel | null = $state(null);
 </script>
 
 <Sidebar.Root collapsible="icon" class="bg-card">
@@ -77,7 +84,33 @@
                 {/each}
             </Sidebar.Menu>
         </Sidebar.Group>
+
+        <Sidebar.Group>
+            <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
+            <Sidebar.GroupAction title="Add Integration" onclick={() => addIntegrationDropdownOpen = true}>
+                <Plus />
+                <span class="sr-only">Add Project</span>
+            </Sidebar.GroupAction>
+            <Sidebar.Menu>
+                {#each await getMyIntegrations() as integration (`anintegration${integration.id}`)}
+                    <Sidebar.MenuButton tooltipContent={integration.prettyName} class="text-muted-foreground hover:bg-ring/10 hover:text-foreground" onclick={() => {
+                        selectedIntegration = integration;
+                    }}>
+                        {#if integration.service === "planningcenter"}
+                            <Flag />
+                        {:else if integration.service === "breeze"}
+                            <BreezeIcon />
+                        {:else}
+                            <RefreshCw />
+                        {/if}
+                        <span class="flex-1 truncate">{integration.prettyName}</span>
+                        <StatusBadge status={integration.status} />
+                    </Sidebar.MenuButton>
+                {/each}
+            </Sidebar.Menu>
+        </Sidebar.Group>
     </Sidebar.Content>
+
     <Sidebar.Footer>
         <Sidebar.Menu>
             <Sidebar.MenuItem>
@@ -179,3 +212,6 @@
     </Sidebar.Footer>
     <Sidebar.Rail />
 </Sidebar.Root>
+
+<AddIntegrationDialog bind:open={addIntegrationDropdownOpen} />
+<IntegrationInfoDialog bind:integration={selectedIntegration} />

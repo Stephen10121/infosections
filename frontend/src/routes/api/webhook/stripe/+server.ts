@@ -1,7 +1,6 @@
 import { error, json } from "@sveltejs/kit";
 import Stripe from "stripe";
 import { config } from "dotenv";
-import { userHasSubscribed } from "@/userSubscribed.js";
 
 config();
 
@@ -55,9 +54,6 @@ export async function POST({ request, locals }) {
                         "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
                     }
                 });
-
-                // Tells the backend that the user has subscribed.
-                await userHasSubscribed(user.id, user.refreshToken);
 
                 break
             }

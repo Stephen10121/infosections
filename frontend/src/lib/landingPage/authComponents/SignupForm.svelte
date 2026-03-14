@@ -6,8 +6,6 @@
     import { Input } from "$lib/components/ui/input/index.js";
     import type { HTMLAttributes } from "svelte/elements";
     import { createEmailPasswordSignup, googleLoginSignup } from "../../../routes/(mainWebsite)/signup/signup.remote";
-    import { toast } from "svelte-sonner";
-    import { isHttpError } from "@sveltejs/kit";
 
     let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 </script>

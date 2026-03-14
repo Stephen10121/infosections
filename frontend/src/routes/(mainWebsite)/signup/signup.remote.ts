@@ -1,11 +1,11 @@
-import { command, form, getRequestEvent } from "$app/server";
+import { type AuthProviderInfo, type RecordModel } from "pocketbase";
+import { error, invalid, redirect } from "@sveltejs/kit";
 import { EmailSchema } from "@/valibotSchemaHelpers";
-import { error, fail, invalid, redirect } from "@sveltejs/kit";
+import { form, getRequestEvent } from "$app/server";
+import { dev } from "$app/environment";
 import { config } from "dotenv";
-import { ClientResponseError, type AuthProviderInfo, type RecordModel } from "pocketbase";
 import * as v from "valibot";
 import Stripe from "stripe";
-import { dev } from "$app/environment";
 
 config();
 
