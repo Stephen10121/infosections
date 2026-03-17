@@ -504,6 +504,7 @@ export interface AvailableIntegration {
   description: string;
   icon: IntegrationModel["service"];
   docsUrl: string;
+  comingSoon: boolean
 }
 
 export const availableIntegrations: AvailableIntegration[] = [
@@ -514,6 +515,7 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Sync events from Planning Center Calendar. Automatically imports services, events, and schedules.",
 		icon: "planningcenter",
 		docsUrl: "https://www.planningcenter.com/",
+		comingSoon: false,
 	},
 	{
 		id: "breeze",
@@ -522,6 +524,7 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Connect with Breeze Church Management to sync your church events and calendar.",
 		icon: "breeze",
 		docsUrl: "https://www.breezechms.com/",
+		comingSoon: true,
 	},
 	{
 		id: "googlecalendar",
@@ -530,6 +533,7 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Import events from Google Calendar. Supports multiple calendars and automatic sync.",
 		icon: "google",
 		docsUrl: "https://calendar.google.com/",
+		comingSoon: true,
 	},
 	{
 		id: "outlook",
@@ -538,5 +542,6 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Sync events from Microsoft Outlook and Office 365 calendars.",
 		icon: "outlook",
 		docsUrl: "https://outlook.com/",
+		comingSoon: true,
 	},
 ];

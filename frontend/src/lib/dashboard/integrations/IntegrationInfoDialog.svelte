@@ -1,10 +1,12 @@
 <script lang="ts">
     import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { availableIntegrations, timeAgo, type IntegrationModel } from "@/utils";
+    import { availableIntegrations, timeWhen, type IntegrationModel } from "@/utils";
     import IntegrationIcon from "./IntegrationIcon.svelte";
     import StatusBadge from "./StatusBadge.svelte";
     import { Button } from "@/components/ui/button";
     import { ExternalLink, Loader2, RefreshCw, Trash2 } from "@lucide/svelte";
+    import { removeAnIntegration } from "../../../routes/(mainWebsite)/dashboard/integrations.remote";
+    import { toast } from "svelte-sonner";
 
     let { integration = $bindable() }: { integration: IntegrationModel | null } = $props();
 
@@ -41,8 +43,8 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-muted-foreground">Last synced</span>
-                    <span class="text-sm">{timeAgo(new Date(integration.lastEventsFetch))}</span>
+                    <span class="text-sm text-muted-foreground">Next sync event</span>
+                    <span class="text-sm">{timeWhen(new Date(integration.lastEventsFetch))}</span>
                 </div>
 
                 {#if integration.eventsCount !== undefined}
@@ -85,14 +87,22 @@
                     </a>
                 </Button>
                 </div>
-                <Button
-                    variant="destructive"
-                    class="w-full"
-                    onclick={removeIntegration}
-                >
-                    <Trash2 class="mr-2 h-4 w-4" />
-                    Remove Integration
-                </Button>
+                <form {...removeAnIntegration.enhance(async ({ submit }) => {
+                    let loading = toast.loading("Removing Integration.", { duration: Number.POSITIVE_INFINITY });
+                    await submit();
+                    integration = null;
+                    toast.dismiss(loading);
+                })}>
+                    <input {...removeAnIntegration.fields.id.as("hidden", integration.id)} />
+                    <Button
+                        variant="destructive"
+                        class="w-full"
+                        type="submit"
+                    >
+                        <Trash2 class="mr-2 h-4 w-4" />
+                        Remove Integration
+                    </Button>
+                </form>
             </Dialog.Footer>
         </Dialog.Content>
     {/if}

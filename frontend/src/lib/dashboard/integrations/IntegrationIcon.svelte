@@ -1,5 +1,6 @@
 <script lang="ts">
     import { cn, type IntegrationModel } from "@/utils";
+    import { Flag } from "@lucide/svelte";
     import type { ClassValue } from "svelte/elements";
 
     let { class: className = "", icon }: { icon: IntegrationModel["service"], class?: ClassValue } = $props();
@@ -26,5 +27,9 @@
     className
     )}
 >
-    {iconLetters[icon] || "?"}
+    {#if icon === "planningcenter"}
+        <Flag class="w-4 h-4" />
+    {:else}
+        {iconLetters[icon] || "?"}
+    {/if}
 </div>

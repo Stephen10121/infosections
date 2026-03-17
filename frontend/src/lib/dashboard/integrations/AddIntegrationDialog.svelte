@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { availableIntegrations, cn, type AvailableIntegration } from "@/utils";
+    import { availableIntegrations, cn } from "@/utils";
     import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
     import IntegrationIcon from "./IntegrationIcon.svelte";
     import { Badge } from "@/components/ui/badge";
@@ -27,14 +27,14 @@
             })}>
                 <input {...addAnIntegration.fields.provider.as("hidden", integration.id)} />
                 <button
-                    disabled={isConnected}
+                    disabled={isConnected || integration.comingSoon}
                     onclick={() => {
                         open = false;
                     }}
                     type="submit"
                     class={cn(
                         "flex items-start gap-3 rounded-lg border p-3 text-left transition-colors",
-                        isConnected
+                        isConnected || integration.comingSoon
                         ? "opacity-50 cursor-not-allowed bg-muted/50"
                         : "hover:bg-accent hover:border-accent-foreground/20 cursor-pointer"
                     )}
@@ -45,6 +45,8 @@
                             <span class="font-medium text-sm">{integration.name}</span>
                             {#if isConnected}
                                 <Badge variant="secondary" class="text-[10px]">Connected</Badge>
+                            {:else if integration.comingSoon}
+                                <Badge variant="secondary" class="text-[10px]">Coming Soon</Badge>
                             {/if}
                         </div>
                         <p class="text-xs text-muted-foreground mt-0.5 line-clamp-2">

@@ -4,6 +4,7 @@ import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import type { AuthProviderInfo } from "pocketbase";
 import * as v from "valibot";
+import { getMyIntegrations } from "./backend.remote";
 
 config();
 
@@ -13,11 +14,10 @@ const AddIntegrationData = v.object({
 
 export const addAnIntegration = form(AddIntegrationData, async (integrationData) => {
     const { locals, url, cookies } = getRequestEvent();
+
+    if (!locals.user) return redirect(303, "/");
     
     const authMethods = await locals.pb.collection('integration').listAuthMethods();
-
-    // console.log(authMethods.oauth2.providers, integrationData);
-    // return redirect(303, "/dashboard");
 
     if (!authMethods.oauth2.enabled) return redirect(303, "/dashboard");
 
@@ -73,4 +73,35 @@ export const addAnIntegration = form(AddIntegrationData, async (integrationData)
     const newUrl = url2.toString();
 
     return redirect(303, newUrl);
+});
+
+const RemoveIntegrationData = v.object({
+    id: v.string()
+});
+
+export const removeAnIntegration = form(RemoveIntegrationData, async (integrationData) => {
+    const { locals } = getRequestEvent();
+
+    if (!locals.user) return redirect(303, "/");
+
+    try {
+        const record = await locals.pb.collection('integration').getFirstListItem(`id="${integrationData.id}" && owner ="${locals.user.id}"`, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+
+        await locals.pb.collection('integration').delete(record.id, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+
+        getMyIntegrations().refresh();
+    } catch (err) {
+        console.log(err);
+        return redirect(303, "/dashboard");
+    }
+
+    return { msg: "Good" }
 });
