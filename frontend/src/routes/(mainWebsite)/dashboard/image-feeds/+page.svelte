@@ -17,6 +17,7 @@
     import { cn } from "@/utils";
     import { browser } from "$app/environment";
     import { page } from "$app/stores";
+    import { getMyImageFeeds } from "../backend.remote.js";
 
     let { data } = $props();
 
@@ -138,10 +139,10 @@
     </div>
 
     <div class="w-full h-full grid gap-4 xl:grid-cols-3 relative">
-        {#if data.imageFeeds.length === 0}
+        {#if (await getMyImageFeeds()).length === 0}
             <p class="absolute top-3 left-1/2 -translate-1/2 text-muted-foreground">No Image Feeds Yet.</p>
         {/if}
-        {#each data.imageFeeds as imageFeed (`imageFeedlist${imageFeed.id}`)}
+        {#each await getMyImageFeeds() as imageFeed (`imageFeedlist${imageFeed.id}`)}
             <Card.Root class="hover:shadow-lg transition-shadow">
                 <Card.Header>
                 <div class="flex items-start justify-between">

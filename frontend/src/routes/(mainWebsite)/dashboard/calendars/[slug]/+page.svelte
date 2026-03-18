@@ -6,28 +6,25 @@
     import CalQuickActions from "@/dashboard/calendar/CalQuickActions.svelte";
     import CalGeneralInfo from "@/dashboard/calendar/CalGeneralInfo.svelte";
     import CalStatistics from "@/dashboard/calendar/CalStatistics.svelte";
+    import { updateCalendarForm } from "../calendarActions.remote.js";
     import CalAvatar from "@/dashboard/calendar/CalAvatar.svelte";
     import CalShare from "@/dashboard/calendar/CalShare.svelte";
-    import { getMyCalendarById } from "../../backend.remote";
+    import { getCalendarById } from "../../backend.remote.js";
     import { Button } from "@/components/ui/button";
     import { Temporal } from "temporal-polyfill";
     import { clearFileInput } from "@/utils.js";
     import { ArrowLeft } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
     import { onDestroy } from "svelte";
-    import { updateCalendarForm } from "../calendarActions.remote.js";
 
     
     let { data } = $props();
 
-    let selectedCalendar = $derived(await getMyCalendarById(data.selectedCalendarId));
+    let selectedCalendar = $derived(await getCalendarById(data.selectedCalendarId));
 
     let timeZone = $state(Temporal.Now.timeZoneId());
     let nowDate = $derived(Temporal.Now.zonedDateTimeISO(timeZone));
     let uploadNewAvatar: File | null = $state(null);
-
-
-
     let saveChangesToast: string | number | null = $state(null);
 
     let avatarChanged = $state(false);

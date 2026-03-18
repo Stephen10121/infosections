@@ -1,6 +1,6 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
 import { getRequestEvent, query } from "$app/server";
-import type { CalendarDBModel, IntegrationModel } from "@/utils";
+import type { CalendarDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
 import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import * as v from "valibot";
@@ -50,7 +50,7 @@ export const getMyCalendars = query(async () => {
 /**
  * This gets a calendar by the database id, it also checks if the locals.user is the owner of this calendar. If not, the user gets redirected.
  */
-export const getMyCalendarById = query(v.string(), async (id) => {
+export const getCalendarById = query(v.string(), async (id) => {
     const { locals } = getRequestEvent();
     let calendar: CalendarDBModel | undefined;
 
@@ -72,4 +72,51 @@ export const getMyCalendarById = query(v.string(), async (id) => {
     if (calendar.owner !== locals.user.id) return redirect(303, "/dashboard/calendars");
 
     return calendar;
+});
+
+export const getMyImageFeeds = query(async () => {
+    const { locals } = getRequestEvent();
+    let imageFeeds: ImageFeedDBModel[] = [];
+
+    if (!locals.user) return imageFeeds;
+
+    try {
+        imageFeeds = await locals.pb.collection('imageFeeds').getFullList({
+            filter: `owner="${locals.user.id}"`,
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to fetch calendars.", err);
+    }
+
+    return imageFeeds;
+});
+
+/**
+ * This gets a image feed by the database id, it also checks if the locals.user is the owner of this feed. If not, the user gets redirected.
+ */
+export const getImageFeedById = query(v.string(), async (id) => {
+    const { locals } = getRequestEvent();
+    let imageFeed: ImageFeedDBModel | undefined;
+
+    if (!locals.user) return redirect(303, "/dashboard/image-feeds");
+
+    try {
+        imageFeed = await locals.pb.collection('imageFeeds').getOne(id, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to fetch image feeds.", err);
+        return redirect(303, "/dashboard/image-feeds");
+    }
+
+    if (!imageFeed) return redirect(303, "/dashboard/image-feeds");
+
+    if (imageFeed.owner !== locals.user.id) return redirect(303, "/dashboard/image-feeds");
+
+    return imageFeed;
 });

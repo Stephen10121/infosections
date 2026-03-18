@@ -1,9 +1,9 @@
+import { defaultCalendarCustomizations, type CalendarDBModel } from "@/utils";
+import { getCalendarById, getMyCalendars } from "../backend.remote";
 import { command, form, getRequestEvent } from "$app/server";
-import * as v from "valibot";
-import { config } from "dotenv";
-import { defaultCalendarCustomizations, type CalendarDBModel, type DynamicURLModel, type UserModel } from "@/utils";
-import { getMyCalendarById, getMyCalendars } from "../backend.remote";
 import { invalid, redirect } from "@sveltejs/kit";
+import { config } from "dotenv";
+import * as v from "valibot";
 
 config();
 
@@ -103,7 +103,7 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
         return redirect(303, "/");
     }
 
-    const calendar = await getMyCalendarById(updatedCalendar.id);
+    const calendar = await getCalendarById(updatedCalendar.id);
 
     try {
         let data: Partial<CalendarDBModel> = {
@@ -146,7 +146,7 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
     }
 
     getMyCalendars().refresh();
-    getMyCalendarById(calendar.id).refresh();
+    getCalendarById(calendar.id).refresh();
     return {
         error: false,
         msg: "Successfully updated calendar."
@@ -163,7 +163,7 @@ export const deleteCalendarCommand = command(v.string(), async (id) => {
         }
     }
 
-    const calendar = await getMyCalendarById(id);
+    const calendar = await getCalendarById(id);
 
     try {
         await locals.pb.collection('calendars').delete(calendar.id, {
