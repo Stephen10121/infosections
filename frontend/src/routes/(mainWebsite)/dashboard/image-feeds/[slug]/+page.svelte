@@ -18,6 +18,7 @@
     import Event from "@/Event.svelte";
     import CustomImages from "@/ifeedslug/CustomImages.svelte";
     import IncludedCalendars from "@/IncludedCalendars.svelte";
+    import { getMyCalendars } from "../../backend.remote";
 
     let { data } = $props();
 
@@ -399,7 +400,7 @@
                     <Card.Description>You can also include 1 or more calendars that you have created in the <span><a class="underline" href="/dashboard/calendars">calendars page!</a></span> (Changes not reflected in Ifeed preview!)</Card.Description>
                 </Card.Header>
                 <Card.Content>
-                    <IncludedCalendars iFeedId={data.selectedfeed.id} pb_url={data.pb_url} includedCalendars={data.selectedfeed.additionalCalendars} calendars={data.calendars} />
+                    <IncludedCalendars iFeedId={data.selectedfeed.id} pb_url={data.pb_url} includedCalendars={data.selectedfeed.additionalCalendars} calendars={await getMyCalendars()} />
                 </Card.Content>
             </Card.Root>
         </div>

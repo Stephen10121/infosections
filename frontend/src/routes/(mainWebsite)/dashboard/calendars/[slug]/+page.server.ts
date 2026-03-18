@@ -1,22 +1,12 @@
 import type { CalendarDBModel } from '@/utils.js';
 import { redirect } from '@sveltejs/kit';
+import { getMyCalendars } from '../../backend.remote';
 
 export async function load({ params, parent }) {
-    const data = await parent();
+    await parent();
     let slug = params.slug;
 
-    let selectedCalendar: CalendarDBModel | null = null;
-    for (let i=0;i<data.calendars.length;i++) {
-        if (data.calendars[i].id === slug) {
-            selectedCalendar = data.calendars[i];
-        }
-    }
-
-    if (!selectedCalendar) {
-        return redirect(307, "/dashboard/calendars");
-    }
-
     return {
-        selectedCalendar
+        selectedCalendarId: slug
     }
 }

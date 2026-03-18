@@ -4,6 +4,7 @@
     import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
     import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
     import YourViews from '@/dashboard/home/YourViews.svelte';
+    import { getMyCalendars } from './backend.remote.js';
 
     let { data } = $props();
 </script>
@@ -22,13 +23,13 @@
         eventAmount={data.events.length}
         eventListAmount={data.eventLists.length}
         imageFeedsAmount={data.imageFeeds.length}
-        calendarsAmount={data.calendars.length}
+        calendarsAmount={(await getMyCalendars()).length}
     />
 
     <div class="grid gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-6">
             <YourViews
-                calendars={data.calendars}
+                calendars={await getMyCalendars()}
                 imageFeeds={data.imageFeeds}
                 eventLists={data.eventLists}
                 pb_url={data.pb_url}

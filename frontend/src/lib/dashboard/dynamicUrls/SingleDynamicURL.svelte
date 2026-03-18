@@ -6,7 +6,6 @@
     import { cn, type DynamicURLModel } from "@/utils.js";
     import * as Card from "@/components/ui/card/index";
     import { Badge } from "@/components/ui/badge";
-    import { onMount } from "svelte";
 
     let { openId = $bindable(), url, websiteURL }: { openId: string | null, url: DynamicURLModel, websiteURL: string } = $props();
 

@@ -1,7 +1,6 @@
-import type { CalendarDBModel, EventDBModel, EventDBModelPrivate, EventListDBModel, ImageFeedDBModel } from '@/utils.js';
+import type { CalendarDBModel, EventDBModelPrivate, EventListDBModel, ImageFeedDBModel } from '@/utils.js';
 import { redirect } from '@sveltejs/kit';
 import { config } from "dotenv";
-import Stripe from 'stripe';
 
 config();
 
@@ -10,18 +9,6 @@ export async function load({ parent, locals }) {
 
     if (!data.user) {
         return redirect(307, "/");
-    }
-
-    let calendars: CalendarDBModel[] = [];
-    try {
-        calendars = await locals.pb.collection('calendars').getFullList({
-            filter: `owner="${data.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch calendars.", err);
     }
 
     let imageFeeds: ImageFeedDBModel[] = [];
@@ -65,7 +52,6 @@ export async function load({ parent, locals }) {
         ...data,
         events,
         pb_url: process.env.PB_URL!,
-        calendars,
         imageFeeds,
         eventLists,
         stripeSubscriptionUrl: data.user.subscriptionURL,

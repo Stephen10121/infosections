@@ -6,6 +6,7 @@
     import DashboardSidebar from '@/dashboard/DashboardSidebar.svelte';
     import { afterNavigate } from '$app/navigation';
     import { browser } from '$app/environment';
+    import { getMyCalendars } from './backend.remote.js';
 
 	let { children, data } = $props();
 
@@ -33,7 +34,7 @@
 	/>
 
 	<div class="flex-1 flex flex-col h-full">
-		<DashboardHeader calendars={data.calendars} imageFeeds={data.imageFeeds} eventLists={data.eventLists} />
+		<DashboardHeader calendars={await getMyCalendars()} imageFeeds={data.imageFeeds} eventLists={data.eventLists} />
 
 		<main class="flex-1 p-6 space-y-6 mainPage relative h-full" id="ascrollableelement">
 			{#if navigating.complete !== null}

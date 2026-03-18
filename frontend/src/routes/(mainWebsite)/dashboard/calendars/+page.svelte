@@ -1,18 +1,18 @@
 <script lang="ts">
+    import { createCalendarCommand, deleteCalendarCommand } from "./calendarActions.remote.js";
     import { Copy, MoreVertical, Plus, Shield, Trash2, Users } from "@lucide/svelte";
     import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
-    import { deleteCalendar } from "@/endpointCalls/deleteCalendar.js";
-    import { createCalendar } from "@/endpointCalls/createCalendar.js";
     import { Button, buttonVariants } from "@/components/ui/button";
     import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-    import { afterNavigate, invalidateAll } from "$app/navigation";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
     import { Switch } from "@/components/ui/switch/index.js";
     import * as Dialog from "@/components/ui/dialog/index";
+    import { getMyCalendars } from "../backend.remote.js";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
+    import { afterNavigate } from "$app/navigation";
     import { Label } from "@/components/ui/label";
     import { Input } from "@/components/ui/input";
     import { browser } from "$app/environment";
@@ -32,18 +32,22 @@
     async function handleCreateCalendar() {
         if (newCalendarName && newCalendarDescription) {
             creatingCalendar = true;
-            const success = await createCalendar(newCalendarName, newCalendarDescription, newCalendarPasswordEnabled, newCalendarPassword, data.user.subscriptionURL);
+            const response = await createCalendarCommand({
+                name: newCalendarName,
+                description: newCalendarDescription,
+                enablePassword: newCalendarPasswordEnabled,
+                newPassword: newCalendarPassword
+            });
             creatingCalendar = false;
-            if (success) {
+            if (response.error) {
+                toast.error(response.msg);
+            } else {
+                toast.success(response.msg);
                 newCalendarDialogOpen = false;
                 newCalendarDescription = "";
                 newCalendarName = "";
                 newCalendarPasswordEnabled = false;
                 newCalendarPassword = "";
-
-                let updating = toast.info("Updating Calendar List");
-                await invalidateAll();
-                toast.dismiss(updating);
             }
         } else {
             toast.error("Missing Fields.");
@@ -66,11 +70,13 @@
     async function deleteCal() {
         if (deleteCalendarId === null) return
         const deletingCalendar = toast.loading("Deleting Calendar");
-        const success = await deleteCalendar(deleteCalendarId);
+        const response = await deleteCalendarCommand(deleteCalendarId);
         toast.dismiss(deletingCalendar);
         deleteCalendarId = null;
-        if (success) {
-            invalidateAll();
+        if (response.error) {
+            toast.error(response.msg);
+        } else {
+            toast.success(response.msg);
         }
     }
 
@@ -158,10 +164,10 @@
     </div>
 
     <div class="w-full h-full grid gap-4 xl:grid-cols-3 relative">
-        {#if data.calendars.length === 0}
+        {#if (await getMyCalendars()).length === 0}
             <p class="absolute top-3 left-1/2 -translate-1/2 text-muted-foreground">No Calendars Yet.</p>
         {/if}
-        {#each data.calendars as calendar (`calendarlist${calendar.id}`)}
+        {#each await getMyCalendars() as calendar (`calendarlist${calendar.id}`)}
             <Card.Root class="hover:shadow-lg transition-shadow">
                 <Card.Header>
                 <div class="flex items-start justify-between">
