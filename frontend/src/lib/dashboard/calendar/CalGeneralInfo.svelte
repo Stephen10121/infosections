@@ -68,6 +68,7 @@
                 bind:value={calendarDescriptionBindable}
                 placeholder="Enter calendar description"
                 rows={3}
+                id="calendar-description"
             />
         </div>
     </Card.Content>

@@ -1,6 +1,6 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
 import { getRequestEvent, query } from "$app/server";
-import type { CalendarDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
+import type { CalendarDBModel, CustomImageIFeedDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
 import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import * as v from "valibot";
@@ -119,4 +119,25 @@ export const getImageFeedById = query(v.string(), async (id) => {
     if (imageFeed.owner !== locals.user.id) return redirect(303, "/dashboard/image-feeds");
 
     return imageFeed;
+});
+
+export const getCustomImagesForIFeed = query(v.string(), async (id) => {
+    const { locals } = getRequestEvent();
+    let customImages: CustomImageIFeedDBModel[] = [];
+
+    if (!locals.user) return customImages;
+
+    try {
+        customImages = await locals.pb.collection('customImageIfeed').getFullList({
+            filter: `imageFeed ~ "${id}" && owner = "${locals.user.id}"`,
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to fetch image feed custom images.", err);
+        return redirect(303, "/dashboard/image-feeds");
+    }
+
+    return customImages;
 });

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { deleteCustomIFeedEvent } from "@/endpointCalls/deleteCustomIFeedEvent";
+    import { deleteCustomImageCommand } from "../../routes/(mainWebsite)/dashboard/image-feeds/IFeedCustomImageActions.remote";
     import { type CustomImageIFeedDBModel, type ImageFeedDBModel } from "@/utils";
     import Button, { buttonVariants } from "@/components/ui/button/button.svelte";
     import * as Sheet from "$lib/components/ui/sheet/index.js";
@@ -8,9 +8,9 @@
     import * as Empty from "$lib/components/ui/empty/index.js";
     import CreateCustomEvent from "./CreateCustomEvent.svelte";
     import Badge from "@/components/ui/badge/badge.svelte";
-    import { invalidateAll } from "$app/navigation";
     import * as Dialog from "@/components/ui/dialog";
     import { ImagePlus } from "@lucide/svelte";
+    import { toast } from "svelte-sonner";
 
     let { customImages, apiServer, imageFeeds, currentFeedID }: { customImages: CustomImageIFeedDBModel[], apiServer: string, imageFeeds: ImageFeedDBModel[], currentFeedID: string } = $props();
 
@@ -24,10 +24,12 @@
     }
 
     async function deleteEvent() {
-        const success = await deleteCustomIFeedEvent(customImages[selectedEventIndex].id);
-        if (success) {
+        const response = await deleteCustomImageCommand({ id: customImages[selectedEventIndex].id, currentFeedID });
+        if (response.error) {
+            toast.error(response.msg);
+        } else {
+            toast.success(response.msg);
             showEvent = false;
-            invalidateAll();
         }
     }
 </script>
@@ -79,7 +81,7 @@
             <Sheet.Description>Make changes to the image settings here. Click save when you're done.</Sheet.Description>
         </Sheet.Header>
         {#if showEvent}
-            <UpdateCustomEvent {currentFeedID} {customImages} {apiServer} {imageFeeds} {selectedEventIndex} />
+            <UpdateCustomEvent {currentFeedID} {customImages} {apiServer} {imageFeeds} {selectedEventIndex} close={() => {showEvent = false}} />
         {/if}
         <Sheet.Footer>
             <Button form="updateEventForm" type="submit">Save changes</Button>

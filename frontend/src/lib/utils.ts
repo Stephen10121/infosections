@@ -100,7 +100,7 @@ export interface EventDBModel extends RecordModel {
 }
 
 export interface CustomImageIFeedDBModel extends RecordModel {
-	picture: string,
+	picture: string | File,
 	registrationURL: string,
 	showLink: boolean,
 	linkText: string,
@@ -217,7 +217,6 @@ export type ImageFeedCustomizations = {
 	showEventDescription: boolean,
 	showEventRegistration: boolean,
 	feedDurationMS: number,
-	feedAnimationType: "slideshow" | "list",
 }
 
 export type ImageListCustomizations = {
@@ -242,7 +241,6 @@ export const defaultImageFeedCustomizations: ImageFeedCustomizations = {
 	showEventDescription: true,
 	showEventRegistration: true,
 	feedDurationMS: 7000,
-	feedAnimationType: "slideshow"
 }
 
 export type ImageFeedFilters = {

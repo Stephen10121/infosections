@@ -1,17 +1,11 @@
 <script lang="ts">
-    import { DateFormatter, getLocalTimeZone, parseDate, type DateValue } from "@internationalized/date";
-    import { clearFileInput, cn, type CustomImageIFeedDBModel, type ImageFeedDBModel } from "@/utils";
-    import { updateCustomIFeedEvent } from "@/endpointCalls/updateCustomIfeedEvent";
-    import Button, { buttonVariants } from "@/components/ui/button/button.svelte";
-    import Textarea from "@/components/ui/textarea/textarea.svelte";
-    import { Checkbox } from "$lib/components/ui/checkbox/index.js";
-    import { CalendarIcon, Upload, X } from "@lucide/svelte";
-    import * as Popover from "@/components/ui/popover";
-    import { Calendar } from "@/components/ui/calendar";
+    import { updateCustomImageForm } from "../../routes/(mainWebsite)/dashboard/image-feeds/IFeedCustomImageActions.remote";
+    import { clearFileInput, type CustomImageIFeedDBModel, type ImageFeedDBModel } from "@/utils";
+    import Button from "@/components/ui/button/button.svelte";
     import { Switch } from "@/components/ui/switch";
-    import { invalidateAll } from "$app/navigation";
     import { Input } from "@/components/ui/input";
     import { Label } from "@/components/ui/label";
+    import { Upload, X } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
 
     let {
@@ -20,22 +14,15 @@
         imageFeeds,
         currentFeedID,
         selectedEventIndex,
+        close
     }: {
         customImages: CustomImageIFeedDBModel[],
         apiServer: string,
         imageFeeds: ImageFeedDBModel[],
         currentFeedID: string,
         selectedEventIndex: number,
+        close: () => unknown
     } = $props();
-
-    // svelte-ignore state_referenced_locally
-    let includeInOtherFeeds = $state(imageFeeds.map((feed) => {
-        return {
-            id: feed.id,
-            name: feed.name,
-            include: customImages[selectedEventIndex].imageFeed.includes(feed.id)
-        }
-    }))
 
     let uploadNewEventPicture: File | null = $state(null);
     let uploadNewEventPictureLink = $derived(uploadNewEventPicture ? URL.createObjectURL(uploadNewEventPicture) : null);
@@ -60,35 +47,45 @@
         const files = event.target.files as File[];
         if (files.length === 0) return;
         uploadNewEventPicture = files[0];
-    }
-
-    async function updateEvent(event: SubmitEvent) {
-        event.preventDefault();
-
-        if (showLink && (linkText.length === 0 || registrationURL.length === 0)) {
-            toast.error("Missing Data", { description: "Please fill all required fields." });
-            return;
-        }
-        let included: string[] = [];
-        for (let i=0;i<includeInOtherFeeds.length;i++) {
-            if (includeInOtherFeeds[i].include) {
-                included.push(includeInOtherFeeds[i].id);
-            }
-        }
-
-        const savingChangesToast = toast.loading("Saving changes!");
-        const success = await updateCustomIFeedEvent(customImages[selectedEventIndex].id, linkText, registrationURL, included, showLink, uploadNewEventPicture, eventPictureLink);
-        if (success) {
-            clearFileInput(document.getElementById("imageUploaderIFeed"));
-            uploadNewEventPicture = null;
-            await invalidateAll();
-        }
-        toast.dismiss(savingChangesToast);
+        eventPictureLink = ""
     }
 </script>
 
-<form id="updateEventForm" onsubmit={updateEvent} class="grid flex-1 auto-rows-min gap-5 px-4 w-full overflow-y-auto">
+<form
+    id="updateEventForm"
+    {...updateCustomImageForm.enhance(async ({ submit, form }) => {
+        const savingChangesToast = toast.loading("Saving changes!");
+        try {
+            await submit();
+            toast.dismiss(savingChangesToast);
+            if (!updateCustomImageForm.fields.allIssues()) {
+                form.reset();
+                clearFileInput(document.getElementById("imageUploaderIFeed"));
+                uploadNewEventPicture = null;
+                close();
+                toast.success("Success.");
+            }
+        } catch (err) {
+            console.log(err);
+            toast.dismiss(savingChangesToast);
+            toast.error("An error occured.");
+        }
+    })}
+    enctype="multipart/form-data"
+    class="grid flex-1 auto-rows-min gap-5 px-4 w-full overflow-y-auto"
+>
+    {#if customImages[selectedEventIndex].id}
+        <input {...updateCustomImageForm.fields.id.as("hidden", customImages[selectedEventIndex].id)} />
+    {/if}
+    {#if currentFeedID}
+        <input {...updateCustomImageForm.fields.currentIFeedId.as("hidden", currentFeedID)} />
+    {/if}
+    <input {...updateCustomImageForm.fields.eventPictureLink.as("text")} value={eventPictureLink} class="sr-only" />
+
     <div class="flex items-start gap-4 flex-col">
+        {#each updateCustomImageForm.fields.allIssues() as anIssue (`AformsubmitIssue${anIssue.message}`)}
+            <p class="text-red-500">{anIssue.message}</p>
+        {/each}
         <div class="relative w-full">
             {#if eventPictureLink.length > 0 || uploadNewEventPicture}
                 <div class="relative group w-full">
@@ -122,7 +119,7 @@
                 <Upload class="h-4 w-4 mr-2" />
                 Upload Image
                 <input
-                    name="newEventImage"
+                    {...updateCustomImageForm.fields.uploadNewEventPicture.as("file")}
                     id="imageUploaderIFeed"
                     type="file"
                     accept="image/*"
@@ -140,6 +137,7 @@
     </div>
 
     <div class="flex items-center justify-between space-x-2">
+        <input {...updateCustomImageForm.fields.showLink.as("checkbox")} checked={showLink} type="checkbox" class="sr-only" />
         <Label for="showEvent" class="flex flex-col items-start space-y-1 cursor-pointer">
             <span class="font-medium">Show Link</span>
         </Label>
@@ -152,22 +150,22 @@
 
     {#if showLink}
         <div class="grid gap-2">
+            <input {...updateCustomImageForm.fields.linkText.as("text")} value={linkText} class="sr-only" />
             <Label for="name" class="text-end">Name*</Label>
             <Input name="eventName" id="name" bind:value={linkText} />
         </div>
 
         <div class="grid gap-2">
+            <input {...updateCustomImageForm.fields.registrationURL.as("text")} value={registrationURL} class="sr-only" />
             <Label for="registrationURL" class="text-end">Link URL*</Label>
             <Input name="eventRegistrationURL" id="registrationURL" bind:value={registrationURL} placeholder='e.g. "https://event123.example.com/register"' />
         </div>
     {/if}
 
-    {#each includeInOtherFeeds as imageFeed, index (`includeinifeed${imageFeed.id}`)}
-        {#if imageFeed.id !== currentFeedID}
-            <div class="flex items-center gap-3">
-                <Checkbox id="includeinfeed{imageFeed.id}" bind:checked={includeInOtherFeeds[index].include} />
-                <Label for="includeinfeed{imageFeed.id}">Include in "{imageFeed.name}" feed.</Label>
-            </div>
-        {/if}
+    {#each imageFeeds as imageFeed (`includeInAnImageFeed${imageFeed.id}`)}
+        <div class="flex items-center gap-3 {imageFeed.id === currentFeedID ? "sr-only" : ""}">
+            <input id="includehere{imageFeed.id}" {...updateCustomImageForm.fields.included.as("checkbox", imageFeed.id)} checked={customImages[selectedEventIndex].imageFeed.includes(imageFeed.id)} />
+            <Label for="includehere{imageFeed.id}">Include in "{imageFeed.name}" feed.</Label>
+        </div>
     {/each}
 </form>
