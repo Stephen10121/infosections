@@ -3,8 +3,6 @@
     import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
     import { Button, buttonVariants } from "@/components/ui/button";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
-    import { createIFeed } from "@/endpointCalls/createIFeed.js";
-    import { deleteIFeed } from "@/endpointCalls/deleteIFeed.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
     import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
     import * as Dialog from "@/components/ui/dialog/index";
@@ -17,6 +15,8 @@
     import { cn } from "@/utils";
     import { browser } from "$app/environment";
     import { page } from "$app/stores";
+    import { getMyImageFeeds } from "../backend.remote.js";
+    import { createImageFeedCommand, deleteImageFeedCommand } from "./imageFeedActions.remote.js";
 
     let { data } = $props();
 
@@ -28,16 +28,18 @@
     async function handleCreateIFeed() {
         if (newIFeedName && newIFeedDescription) {
             creatingIFeed = true;
-            const success = await createIFeed(newIFeedName, newIFeedDescription, data.stripeUrl, data.user.userEmail);
+            const response = await createImageFeedCommand({
+                name: newIFeedName,
+                description: newIFeedDescription
+            });
             creatingIFeed = false;
-            if (success) {
+            if (response.error) {
+                toast.error(response.msg);
+            } else {
+                toast.success(response.msg);
                 newIFeedDialogOpen = false;
                 newIFeedDescription = "";
                 newIFeedName = "";
-
-                let updating = toast.info("Updating IFeed List");
-                await invalidateAll();
-                toast.dismiss(updating);
             }
         } else {
             toast.error("Missing Fields.");
@@ -61,12 +63,14 @@
         if (deleteIFeedId === null) return
 
         const deletingCalendar = toast.loading("Deleting Image Feed");
-        const success = await deleteIFeed(deleteIFeedId);
+        const response = await deleteImageFeedCommand(deleteIFeedId);
         toast.dismiss(deletingCalendar);
         deleteIFeedId = null;
         
-        if (success) {
-            invalidateAll();
+        if (response.error) {
+            toast.error(response.msg);
+        } else {
+            toast.success(response.msg);
         }
     }
 
@@ -138,10 +142,10 @@
     </div>
 
     <div class="w-full h-full grid gap-4 xl:grid-cols-3 relative">
-        {#if data.imageFeeds.length === 0}
+        {#if (await getMyImageFeeds()).length === 0}
             <p class="absolute top-3 left-1/2 -translate-1/2 text-muted-foreground">No Image Feeds Yet.</p>
         {/if}
-        {#each data.imageFeeds as imageFeed (`imageFeedlist${imageFeed.id}`)}
+        {#each await getMyImageFeeds() as imageFeed (`imageFeedlist${imageFeed.id}`)}
             <Card.Root class="hover:shadow-lg transition-shadow">
                 <Card.Header>
                 <div class="flex items-start justify-between">

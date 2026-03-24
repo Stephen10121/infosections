@@ -1,8 +1,9 @@
 <script lang="ts">
-    import MetricCards from '@/dashboard/home/MetricCards.svelte';
-    import QuickActions from '@/dashboard/home/QuickActions.svelte';
-    import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
+    import { getAllUserEvents, getMyCalendars, getMyEventLists, getMyImageFeeds, getMyIntegrations } from './backend.remote.js';
     import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
+    import QuickActions from '@/dashboard/home/QuickActions.svelte';
+    import MetricCards from '@/dashboard/home/MetricCards.svelte';
+    import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
     import YourViews from '@/dashboard/home/YourViews.svelte';
 
     let { data } = $props();
@@ -19,29 +20,33 @@
     </div>
 
     <MetricCards
-        eventAmount={data.events.length}
-        eventListAmount={data.eventLists.length}
-        imageFeedsAmount={data.imageFeeds.length}
-        calendarsAmount={data.calendars.length}
+        eventAmount={(await getAllUserEvents()).length}
+        eventListAmount={(await getMyEventLists()).length}
+        imageFeedsAmount={(await getMyImageFeeds()).length}
+        calendarsAmount={(await getMyCalendars()).length}
     />
 
     <div class="grid gap-6 lg:grid-cols-3">
         <div class="lg:col-span-2 space-y-6">
             <YourViews
-                calendars={data.calendars}
-                imageFeeds={data.imageFeeds}
-                eventLists={data.eventLists}
+                calendars={await getMyCalendars()}
+                imageFeeds={await getMyImageFeeds()}
+                eventLists={await getMyEventLists()}
                 pb_url={data.pb_url}
             />
-            <UpcomingEvents events={data.events} />
+            <UpcomingEvents events={await getAllUserEvents()} />
         </div>
         <div>
             <div class="space-y-6" style="position: sticky;top:0px;">
                 <QuickActions />
-                <SyncStatus
-                    lastEventsFetch={data.user.lastEventsFetch}
-                    eventsAmount={data.events.length}
-                />
+                {#each await getMyIntegrations() as integration (`anIntegrationStatus${integration.id}`)}
+                    {#if integration.service === "planningcenter"}
+                        <SyncStatus
+                            lastEventsFetch={integration.lastEventsFetch}
+                            eventsAmount={(await getAllUserEvents()).filter((event) => event.service === "planningcenter").length}
+                        />
+                    {/if}
+                {/each}
             </div>
         </div>
     </div>

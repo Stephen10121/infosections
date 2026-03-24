@@ -2,19 +2,20 @@ import { dev } from "$app/environment";
 import { redirect } from "@sveltejs/kit";
 import type { AuthProviderInfo, RecordAuthResponse } from "pocketbase";
 import { config } from "dotenv";
-import { fetchFileFromURL } from "$lib/utils.js";
-import { newUserLoggedIn } from "@/newUserLoggedIn";
-import Stripe from "stripe";
+import { updateSpecificUserEvents } from "../(mainWebsite)/dashboard/backend.remote";
 
 config();
 
 export async function GET({ locals, url, cookies }) {
-    const expectedState = cookies.get("state");
-    const expectedVerifier = cookies.get("verifier");
+    const expectedState = cookies.get("integrationState");
+    const expectedVerifier = cookies.get("integrationVerifier");
+    const expectedName = cookies.get("integrationName");
 
-    if (!expectedState || !expectedVerifier) {
+    if (!expectedState || !expectedVerifier || !expectedName) {
         return redirect(303, "/");
     }
+
+    if (!locals.user) return redirect(303, "/");
 
     let redirectURL;
 
@@ -35,9 +36,9 @@ export async function GET({ locals, url, cookies }) {
         return redirect(303, "/");
     }
 
-    let provider: AuthProviderInfo;
+    let provider: AuthProviderInfo | undefined;
     try {
-        const authMethods = await locals.pb.collection("users").listAuthMethods({
+        const authMethods = await locals.pb.collection("integration").listAuthMethods({
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
@@ -48,7 +49,11 @@ export async function GET({ locals, url, cookies }) {
             return redirect(303, "/");
         }
     
-        provider = authMethods.oauth2.providers[0];
+        for (let i=0;i<authMethods.oauth2.providers.length;i++) {
+            if (authMethods.oauth2.providers[i].name === expectedName) {
+                provider = authMethods.oauth2.providers[i]
+            }
+        }
     } catch (err) {
         console.log("List auth methods error.", err);
         return redirect(303, "/");
@@ -63,104 +68,63 @@ export async function GET({ locals, url, cookies }) {
         console.log("Returned state does not match expected state.");
         return redirect(303, "/");
     }
-    
-    let res: RecordAuthResponse;
+
     try {
-        res = await locals.pb.collection("users").authWithOAuth2Code(provider.name, code, expectedVerifier, redirectURL, {
-            new: true
-        }, {
+        const record = await locals.pb.collection('integration').getFirstListItem(`service="${provider.name}" && owner ="${locals.user.id}"`, {
             headers: {
                 "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
             }
         });
 
-        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
-            path: "/"
-        })
+        if (record) {
+            return redirect(303, "/dashboard");
+        }
+    } catch (_err) {
+        //All Good. The record doesnt exist.
+    }
+    
+    try {
+        const token = await fetch("https://api.planningcenteronline.com/oauth/token", {
+            method: "POST",
+            headers: {
+                "Authorization": "Basic " + Buffer.from(`${process.env.PLANNING_CENTER_CLIENT_ID!}:${process.env.PLANNING_CENTER_CLIENT_SECRET!}`).toString("base64")
+            },
+            body: new URLSearchParams({
+                grant_type: "authorization_code",
+                code,
+                redirect_uri: redirectURL,
+                client_id: process.env.PLANNING_CENTER_CLIENT_ID!,
+                code_verifier: expectedVerifier
+            })
+        }).then(r => r.json());
+
+        const in89Days = new Date(new Date().setDate((new Date()).getDate() + 89));
+        const in1hour = new Date(new Date().setHours((new Date()).getHours() + 1));
+        const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
+
+        await locals.pb.collection("integration").create({
+            owner: locals.user.id,
+            service: provider.name,
+            refreshToken: token.refresh_token,
+            accessToken: token.access_token,
+            refreshTokenExpires: in89Days,
+            accessTokenExpires: in2hours,
+            lastEventsFetch: in1hour,
+            password: "12345678",
+            passwordConfirm: "12345678",
+            prettyName: provider.displayName,
+            status: "connected"
+        }, {
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
     } catch (err) {
         console.log("Error signing up with oath", err);
         return redirect(303, "/");
     }
 
-    const newUserRecord = locals.pb.authStore.record;
-    if (newUserRecord && res.meta) {
-        const in89Days = new Date(new Date().setDate((new Date()).getDate() + 89));
-        const in2hours = new Date(new Date().setHours((new Date()).getHours() + 2));
-        const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
-        if (newUserRecord.new) {
-            let stripeTrialSubscriptionUrl = "";
-            let stripeSubscriptionUrl = "";
-            let stripeCustomerID = "";
-
-            try {
-                const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
-                const customer = await stripe.customers.create({
-                    metadata: {
-                        internal_id: newUserRecord.id
-                    },
-                });
-
-                const session = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                    mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    customer: customer.id,
-                });
-        
-                const freeTrialSession = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
-                    mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    customer: customer.id,
-                    subscription_data: {
-                        trial_period_days: 14
-                    }
-                });
-        
-                stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
-                stripeSubscriptionUrl = session.url ? session.url : "";
-                stripeCustomerID = customer.id;
-            } catch (err) {
-                console.log(err);
-            }
-            
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                new: false,
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
-                accessLevel: "none",
-                customerId: stripeCustomerID,
-                subscriptionURL: stripeSubscriptionUrl,
-                freeTrialURL: stripeTrialSubscriptionUrl,
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
-                }
-            });
-
-            // Tells the backend that the user has subscribed.
-            await newUserLoggedIn(newUserRecord.id, newUserRecord.refreshToken);
-        } else {
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
-                authToken: res.meta.accessToken,
-                refreshToken: res.meta.refreshToken,
-                refreshTokenExpires: in89Days,
-                accessTokenExpires: in2hours,
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
-                }
-            });
-        }
-    }
+    await updateSpecificUserEvents();
 
     return redirect(303, "/dashboard");
 }

@@ -1,7 +1,6 @@
 import { error, json } from "@sveltejs/kit";
 import Stripe from "stripe";
 import { config } from "dotenv";
-import { userHasSubscribed } from "@/userSubscribed.js";
 
 config();
 
@@ -56,9 +55,6 @@ export async function POST({ request, locals }) {
                     }
                 });
 
-                // Tells the backend that the user has subscribed.
-                await userHasSubscribed(user.id, user.refreshToken);
-
                 break
             }
         case "customer.subscription.deleted": {
@@ -88,7 +84,7 @@ export async function POST({ request, locals }) {
     } catch (err) {
         console.log("[server] Error in the user subscription endpoint.", err);
 
-        return error(500);
+        return error(500, JSON.stringify(err));
     }
 
     return json({msg: "ok"});

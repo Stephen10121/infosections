@@ -1,22 +1,22 @@
 <script lang="ts">
+    import { createEventListCommand, deleteEventListCommand } from "./eventListActions.remote.js";
     import { Copy, MoreVertical, Plus, Trash2, Users } from "@lucide/svelte";
     import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
     import { Button, buttonVariants } from "@/components/ui/button";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
-    import { createEList } from "@/endpointCalls/createEList.js";
-    import { deleteEList } from "@/endpointCalls/deleteEList.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
     import NoEventListAvatar from "@/NoEventListAvatar.svelte";
     import * as Dialog from "@/components/ui/dialog/index";
+    import { getMyEventLists } from "../backend.remote.js";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
-    import { afterNavigate, invalidateAll } from "$app/navigation";
+    import { afterNavigate } from "$app/navigation";
     import { Label } from "@/components/ui/label";
     import { Input } from "@/components/ui/input";
-    import { toast } from "svelte-sonner";
-    import { cn } from "@/utils";
     import { browser } from "$app/environment";
+    import { toast } from "svelte-sonner";
     import { page } from "$app/stores";
+    import { cn } from "@/utils";
 
     let { data } = $props();
 
@@ -28,16 +28,19 @@
     async function handleCreateEList() {
         if (newEListName && newEListDescription) {
             creatingEList = true;
-            const success = await createEList(newEListName, newEListDescription, data.stripeUrl, data.user.userEmail);
+            const response = await createEventListCommand({
+                name: newEListName,
+                description: newEListDescription,
+            });
             creatingEList = false;
-            if (success) {
+            if (response.error) {
+                toast.error(response.msg);
+            } else {
                 newEListDialogOpen = false;
                 newEListDescription = "";
                 newEListName = "";
 
-                let updating = toast.info("Updating IFeed List");
-                await invalidateAll();
-                toast.dismiss(updating);
+                toast.success(response.msg);
             }
         } else {
             toast.error("Missing Fields.");
@@ -61,12 +64,14 @@
         if (deleteEListId === null) return
 
         const deletingEList = toast.loading("Deleting Event List");
-        const success = await deleteEList(deleteEListId);
+        const response = await deleteEventListCommand(deleteEListId);
         toast.dismiss(deletingEList);
         deleteEListId = null;
         
-        if (success) {
-            invalidateAll();
+        if (response.error) {
+            toast.error(response.msg);
+        } else {
+            toast.success(response.msg);
         }
     }
 
@@ -138,10 +143,10 @@
     </div>
 
     <div class="w-full h-full grid gap-4 xl:grid-cols-3 relative">
-        {#if data.eventLists.length === 0}
+        {#if (await getMyEventLists()).length === 0}
             <p class="absolute top-3 left-1/2 -translate-1/2 text-muted-foreground">No Event Lists Yet.</p>
         {/if}
-        {#each data.eventLists as eventList (`eventFeedlist${eventList.id}`)}
+        {#each await getMyEventLists() as eventList (`eventFeedlist${eventList.id}`)}
             <Card.Root class="hover:shadow-lg transition-shadow">
                 <Card.Header>
                 <div class="flex items-start justify-between">

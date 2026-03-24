@@ -20,7 +20,7 @@
             name: "Upcoming Events Synced",
             value: eventAmount,
             icon: Calendar,
-            description: "From Planning Center",
+            description: "From Your Integrations",
             accent: "text-blue-500",
             bgAccent: "bg-blue-500/10",
         },

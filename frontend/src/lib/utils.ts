@@ -2,9 +2,9 @@ import { clsx, type ClassValue } from "clsx";
 import type { RecordModel } from "pocketbase";
 import { toast } from "svelte-sonner";
 import { twMerge } from "tailwind-merge";
-import { updateSpecificUserEvents } from "./endpointCalls/updateSpecificUserEvents";
 import { invalidateAll } from "$app/navigation";
 import { Temporal } from "temporal-polyfill";
+import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/backend.remote";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -95,12 +95,13 @@ export interface EventDBModel extends RecordModel {
 	startTime: string,
 	endTime: string,
 	featured: boolean,
-	recurrence: string,
 	visibleInChurchCenter: boolean
+	recurrence: string,
+	service: "planningcenter"
 }
 
 export interface CustomImageIFeedDBModel extends RecordModel {
-	picture: string,
+	picture: string | File,
 	registrationURL: string,
 	showLink: boolean,
 	linkText: string,
@@ -117,7 +118,7 @@ export interface CalendarDBModel extends RecordModel {
 	password: string,
 	passwordEnabled: boolean,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	filters: CalendarFilters,
 	description: string,
@@ -130,7 +131,7 @@ export interface CalendarDBModel extends RecordModel {
 export interface ImageFeedDBModel extends RecordModel {
 	name: string,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	description: string,
 	displaySettings: ImageFeedCustomizations,
@@ -143,7 +144,7 @@ export interface ImageFeedDBModel extends RecordModel {
 export interface EventListDBModel extends RecordModel {
 	name: string,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	description: string,
 	displaySettings: ImageListCustomizations,
@@ -217,7 +218,6 @@ export type ImageFeedCustomizations = {
 	showEventDescription: boolean,
 	showEventRegistration: boolean,
 	feedDurationMS: number,
-	feedAnimationType: "slideshow" | "list",
 }
 
 export type ImageListCustomizations = {
@@ -242,7 +242,6 @@ export const defaultImageFeedCustomizations: ImageFeedCustomizations = {
 	showEventDescription: true,
 	showEventRegistration: true,
 	feedDurationMS: 7000,
-	feedAnimationType: "slideshow"
 }
 
 export type ImageFeedFilters = {
@@ -266,22 +265,34 @@ export const defaultEventListFilters: EventListFilters = {
 }
 
 export interface UserModel extends RecordModel {
-	userEmail: string,
-	username: string,
+	// userEmail: string,
+	// username: string,
 	name: string,
 	avatar: string,
-	subscriptionEmail: string
+	// subscriptionEmail: string
 	customerId: string,
 	priceId: string,
 	new: boolean,
-	authToken: string,
-	refreshToken: string,
+	// authToken: string,
+	// refreshToken: string,
 	accessLevel: "none" | "standard" | "premium",
-	refreshTokenExpires: number,
-	accessTokenExpires: number
-	lastEventsFetch: string
+	// refreshTokenExpires: number,
+	// accessTokenExpires: number
+	// lastEventsFetch: string
 	subscriptionURL: string
 	freeTrialURL: string
+}
+
+export interface IntegrationModel extends RecordModel {
+	prettyName: string,
+	owner: string,
+	service: "planningcenter" | "breeze" | "google" | "outlook"
+	refreshToken: string,
+	accessToken: string,
+	refreshTokenExpires: number,
+	accessTokenExpires: number
+	lastEventsFetch: string,
+	status: "connected" | "syncing" | "error" | "disconnected"
 }
 
 export function capitalizeFirstLetter(str: string) {
@@ -371,14 +382,12 @@ export function timeWhen(dateParam: Date | string | number) {
 
 export async function refreshingEvents() {
 	const refreshingToast = toast.loading("Refreshing events.");
-	const ok = await updateSpecificUserEvents();
-	if (ok) {
-		await invalidateAll();
-		toast.dismiss(refreshingToast);
-		toast.success("Refreshed Events");
+	const response = await updateSpecificUserEvents();
+	toast.dismiss(refreshingToast);
+	if (response.error) {
+		toast.error(response.msg);
 	} else {
-		toast.dismiss(refreshingToast);
-		toast.error("Failed to refresh Events");
+		toast.success(response.msg);
 	}
 }
 
@@ -483,4 +492,53 @@ export const TIMEZONES = [
 	"Australia/Perth",
 	"America/Sao_Paulo",
 	"Africa/Johannesburg"
+];
+
+export interface AvailableIntegration {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  icon: IntegrationModel["service"];
+  docsUrl: string;
+  comingSoon: boolean
+}
+
+export const availableIntegrations: AvailableIntegration[] = [
+	{
+		id: "planningcenter",
+		name: "Planning Center",
+		slug: "planningcenter",
+		description: "Sync events from Planning Center Calendar. Automatically imports services, events, and schedules.",
+		icon: "planningcenter",
+		docsUrl: "https://www.planningcenter.com/",
+		comingSoon: false,
+	},
+	{
+		id: "breeze",
+		name: "Breeze ChMS",
+		slug: "breeze",
+		description: "Connect with Breeze Church Management to sync your church events and calendar.",
+		icon: "breeze",
+		docsUrl: "https://www.breezechms.com/",
+		comingSoon: true,
+	},
+	{
+		id: "googlecalendar",
+		name: "Google Calendar",
+		slug: "google-calendar",
+		description: "Import events from Google Calendar. Supports multiple calendars and automatic sync.",
+		icon: "google",
+		docsUrl: "https://calendar.google.com/",
+		comingSoon: true,
+	},
+	{
+		id: "outlook",
+		name: "Outlook Calendar",
+		slug: "outlook",
+		description: "Sync events from Microsoft Outlook and Office 365 calendars.",
+		icon: "outlook",
+		docsUrl: "https://outlook.com/",
+		comingSoon: true,
+	},
 ];

@@ -66,7 +66,7 @@ export async function load({ params, locals }) {
     return {
         events,
         name: eventList.name,
-        logoLink: locals.pb.files.getURL(eventList, eventList.logo),
+        logoLink: locals.pb.files.getURL(eventList, eventList.logo.toString()),
         displaySettings: eventList.displaySettings,
         description: eventList.description,
         apiServer: process.env.PB_URL!,

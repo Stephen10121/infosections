@@ -4,13 +4,15 @@
     import Stats from "@/landingPage/Stats.svelte";
     import Hero from "@/landingPage/Hero.svelte";
     import CTA from "@/landingPage/CTA.svelte";
+
+    let { data } = $props();
 </script>
 
 <svelte:head>
     <title>InfoSections</title>
 </svelte:head>
 
-<Header />
+<Header loggedIn={data.user!==undefined} />
 <Hero />
 <Features />
 <Stats />

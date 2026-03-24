@@ -1,10 +1,15 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2 } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2, Flag, RefreshCw, Plus } from "@lucide/svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-    import { capitalizeFirstLetter, refreshingEvents, type UserModel } from "@/utils";
+    import { capitalizeFirstLetter, refreshingEvents, type IntegrationModel, type UserModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
+    import { getMyIntegrations } from "../../routes/(mainWebsite)/dashboard/backend.remote";
+    import AddIntegrationDialog from "./integrations/AddIntegrationDialog.svelte";
+    import BreezeIcon from "./integrations/BreezeIcon.svelte";
+    import IntegrationInfoDialog from "./integrations/IntegrationInfoDialog.svelte";
+    import StatusBadge from "./integrations/StatusBadge.svelte";
 
     let { 
         user,
@@ -33,6 +38,8 @@
     ];
 
     let userAccountDropdownOpen = $state(false);
+    let addIntegrationDropdownOpen = $state(false);
+    let selectedIntegration: IntegrationModel | null = $state(null);
 </script>
 
 <Sidebar.Root collapsible="icon" class="bg-card">
@@ -64,7 +71,11 @@
             <Sidebar.GroupLabel>Dashboard</Sidebar.GroupLabel>
             <Sidebar.Menu>
                 {#each navigation as item (item.title)}
-                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") || (pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"}>
+                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") || (pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"} onclick={() => {
+                        if (sidebar.openMobile) {
+                            sidebar.setOpenMobile(false);
+                        }
+                    }}>
                         {#snippet child({ props })}
                             <a href={item.url} {...props}>
                                 {#if item.icon}
@@ -77,7 +88,43 @@
                 {/each}
             </Sidebar.Menu>
         </Sidebar.Group>
+
+        {#if sidebar.open}
+            <Sidebar.Group>
+                <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
+                <Sidebar.GroupAction title="Add Integration" onclick={() => {
+                    addIntegrationDropdownOpen = true;
+                    if (sidebar.openMobile) {
+                        sidebar.setOpenMobile(false);
+                    }
+                }}>
+                    <Plus />
+                    <span class="sr-only">Add Project</span>
+                </Sidebar.GroupAction>
+                <Sidebar.Menu>
+                    {#each await getMyIntegrations() as integration (`anintegration${integration.id}`)}
+                        <Sidebar.MenuButton tooltipContent={integration.prettyName} class="text-muted-foreground hover:bg-ring/10 hover:text-foreground" onclick={() => {
+                            if (sidebar.openMobile) {
+                                sidebar.setOpenMobile(false);
+                            }
+                            selectedIntegration = integration;
+                        }}>
+                            {#if integration.service === "planningcenter"}
+                                <Flag />
+                            {:else if integration.service === "breeze"}
+                                <BreezeIcon />
+                            {:else}
+                                <RefreshCw />
+                            {/if}
+                            <span class="flex-1 truncate">{integration.prettyName}</span>
+                            <StatusBadge status={integration.status} />
+                        </Sidebar.MenuButton>
+                    {/each}
+                </Sidebar.Menu>
+            </Sidebar.Group>
+        {/if}
     </Sidebar.Content>
+
     <Sidebar.Footer>
         <Sidebar.Menu>
             <Sidebar.MenuItem>
@@ -91,12 +138,12 @@
                             >
                                 <Avatar.Root class="size-8 rounded-lg">
                                     <Avatar.Image src={userAvatar} alt={user.name} />
-                                    <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                                    <Avatar.Fallback class="rounded-lg">{user.name.split(" ").map((n) => n[0].toUpperCase()).join("")}</Avatar.Fallback>
                                 </Avatar.Root>
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-medium">{user.name}</span>
-                                    <span class="truncate text-xs">{user.userEmail}</span>
+                                    <span class="truncate text-xs">{user.email}</span>
                                 </div>
                                 <ChevronsUpDownIcon class="ml-auto size-4" />
                             </Sidebar.MenuButton>
@@ -112,12 +159,12 @@
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar.Root class="size-8 rounded-lg">
                                     <Avatar.Image src={userAvatar} alt={user.name} />
-                                    <Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+                                    <Avatar.Fallback class="rounded-lg">{user.name.split(" ").map((n) => n[0].toUpperCase()).join("")}</Avatar.Fallback>
                                 </Avatar.Root>
 
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="truncate font-medium">{user.name}</span>
-                                    <span class="truncate text-xs">{user.userEmail}</span>
+                                    <span class="truncate text-xs">{user.email}</span>
                                 </div>
                             </div>
                         </DropdownMenu.Label>
@@ -128,7 +175,7 @@
                             {#if user.accessLevel !== "none"}
                                 <DropdownMenu.Item>
                                     {#snippet child({ props })}
-                                        <a class="w-full h-full" href="{stripeCustomerPortal}?prefilled_email={user.userEmail}" target="_blank" {...props}>
+                                        <a class="w-full h-full" href="{stripeCustomerPortal}?prefilled_email={user.email}" target="_blank" {...props}>
                                             <CreditCardIcon class="data-highlighted:text-primary" />
                                             Billing
                                         </a>
@@ -179,3 +226,6 @@
     </Sidebar.Footer>
     <Sidebar.Rail />
 </Sidebar.Root>
+
+<AddIntegrationDialog bind:open={addIntegrationDropdownOpen} />
+<IntegrationInfoDialog bind:integration={selectedIntegration} />

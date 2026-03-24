@@ -1,6 +1,8 @@
 <script lang="ts">
     import { Button } from "@/components/ui/button";
     import { Calendar } from "@lucide/svelte";
+
+    let { loggedIn }: { loggedIn: boolean } = $props();
 </script>
 
 <header class="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,16 +19,14 @@
                 <a href="#about" class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About</a>
             </nav>
 
-            <div class="flex gap-1">
-                <form method="post">
-                    <Button type="submit" class="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
-                </form>
-            </div>
-
-            <!-- <div class="flex gap-3 items-center">
-                <Button href="/signup" class="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
-                <Button href="/signin" variant="outline">Login</Button>
-            </div> -->
+            {#if loggedIn}
+                <Button href="/dashboard" variant="outline">Dashboard</Button>
+            {:else}
+                <div class="flex gap-3 items-center">
+                    <Button href="/signup" class="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                    <Button href="/login" variant="outline">Login</Button>
+                </div>
+            {/if}
         </div>
     </div>
 </header>

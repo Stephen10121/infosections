@@ -12,18 +12,18 @@ import (
 func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 	se.Router.PATCH("/updateSpecificUserEvents/{id}", func(e *core.RequestEvent) error {
 		id := e.Request.PathValue("id")
-		authenticity := e.Request.Header.Get("X-PCO-Webhooks-Authenticity")
+		customerId := e.Request.Header.Get("X-PCO-Webhooks-Authenticity")
 
-		if len(id) == 0 || len(authenticity) == 0 {
+		if len(id) == 0 || len(customerId) == 0 {
 			return e.JSON(422, map[string]string{
 				"msg": "Missing parameters",
 			})
 		}
 
-		_, err := app.FindFirstRecordByFilter(
+		userRecord, err := app.FindFirstRecordByFilter(
 			"users",
-			"id = {:id} && authToken = {:authToken}",
-			dbx.Params{"id": id, "authToken": authenticity},
+			"id = {:id} && customerId = {:customerId}",
+			dbx.Params{"id": id, "customerId": customerId},
 		)
 
 		if err != nil {
@@ -34,14 +34,18 @@ func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 
 		functions.GetAndStoreNextThreeEvents(id, app)
 
-		record, err := app.FindRecordById("users", id)
+		integration, err := app.FindFirstRecordByFilter(
+			"integration",
+			"owner = {:owner}",
+			dbx.Params{"owner": userRecord.Id},
+		)
 		if err != nil {
 			return e.Error(500, "Internal Error", "Failed to update user.")
 		}
 
-		record.Set("lastEventsFetch", time.Now())
+		integration.Set("lastEventsFetch", time.Now())
 
-		err = app.Save(record)
+		err = app.Save(integration)
 		if err != nil {
 			return e.Error(500, "Internal Error", "Failed to update user.")
 		}

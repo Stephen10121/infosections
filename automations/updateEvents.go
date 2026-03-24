@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/Stephen10121/infosections/functions"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 )
 
@@ -27,14 +28,18 @@ func UpdateEventInstances(app *pocketbase.PocketBase) {
 		)
 		functions.GetAndStoreNextThreeEvents(users[i].Id, app)
 
-		record, err := app.FindRecordById("users", users[i].Id)
+		integration, err := app.FindFirstRecordByFilter(
+			"integration",
+			"owner = {:owner}",
+			dbx.Params{"owner": users[i].Id},
+		)
 		if err != nil {
 			continue
 		}
 
-		record.Set("lastEventsFetch", time.Now())
+		integration.Set("lastEventsFetch", time.Now())
 
-		err = app.Save(record)
+		err = app.Save(integration)
 		if err != nil {
 			continue
 		}

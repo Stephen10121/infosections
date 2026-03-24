@@ -56,7 +56,7 @@
     }
 
     $effect(() => {
-        if (api && displaySettings) {
+        if (api && displaySettings && displaySettings.feedDurationMS) {
             api.reInit(undefined, [Autoplay({
                 delay: displaySettings.feedDurationMS,
                 playOnInit: true,
