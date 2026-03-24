@@ -1,14 +1,13 @@
 <script lang="ts">
-    import { addIFeedIncludedCalendar, removeIFeedIncludedCalendar } from "./endpointCalls/updateIfeedIncludedCalendars";
+    import { removeIncludedCalendarsToIFeed, updateIncludedCalendarsToIFeed } from "../routes/(mainWebsite)/dashboard/image-feeds/IFeedIncludeCalActions.remote";
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import AnIncludedCalendar from "./AnIncludedCalendar.svelte";
     import * as Empty from "$lib/components/ui/empty/index.js";
     import { Button } from "@/components/ui/button";
-    import { invalidateAll } from "$app/navigation";
     import { type CalendarDBModel } from "@/utils";
     import { CalendarDays } from "@lucide/svelte";
-    import { toast } from "svelte-sonner";
     import ACalToAdd from "./ACalToAdd.svelte";
+    import { toast } from "svelte-sonner";
 
     let { 
         includedCalendars,
@@ -31,16 +30,34 @@
             return
         }
 
-        const success = await addIFeedIncludedCalendar(iFeedId, calsToAdd);
+        const updatingIncludedCalendars = toast.loading("Updating List", { duration: Number.POSITIVE_INFINITY });
+        const result = await updateIncludedCalendarsToIFeed({
+            currentFeedID: iFeedId,
+            calIds: calsToAdd
+        });
+        toast.dismiss(updatingIncludedCalendars);
         includeACalendarPopup = false;
 
-        if (success) invalidateAll();
+        if (result.error) {
+            toast.error(result.msg);
+        } else {
+            toast.success(result.msg);
+        }
     }
 
     async function removeCal(calId: string) {
-        const success = await removeIFeedIncludedCalendar(iFeedId, calId);
+        const removingCalToast = toast.loading("Removing included calendar", { duration: Number.POSITIVE_INFINITY });
+        const res = await removeIncludedCalendarsToIFeed({
+            currentFeedID: iFeedId,
+            calId
+        });
+        toast.dismiss(removingCalToast);
 
-        if (success) invalidateAll();
+        if (res.error) {
+            toast.error(res.msg);
+        } else {
+            toast.success(res.msg);
+        }
     }
 
     $effect(() => {

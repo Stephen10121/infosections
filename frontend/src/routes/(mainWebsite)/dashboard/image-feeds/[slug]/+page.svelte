@@ -16,6 +16,7 @@
     import { toast } from "svelte-sonner";
     import { onDestroy } from "svelte";
     import IFeedAdditionalImages from "@/dashboard/imageFeed/IFeedAdditionalImages.svelte";
+    import IFeedIncludedCalendars from "@/dashboard/imageFeed/IFeedIncludedCalendars.svelte";
 
     
     let { data } = $props();
@@ -132,6 +133,8 @@
 
             <div class="space-y-6">
                 <IFeedAdditionalImages feedId={selectedImageFeed.id} pb_url={data.pb_url} />
+
+                <IFeedIncludedCalendars feedId={selectedImageFeed.id} pb_url={data.pb_url} additionalCalendars={selectedImageFeed.additionalCalendars} />
             </div>
         </div>
 
