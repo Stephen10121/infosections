@@ -1,5 +1,5 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
-import { getRequestEvent, query } from "$app/server";
+import { command, getRequestEvent, query } from "$app/server";
 import type { CalendarDBModel, CustomImageIFeedDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
 import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
@@ -140,4 +140,34 @@ export const getCustomImagesForIFeed = query(v.string(), async (id) => {
     }
 
     return customImages;
+});
+
+export const updateSpecificUserEvents = command(async () => {
+    const { locals } = getRequestEvent();
+
+    if (!locals.user) {
+        return {
+            error: true,
+            msg: "No User."
+        }
+    }
+    
+    const response = await fetch(process.env.PB_URL + `updateSpecificUserEvents/${locals.user.id}`, {
+        method: 'PATCH',
+        headers: {
+            "X-PCO-Webhooks-Authenticity": locals.user.customerId
+        }
+    });
+    if (!response.ok) {
+        console.log(response);
+        return {
+            error: false,
+            msg: "Failed to refetch events."
+        }
+    }
+
+    return {
+        error: false,
+        msg: "Successful sync"
+    }
 });

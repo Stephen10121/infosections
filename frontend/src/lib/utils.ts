@@ -2,9 +2,9 @@ import { clsx, type ClassValue } from "clsx";
 import type { RecordModel } from "pocketbase";
 import { toast } from "svelte-sonner";
 import { twMerge } from "tailwind-merge";
-import { updateSpecificUserEvents } from "./endpointCalls/updateSpecificUserEvents";
 import { invalidateAll } from "$app/navigation";
 import { Temporal } from "temporal-polyfill";
+import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/backend.remote";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -381,14 +381,12 @@ export function timeWhen(dateParam: Date | string | number) {
 
 export async function refreshingEvents() {
 	const refreshingToast = toast.loading("Refreshing events.");
-	const ok = await updateSpecificUserEvents();
-	if (ok) {
-		await invalidateAll();
-		toast.dismiss(refreshingToast);
-		toast.success("Refreshed Events");
+	const response = await updateSpecificUserEvents();
+	toast.dismiss(refreshingToast);
+	if (response.error) {
+		toast.error(response.msg);
 	} else {
-		toast.dismiss(refreshingToast);
-		toast.error("Failed to refresh Events");
+		toast.success(response.msg);
 	}
 }
 
