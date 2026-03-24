@@ -71,7 +71,11 @@
             <Sidebar.GroupLabel>Dashboard</Sidebar.GroupLabel>
             <Sidebar.Menu>
                 {#each navigation as item (item.title)}
-                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") || (pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"}>
+                    <Sidebar.MenuButton tooltipContent={item.title} class={pathname === item.url || (pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") || (pathname.includes("/dashboard/image-feeds") && item.url === "/dashboard/image-feeds") || (pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists") ? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10" : "text-muted-foreground hover:bg-ring/10 hover:text-foreground"} onclick={() => {
+                        if (sidebar.openMobile) {
+                            sidebar.setOpenMobile(false);
+                        }
+                    }}>
                         {#snippet child({ props })}
                             <a href={item.url} {...props}>
                                 {#if item.icon}
@@ -85,30 +89,40 @@
             </Sidebar.Menu>
         </Sidebar.Group>
 
-        <Sidebar.Group>
-            <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
-            <Sidebar.GroupAction title="Add Integration" onclick={() => addIntegrationDropdownOpen = true}>
-                <Plus />
-                <span class="sr-only">Add Project</span>
-            </Sidebar.GroupAction>
-            <Sidebar.Menu>
-                {#each await getMyIntegrations() as integration (`anintegration${integration.id}`)}
-                    <Sidebar.MenuButton tooltipContent={integration.prettyName} class="text-muted-foreground hover:bg-ring/10 hover:text-foreground" onclick={() => {
-                        selectedIntegration = integration;
-                    }}>
-                        {#if integration.service === "planningcenter"}
-                            <Flag />
-                        {:else if integration.service === "breeze"}
-                            <BreezeIcon />
-                        {:else}
-                            <RefreshCw />
-                        {/if}
-                        <span class="flex-1 truncate">{integration.prettyName}</span>
-                        <StatusBadge status={integration.status} />
-                    </Sidebar.MenuButton>
-                {/each}
-            </Sidebar.Menu>
-        </Sidebar.Group>
+        {#if sidebar.open}
+            <Sidebar.Group>
+                <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
+                <Sidebar.GroupAction title="Add Integration" onclick={() => {
+                    addIntegrationDropdownOpen = true;
+                    if (sidebar.openMobile) {
+                        sidebar.setOpenMobile(false);
+                    }
+                }}>
+                    <Plus />
+                    <span class="sr-only">Add Project</span>
+                </Sidebar.GroupAction>
+                <Sidebar.Menu>
+                    {#each await getMyIntegrations() as integration (`anintegration${integration.id}`)}
+                        <Sidebar.MenuButton tooltipContent={integration.prettyName} class="text-muted-foreground hover:bg-ring/10 hover:text-foreground" onclick={() => {
+                            if (sidebar.openMobile) {
+                                sidebar.setOpenMobile(false);
+                            }
+                            selectedIntegration = integration;
+                        }}>
+                            {#if integration.service === "planningcenter"}
+                                <Flag />
+                            {:else if integration.service === "breeze"}
+                                <BreezeIcon />
+                            {:else}
+                                <RefreshCw />
+                            {/if}
+                            <span class="flex-1 truncate">{integration.prettyName}</span>
+                            <StatusBadge status={integration.status} />
+                        </Sidebar.MenuButton>
+                    {/each}
+                </Sidebar.Menu>
+            </Sidebar.Group>
+        {/if}
     </Sidebar.Content>
 
     <Sidebar.Footer>
