@@ -65,7 +65,7 @@ export const addAnIntegration = form(AddIntegrationData, async (integrationData)
 
     // We need to widen the oath scope for planning center oath.
     if (name === "planningcenter") {
-        params.set("scope", "calendar people");
+        params.set("scope", "calendar people services");
     }
 
     url2.search = params.toString();
