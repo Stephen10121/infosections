@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 )
 
@@ -14,14 +15,23 @@ import (
 func SendAPICall(method string, endpointURL string, body io.Reader, userId string, app *pocketbase.PocketBase) ([]byte, error) {
 	log.Println("Calling an api endpoint at planningcenter.")
 
-	record, err := app.FindRecordById("users", userId)
+	userRecord, err := app.FindRecordById("users", userId)
 	if err != nil {
 		return nil, errors.New("user doesnt exist.")
 	}
 
+	integration, err := app.FindFirstRecordByFilter(
+		"integration",
+		"owner = {:owner}",
+		dbx.Params{"owner": userRecord.Id},
+	)
+	if err != nil {
+		return nil, errors.New("user doesnt have planning center integration.")
+	}
+
 	// These next lines check if the current access token is valid or not. If not, we will fetch a new one.
 	now := time.Now()
-	accessTokenExpires := record.GetDateTime("accessTokenExpires").Time()
+	accessTokenExpires := integration.GetDateTime("accessTokenExpires").Time()
 	tokenExpired := accessTokenExpires.Sub(now).Seconds() < 10
 
 	if tokenExpired {
@@ -30,9 +40,13 @@ func SendAPICall(method string, endpointURL string, body io.Reader, userId strin
 			return nil, err
 		}
 
-		record, err = app.FindRecordById("users", userId)
+		integration, err = app.FindFirstRecordByFilter(
+			"integration",
+			"owner = {:owner}",
+			dbx.Params{"owner": userRecord.Id},
+		)
 		if err != nil {
-			return nil, errors.New("user doesnt exist.")
+			return nil, errors.New("user doesnt have planning center integration.")
 		}
 	}
 
@@ -42,7 +56,7 @@ func SendAPICall(method string, endpointURL string, body io.Reader, userId strin
 		body,
 	)
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+record.GetString("authToken"))
+	req.Header.Add("Authorization", "Bearer "+integration.GetString("accessToken"))
 
 	if err != nil {
 		return nil, err

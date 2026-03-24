@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Stephen10121/infosections/initializers"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 )
 
@@ -25,15 +26,24 @@ type NewAuthTokenResponse struct {
 // This function will go fetch a new access token. Once it recieves the token, it'll be added to the database right away.
 func NewAccessToken(base *pocketbase.PocketBase, userId string) error {
 	log.Println("Fetching a new access token!")
-	record, err := base.FindRecordById("users", userId)
+	userRecord, err := base.FindRecordById("users", userId)
 	if err != nil {
 		return errors.New("user doesnt exist")
+	}
+
+	integration, err := base.FindFirstRecordByFilter(
+		"integration",
+		"owner = {:owner}",
+		dbx.Params{"owner": userRecord.Id},
+	)
+	if err != nil {
+		return errors.New("user doesnt have planning center integration.")
 	}
 
 	data := map[string]string{
 		"client_id":     initializers.PlanningCenterClientId,
 		"client_secret": initializers.PlanningCenterClientSecret,
-		"refresh_token": record.GetString("refreshToken"),
+		"refresh_token": integration.GetString("refreshToken"),
 		"grant_type":    "refresh_token",
 	}
 
@@ -78,12 +88,12 @@ func NewAccessToken(base *pocketbase.PocketBase, userId string) error {
 	refreshTokenExpires := date.AddDate(0, 0, 89)
 	accessTokenExpires := date.Add(time.Duration(bodyStruct.ExpiresIn) * time.Second)
 
-	record.Set("refreshToken", bodyStruct.RefreshToken)
-	record.Set("authToken", bodyStruct.AccessToken)
-	record.Set("refreshTokenExpires", refreshTokenExpires)
-	record.Set("accessTokenExpires", accessTokenExpires)
+	integration.Set("refreshToken", bodyStruct.RefreshToken)
+	integration.Set("accessToken", bodyStruct.AccessToken)
+	integration.Set("refreshTokenExpires", refreshTokenExpires)
+	integration.Set("accessTokenExpires", accessTokenExpires)
 
-	err = base.Save(record)
+	err = base.Save(integration)
 	if err != nil {
 		return err
 	}
