@@ -95,8 +95,9 @@ export interface EventDBModel extends RecordModel {
 	startTime: string,
 	endTime: string,
 	featured: boolean,
-	recurrence: string,
 	visibleInChurchCenter: boolean
+	recurrence: string,
+	service: "planningcenter"
 }
 
 export interface CustomImageIFeedDBModel extends RecordModel {
