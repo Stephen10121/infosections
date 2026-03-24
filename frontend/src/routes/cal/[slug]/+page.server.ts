@@ -76,7 +76,7 @@ export async function load({ params, locals, cookies }) {
     return {
         events,
         name: calendar.name,
-        logoLink: locals.pb.files.getURL(calendar, calendar.logo),
+        logoLink: locals.pb.files.getURL(calendar, calendar.logo.toString()),
         displaySettings: calendar.displaySettings,
         filters: calendar.filters
     }

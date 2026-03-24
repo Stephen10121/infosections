@@ -126,7 +126,6 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
         }
 
         if (!updatedCalendar.avatarLink && updatedCalendar.newAvatar) {
-            //@ts-ignore
             data["logo"] = updatedCalendar.newAvatar;
         }
         

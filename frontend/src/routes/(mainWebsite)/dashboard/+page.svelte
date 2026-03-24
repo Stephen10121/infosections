@@ -4,7 +4,7 @@
     import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
     import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
     import YourViews from '@/dashboard/home/YourViews.svelte';
-    import { getMyCalendars, getMyImageFeeds } from './backend.remote.js';
+    import { getMyCalendars, getMyEventLists, getMyImageFeeds } from './backend.remote.js';
 
     let { data } = $props();
 </script>
@@ -21,7 +21,7 @@
 
     <MetricCards
         eventAmount={data.events.length}
-        eventListAmount={data.eventLists.length}
+        eventListAmount={(await getMyEventLists()).length}
         imageFeedsAmount={(await getMyImageFeeds()).length}
         calendarsAmount={(await getMyCalendars()).length}
     />
@@ -31,7 +31,7 @@
             <YourViews
                 calendars={await getMyCalendars()}
                 imageFeeds={await getMyImageFeeds()}
-                eventLists={data.eventLists}
+                eventLists={await getMyEventLists()}
                 pb_url={data.pb_url}
             />
             <UpcomingEvents events={data.events} />

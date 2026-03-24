@@ -1,4 +1,6 @@
 <script lang="ts">
+    import IFeedIncludedCalendars from "@/dashboard/imageFeed/IFeedIncludedCalendars.svelte";
+    import IFeedAdditionalImages from "@/dashboard/imageFeed/IFeedAdditionalImages.svelte";
     import IFeedDisplaySettings from "@/dashboard/imageFeed/IFeedDisplaySettings.svelte";
     import IFeedFilterSettings from "@/dashboard/imageFeed/IFeedFilterSettings.svelte";
     import IFeedQuickActions from "@/dashboard/imageFeed/IFeedQuickActions.svelte";
@@ -15,8 +17,6 @@
     import { ArrowLeft } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
     import { onDestroy } from "svelte";
-    import IFeedAdditionalImages from "@/dashboard/imageFeed/IFeedAdditionalImages.svelte";
-    import IFeedIncludedCalendars from "@/dashboard/imageFeed/IFeedIncludedCalendars.svelte";
 
     
     let { data } = $props();
@@ -24,7 +24,6 @@
     let selectedImageFeed = $derived(await getImageFeedById(data.selectedFeedId));
 
     let timeZone = $state(Temporal.Now.timeZoneId());
-    let nowDate = $derived(Temporal.Now.zonedDateTimeISO(timeZone));
     let uploadNewAvatar: File | null = $state(null);
     let saveChangesToast: string | number | null = $state(null);
 
@@ -126,7 +125,7 @@
 
                 <IFeedDisplaySettings displaySettings={selectedImageFeed.displaySettings} bind:changed={displaySettingsChanged} bind:displaySettingsPreview />
 
-                <IFeedPreviewCard {nowDate} displaySettings={displaySettingsPreview} feedId={selectedImageFeed.id} />
+                <IFeedPreviewCard displaySettings={displaySettingsPreview} feedId={selectedImageFeed.id} />
 
                 <IFeedFilterSettings filters={selectedImageFeed.filters} bind:changed={filterSettingsChanged} />
             </form>

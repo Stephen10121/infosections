@@ -103,7 +103,6 @@ export const updateImageFeedForm = form(UpdateImageFeedSchema, async (updatedIFe
         };
 
         if (!updatedIFeed.avatarLink && updatedIFeed.newAvatar) {
-            //@ts-ignore
             data["logo"] = updatedIFeed.newAvatar;
         }
         

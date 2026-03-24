@@ -117,7 +117,7 @@ export interface CalendarDBModel extends RecordModel {
 	password: string,
 	passwordEnabled: boolean,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	filters: CalendarFilters,
 	description: string,
@@ -130,7 +130,7 @@ export interface CalendarDBModel extends RecordModel {
 export interface ImageFeedDBModel extends RecordModel {
 	name: string,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	description: string,
 	displaySettings: ImageFeedCustomizations,
@@ -143,7 +143,7 @@ export interface ImageFeedDBModel extends RecordModel {
 export interface EventListDBModel extends RecordModel {
 	name: string,
 	owner: string,
-	logo: string,
+	logo: string | File,
 	visits: number,
 	description: string,
 	displaySettings: ImageListCustomizations,

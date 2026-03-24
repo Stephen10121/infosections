@@ -108,7 +108,7 @@ export async function load({ params, locals }) {
         events,
         customEvents,
         name: imageFeed.name,
-        logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo),
+        logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo.toString()),
         displaySettings: imageFeed.displaySettings,
         description: imageFeed.description,
         apiServer: process.env.PB_URL!,

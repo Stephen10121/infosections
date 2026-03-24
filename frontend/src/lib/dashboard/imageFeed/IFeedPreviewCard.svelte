@@ -10,8 +10,7 @@
         feedId
     }: {
         displaySettings: ImageFeedCustomizations,
-        feedId: string,
-        nowDate: Temporal.ZonedDateTime
+        feedId: string
     } = $props();
 
     let previewIFrame: HTMLIFrameElement | undefined = $state();
