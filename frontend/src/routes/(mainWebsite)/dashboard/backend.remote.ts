@@ -166,6 +166,7 @@ export const updateSpecificUserEvents = command(async () => {
         }
     }
 
+    getMyIntegrations().refresh();
     return {
         error: false,
         msg: "Successful sync"

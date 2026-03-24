@@ -3,6 +3,7 @@
     import * as Card from "@/components/ui/card/index";
     import { refreshingEvents } from "@/utils";
     import { LayoutList, ImageIcon, CalendarDays, RefreshCw } from "@lucide/svelte";
+    import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
 
     const actions = [
         {
@@ -39,10 +40,12 @@
                     <span class="text-xs">{action.name}</span>
                 </Button>
             {/each}
-            <Button variant="outline" class="h-auto flex-col gap-2 py-4 bg-transparent" onclick={refreshingEvents}>
-                <RefreshCw class="h-5 w-5 text-ring" />
-                <span class="text-xs">Sync Events</span>
-            </Button>
+            {#if (await getMyIntegrations()).filter((integration) => integration.service === "planningcenter").length > 0}
+                 <Button variant="outline" class="h-auto flex-col gap-2 py-4 bg-transparent" onclick={refreshingEvents}>
+                    <RefreshCw class="h-5 w-5 text-ring" />
+                    <span class="text-xs">Sync Planning Center</span>
+                </Button>
+            {/if}
         </div>
     </Card.Content>
 </Card.Root>

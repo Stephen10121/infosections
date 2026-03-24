@@ -20,7 +20,7 @@ func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 			})
 		}
 
-		_, err := app.FindFirstRecordByFilter(
+		userRecord, err := app.FindFirstRecordByFilter(
 			"users",
 			"id = {:id} && customerId = {:customerId}",
 			dbx.Params{"id": id, "customerId": customerId},
@@ -34,14 +34,18 @@ func UpdateSpecificUserEvents(se *core.ServeEvent, app *pocketbase.PocketBase) {
 
 		functions.GetAndStoreNextThreeEvents(id, app)
 
-		record, err := app.FindRecordById("users", id)
+		integration, err := app.FindFirstRecordByFilter(
+			"integration",
+			"owner = {:owner}",
+			dbx.Params{"owner": userRecord.Id},
+		)
 		if err != nil {
 			return e.Error(500, "Internal Error", "Failed to update user.")
 		}
 
-		record.Set("lastEventsFetch", time.Now())
+		integration.Set("lastEventsFetch", time.Now())
 
-		err = app.Save(record)
+		err = app.Save(integration)
 		if err != nil {
 			return e.Error(500, "Internal Error", "Failed to update user.")
 		}

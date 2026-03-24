@@ -4,7 +4,7 @@
     import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
     import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
     import YourViews from '@/dashboard/home/YourViews.svelte';
-    import { getMyCalendars, getMyEventLists, getMyImageFeeds } from './backend.remote.js';
+    import { getMyCalendars, getMyEventLists, getMyImageFeeds, getMyIntegrations } from './backend.remote.js';
 
     let { data } = $props();
 </script>
@@ -39,10 +39,14 @@
         <div>
             <div class="space-y-6" style="position: sticky;top:0px;">
                 <QuickActions />
-                <SyncStatus
-                    lastEventsFetch={data.user.lastEventsFetch}
-                    eventsAmount={data.events.length}
-                />
+                {#each await getMyIntegrations() as integration (`anIntegrationStatus${integration.id}`)}
+                    {#if integration.service === "planningcenter"}
+                        <SyncStatus
+                            lastEventsFetch={integration.lastEventsFetch}
+                            eventsAmount={data.events.filter((event) => event.service === "planningcenter").length}
+                        />
+                    {/if}
+                {/each}
             </div>
         </div>
     </div>
