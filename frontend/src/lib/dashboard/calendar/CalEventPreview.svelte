@@ -14,6 +14,7 @@
 
 <Event calendarCustomizations={displaySettings} event={{
     recurrence: "",
+    service: "planningcenter",
     id: "blankEvent",
     recEventId: "blankRecEvent",
     name: "Event Info Preview",

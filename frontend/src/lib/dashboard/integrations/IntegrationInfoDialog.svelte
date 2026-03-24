@@ -1,21 +1,22 @@
 <script lang="ts">
     import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { availableIntegrations, timeWhen, type IntegrationModel } from "@/utils";
+    import { availableIntegrations, refreshingEvents, timeWhen, type IntegrationModel } from "@/utils";
     import IntegrationIcon from "./IntegrationIcon.svelte";
     import StatusBadge from "./StatusBadge.svelte";
     import { Button } from "@/components/ui/button";
     import { ExternalLink, Loader2, RefreshCw, Trash2 } from "@lucide/svelte";
     import { removeAnIntegration } from "../../../routes/(mainWebsite)/dashboard/integrations.remote";
     import { toast } from "svelte-sonner";
+    import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
 
     let { integration = $bindable() }: { integration: IntegrationModel | null } = $props();
 
-    function handleSync() {
-
-    }
-
-    function removeIntegration() {
-
+    async function handleSync() {
+        if (integration?.service === "planningcenter") {
+            await refreshingEvents();
+            const myIntegrations = (await getMyIntegrations()).filter((int) => int.service === "planningcenter")
+            integration = myIntegrations.length > 0 ? myIntegrations[0] : null;
+        }
     }
 
     let syncing = $state(false);
@@ -44,7 +45,7 @@
 
                 <div class="flex items-center justify-between">
                     <span class="text-sm text-muted-foreground">Next sync event</span>
-                    <span class="text-sm">{timeWhen(new Date(integration.lastEventsFetch))}</span>
+                    <span class="text-sm">{timeWhen((new Date(integration.lastEventsFetch)).setHours((new Date(integration.lastEventsFetch)).getHours() + 1))}</span>
                 </div>
 
                 {#if integration.eventsCount !== undefined}

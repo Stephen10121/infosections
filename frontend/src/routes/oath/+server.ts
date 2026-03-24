@@ -2,6 +2,7 @@ import { dev } from "$app/environment";
 import { redirect } from "@sveltejs/kit";
 import type { AuthProviderInfo, RecordAuthResponse } from "pocketbase";
 import { config } from "dotenv";
+import { updateSpecificUserEvents } from "../(mainWebsite)/dashboard/backend.remote";
 
 config();
 
@@ -122,6 +123,8 @@ export async function GET({ locals, url, cookies }) {
         console.log("Error signing up with oath", err);
         return redirect(303, "/");
     }
+
+    await updateSpecificUserEvents();
 
     return redirect(303, "/dashboard");
 }

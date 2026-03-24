@@ -1,10 +1,10 @@
 <script lang="ts">
-    import MetricCards from '@/dashboard/home/MetricCards.svelte';
-    import QuickActions from '@/dashboard/home/QuickActions.svelte';
-    import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
+    import { getAllUserEvents, getMyCalendars, getMyEventLists, getMyImageFeeds, getMyIntegrations } from './backend.remote.js';
     import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
+    import QuickActions from '@/dashboard/home/QuickActions.svelte';
+    import MetricCards from '@/dashboard/home/MetricCards.svelte';
+    import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
     import YourViews from '@/dashboard/home/YourViews.svelte';
-    import { getMyCalendars, getMyEventLists, getMyImageFeeds, getMyIntegrations } from './backend.remote.js';
 
     let { data } = $props();
 </script>
@@ -20,7 +20,7 @@
     </div>
 
     <MetricCards
-        eventAmount={data.events.length}
+        eventAmount={(await getAllUserEvents()).length}
         eventListAmount={(await getMyEventLists()).length}
         imageFeedsAmount={(await getMyImageFeeds()).length}
         calendarsAmount={(await getMyCalendars()).length}
@@ -34,7 +34,7 @@
                 eventLists={await getMyEventLists()}
                 pb_url={data.pb_url}
             />
-            <UpcomingEvents events={data.events} />
+            <UpcomingEvents events={await getAllUserEvents()} />
         </div>
         <div>
             <div class="space-y-6" style="position: sticky;top:0px;">
@@ -43,7 +43,7 @@
                     {#if integration.service === "planningcenter"}
                         <SyncStatus
                             lastEventsFetch={integration.lastEventsFetch}
-                            eventsAmount={data.events.filter((event) => event.service === "planningcenter").length}
+                            eventsAmount={(await getAllUserEvents()).filter((event) => event.service === "planningcenter").length}
                         />
                     {/if}
                 {/each}

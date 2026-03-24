@@ -1,6 +1,6 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
 import { command, getRequestEvent, query } from "$app/server";
-import type { CalendarDBModel, CustomImageIFeedDBModel, EventListDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
+import type { CalendarDBModel, CustomImageIFeedDBModel, EventDBModelPrivate, EventListDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
 import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import * as v from "valibot";
@@ -167,6 +167,7 @@ export const updateSpecificUserEvents = command(async () => {
     }
 
     getMyIntegrations().refresh();
+    getAllUserEvents().refresh();
     return {
         error: false,
         msg: "Successful sync"
@@ -218,4 +219,25 @@ export const getEventListById = query(v.string(), async (id) => {
     if (eventList.owner !== locals.user.id) return redirect(303, "/dashboard/event-lists");
 
     return eventList;
+});
+
+export const getAllUserEvents = query(async () => {
+    const { locals } = getRequestEvent();
+    let events: EventDBModelPrivate[] = [];
+
+    if (!locals.user) return events;
+
+    try {
+        events = await locals.pb.collection('events').getFullList({
+            filter: `owner="${locals.user.id}"`,
+            sort: 'startTime',
+            headers: {
+                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to events.", err);
+    }
+
+    return events;
 });

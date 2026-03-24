@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { navigating } from '$app/state';
-    import DashboardHeader from '@/dashboard/DashboardHeader.svelte';
+    import { getMyCalendars, getMyEventLists, getMyImageFeeds } from './backend.remote.js';
     import DashboardIsNavigating from '@/dashboard/DashboardIsNavigating.svelte';
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import DashboardSidebar from '@/dashboard/DashboardSidebar.svelte';
+    import DashboardHeader from '@/dashboard/DashboardHeader.svelte';
+	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import { afterNavigate } from '$app/navigation';
     import { browser } from '$app/environment';
-    import { getMyCalendars, getMyEventLists, getMyImageFeeds } from './backend.remote.js';
+    import { navigating } from '$app/state';
 
 	let { children, data } = $props();
 
