@@ -265,20 +265,12 @@ export const defaultEventListFilters: EventListFilters = {
 }
 
 export interface UserModel extends RecordModel {
-	// userEmail: string,
-	// username: string,
 	name: string,
 	avatar: string,
-	// subscriptionEmail: string
 	customerId: string,
 	priceId: string,
 	new: boolean,
-	// authToken: string,
-	// refreshToken: string,
 	accessLevel: "none" | "standard" | "premium",
-	// refreshTokenExpires: number,
-	// accessTokenExpires: number
-	// lastEventsFetch: string
 	subscriptionURL: string
 	freeTrialURL: string
 }
