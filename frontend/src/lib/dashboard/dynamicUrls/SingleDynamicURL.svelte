@@ -54,7 +54,7 @@
         )}
     >
         <Collapsible.Trigger class={buttonVariants({ variant: "ghost", class: "h-full" })}>
-            <div class="w-full flex items-center gap-4 p-4 text-left">
+            <div id="aDynamicURL{url.id}" class="w-full flex items-center gap-4 p-4 text-left">
                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                     <Link2 class="h-5 w-5 text-primary" />
                 </div>

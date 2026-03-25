@@ -459,8 +459,10 @@ export interface DynamicURLModel extends RecordModel {
 	enableWeekSheet: boolean,
 	overrideRedirectTo: string
 	enableOverrideRedirect: boolean,
-	disableURL: boolean;
-	refs: URLRefHits[]
+	disableURL: boolean,
+	refs: URLRefHits[],
+	created: string,
+	updated: string,
 }
 
 export const TIMEZONES = [

@@ -25,7 +25,6 @@
                 toast.error(response.msg);
             } else {
                 toast.success(response.msg);
-                invalidateAll();
             }
         } catch(err) {
             console.log(err);
@@ -83,7 +82,6 @@
                 toast.error(response.msg);
             } else {
                 toast.success(response.msg);
-                invalidateAll();
             }
         } catch (err) {
             toast.dismiss(loading);

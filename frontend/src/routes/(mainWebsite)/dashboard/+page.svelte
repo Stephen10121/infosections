@@ -1,52 +1,64 @@
 <script lang="ts">
-    import { getAllUserEvents, getMyCalendars, getMyEventLists, getMyImageFeeds, getMyIntegrations } from './backend.remote.js';
-    import UpcomingEvents from '@/dashboard/home/UpcomingEvents.svelte';
-    import QuickActions from '@/dashboard/home/QuickActions.svelte';
-    import MetricCards from '@/dashboard/home/MetricCards.svelte';
-    import SyncStatus from '@/dashboard/home/SyncStatus.svelte';
-    import YourViews from '@/dashboard/home/YourViews.svelte';
+    import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getAllUserEvents } from './backend.remote.js';
+    import UpcomingEvents from '@/dashboard/homePage/UpcomingEvents.svelte';
+    import RecentActivity from '@/dashboard/homePage/RecentActivity.svelte';
+    import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
 
     let { data } = $props();
+
+    const [
+        myCalendars,
+        myImageFeeds,
+        myEventLists,
+        myDynamicURLs,
+        allUserEvents
+    ] = $derived(await Promise.all([
+        getMyCalendars(),
+        getMyImageFeeds(),
+        getMyEventLists(),
+        getMyDynamicURLS(),
+        getAllUserEvents()
+    ]));
 </script>
 
 <svelte:head>
     <title>Dashboard | InfoSections</title>
 </svelte:head>
 
-<div class="w-full h-full space-y-6">
-    <div class="flex flex-col gap-1">
-        <h1 class="text-2xl font-bold text-foreground">Hello {data.user.name}!</h1>
-        <p class="text-muted-foreground">Here's an overview of your events and activity.</p>
-    </div>
+<div class="w-full h-full">
+    <div class="space-y-8">
+        <section>
+            <h2 class="text-2xl font-bold tracking-tight text-foreground">
+                Hello, {data.user.name}!
+            </h2>
+            <p class="text-muted-foreground mt-1">
+                {"Here's an overview of your events and activity."}
+            </p>
+        </section>
 
-    <MetricCards
-        eventAmount={(await getAllUserEvents()).length}
-        eventListAmount={(await getMyEventLists()).length}
-        imageFeedsAmount={(await getMyImageFeeds()).length}
-        calendarsAmount={(await getMyCalendars()).length}
-    />
+        <MetricCards
+            {myCalendars}
+            {myDynamicURLs}
+            {myEventLists}
+            {myImageFeeds}
+            {allUserEvents}
+        />
 
-    <div class="grid gap-6 lg:grid-cols-3">
-        <div class="lg:col-span-2 space-y-6">
-            <YourViews
-                calendars={await getMyCalendars()}
-                imageFeeds={await getMyImageFeeds()}
-                eventLists={await getMyEventLists()}
-                pb_url={data.pb_url}
-            />
-            <UpcomingEvents events={await getAllUserEvents()} />
-        </div>
-        <div>
-            <div class="space-y-6" style="position: sticky;top:0px;">
-                <QuickActions />
-                {#each await getMyIntegrations() as integration (`anIntegrationStatus${integration.id}`)}
-                    {#if integration.service === "planningcenter"}
-                        <SyncStatus
-                            lastEventsFetch={integration.lastEventsFetch}
-                            eventsAmount={(await getAllUserEvents()).filter((event) => event.service === "planningcenter").length}
-                        />
-                    {/if}
-                {/each}
+        <!-- <FeatureSummary /> -->
+
+        <div class="grid gap-6 lg:grid-cols-3">
+            <div class="lg:col-span-2 space-y-6">
+                <UpcomingEvents />
+                <RecentActivity
+                    {myCalendars}
+                    {myDynamicURLs}
+                    {myEventLists}
+                    {myImageFeeds}
+                />
+            </div>
+            <div class="space-y-6">
+                <!-- <QuickActions /> -->
+                <!-- <IntegrationStatus integration={mockIntegration} eventsAmount={mockMetrics.eventAmount} /> -->
             </div>
         </div>
     </div>
