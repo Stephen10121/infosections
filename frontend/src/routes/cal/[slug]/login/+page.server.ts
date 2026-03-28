@@ -53,6 +53,6 @@ export const actions = {
             path: "/"
         });
 
-        return { success: true }
+        return redirect(303, `/cal/${params.slug}`);
     }
 };
