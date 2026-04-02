@@ -1,15 +1,13 @@
 <script lang="ts">
-    import IFeedIncludedCalendars from "@/dashboard/imageFeed/IFeedIncludedCalendars.svelte";
-    import IFeedAdditionalImages from "@/dashboard/imageFeed/IFeedAdditionalImages.svelte";
-    import IFeedDisplaySettings from "@/dashboard/imageFeed/IFeedDisplaySettings.svelte";
-    import IFeedFilterSettings from "@/dashboard/imageFeed/IFeedFilterSettings.svelte";
-    import IFeedQuickActions from "@/dashboard/imageFeed/IFeedQuickActions.svelte";
-    import IFeedPreviewCard from "@/dashboard/imageFeed/IFeedPreviewCard.svelte";
-    import IFeedGeneralInfo from "@/dashboard/imageFeed/IFeedGeneralInfo.svelte";
-    import IFeedStatistics from "@/dashboard/imageFeed/IFeedStatistics.svelte";
+    import EListDisplaySettings from "@/dashboard/eventList/EListDisplaySettings.svelte";
+    import EListFilterSettings from "@/dashboard/eventList/EListFilterSettings.svelte";
+    import EListQuickActions from "@/dashboard/eventList/EListQuickActions.svelte";
+    import EListGeneralInfo from "@/dashboard/eventList/EListGeneralInfo.svelte";
+    import EListStatistics from "@/dashboard/eventList/EListStatistics.svelte";
+    import EListPreview from "@/dashboard/eventList/EListPreview.svelte";
     import { updateEventListForm } from "../eventListActions.remote.js";
-    import IFeedAvatar from "@/dashboard/imageFeed/IFeedAvatar.svelte";
-    import IFeedShare from "@/dashboard/imageFeed/IFeedShare.svelte";
+    import EListAvatar from "@/dashboard/eventList/EListAvatar.svelte";
+    import EListShare from "@/dashboard/eventList/EListShare.svelte";
     import { getEventListById } from "../../backend.remote.js";
     import { Button } from "@/components/ui/button";
     import { Temporal } from "temporal-polyfill";
@@ -17,14 +15,6 @@
     import { ArrowLeft } from "@lucide/svelte";
     import { toast } from "svelte-sonner";
     import { onDestroy } from "svelte";
-    import EListAvatar from "@/dashboard/eventList/EListAvatar.svelte";
-    import EListGeneralInfo from "@/dashboard/eventList/EListGeneralInfo.svelte";
-    import EListDisplaySettings from "@/dashboard/eventList/EListDisplaySettings.svelte";
-    import EListFilterSettings from "@/dashboard/eventList/EListFilterSettings.svelte";
-    import EListPreview from "@/dashboard/eventList/EListPreview.svelte";
-    import EListShare from "@/dashboard/eventList/EListShare.svelte";
-    import EListStatistics from "@/dashboard/eventList/EListStatistics.svelte";
-    import EListQuickActions from "@/dashboard/eventList/EListQuickActions.svelte";
 
     
     let { data } = $props();
@@ -32,7 +22,6 @@
     let selectedEventList = $derived(await getEventListById(data.selectedlistId));
 
     let timeZone = $state(Temporal.Now.timeZoneId());
-    let nowDate = $derived(Temporal.Now.zonedDateTimeISO(timeZone));
     let uploadNewAvatar: File | null = $state(null);
     let saveChangesToast: string | number | null = $state(null);
 
@@ -87,7 +76,7 @@
 
 <div class="max-w-5xl mx-auto space-y-6 isolate">
     <div class="flex items-center gap-4">
-        <Button variant="ghost" size="icon" href="/dashboard/image-feeds">
+        <Button variant="ghost" size="icon" href="/dashboard/event-lists">
             <ArrowLeft class="h-5 w-5" />
         </Button>
         <div>

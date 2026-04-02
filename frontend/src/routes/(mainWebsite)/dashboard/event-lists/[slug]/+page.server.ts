@@ -1,5 +1,3 @@
-import type { EventListDBModel } from '@/utils.js';
-import { redirect } from '@sveltejs/kit';
 import { config } from "dotenv";
 
 config();
@@ -10,6 +8,6 @@ export async function load({ params, parent }) {
 
     return {
         selectedlistId: slug,
-        apiServer: process.env.PB_URL!
+        apiServer: process.env["PB_URL"]!
     }
 }

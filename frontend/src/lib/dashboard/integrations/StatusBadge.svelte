@@ -22,7 +22,9 @@
     let config = $derived(statusConfig[status]);
 </script>
 
-<Badge variant={config.variant} class={cn("text-[10px] px-1.5 py-0 h-5 gap-1", config.className)}>
-    <config.icon class={cn("h-3 w-3", status === "syncing" && "animate-spin")} />
-    {config.label}
-</Badge>
+{#if config}
+    <Badge variant={config.variant} class={cn("text-[10px] px-1.5 py-0 h-5 gap-1", config.className)}>
+        <config.icon class={cn("h-3 w-3", status === "syncing" && "animate-spin")} />
+        {config.label}
+    </Badge>
+{/if}
