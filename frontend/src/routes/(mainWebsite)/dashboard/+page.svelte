@@ -4,6 +4,7 @@
     import RecentActivity from '@/dashboard/homePage/RecentActivity.svelte';
     import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
     import QuickActions from '@/dashboard/homePage/QuickActions.svelte';
+    import IntegrationStatus from '@/dashboard/homePage/IntegrationStatus.svelte';
 
     let { data } = $props();
 
@@ -61,7 +62,7 @@
             </div>
             <div class="space-y-6">
                 <QuickActions />
-                <!-- <IntegrationStatus integration={mockIntegration} eventsAmount={mockMetrics.eventAmount} /> -->
+                <IntegrationStatus {myIntegrations} {allUserEvents} />
             </div>
         </div>
     </div>
