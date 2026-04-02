@@ -1,0 +1,48 @@
+{
+	"name": "frontend",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"stripe-dev": "stripe listen --forward-to localhost:5173/api/webhook/stripe"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^7.0.0",
+		"@sveltejs/kit": "^2.50.2",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@tailwindcss/vite": "^4.1.18",
+		"svelte": "^5.54.0",
+		"svelte-check": "^4.4.2",
+		"tailwindcss": "^4.1.18",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1",
+		"@internationalized/date": "^3.10.0",
+		"@lucide/svelte": "^0.561.0",
+		"@types/node": "^24.8.1",
+		"bits-ui": "^2.15.5",
+		"clsx": "^2.1.1",
+		"embla-carousel-autoplay": "^8.6.0",
+		"embla-carousel-svelte": "^8.6.0",
+		"svelte-sonner": "^1.0.5",
+		"tailwind-merge": "^3.3.1",
+		"tailwind-variants": "^3.2.2",
+		"temporal-polyfill": "^0.3.0",
+		"tw-animate-css": "^1.4.0",
+		"vaul-svelte": "^1.0.0-next.7"
+	},
+	"dependencies": {
+		"@stripe/stripe-js": "^8.1.0",
+		"@sveltejs/adapter-node": "^5.4.0",
+		"dotenv": "^17.2.3",
+		"mode-watcher": "^1.1.0",
+		"pocketbase": "^0.26.2",
+		"stripe": "^18.0.0",
+		"valibot": "^1.2.0"
+	}
+}
