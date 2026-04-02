@@ -5,8 +5,12 @@
     import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
     import QuickActions from '@/dashboard/homePage/QuickActions.svelte';
     import IntegrationStatus from '@/dashboard/homePage/IntegrationStatus.svelte';
+    import FeatureSummary from '@/dashboard/homePage/FeatureSummary.svelte';
+    import { Temporal } from 'temporal-polyfill';
 
     let { data } = $props();
+
+    let timeZone = $state(Temporal.Now.timeZoneId());
 
     const [
         myCalendars,
@@ -48,7 +52,14 @@
             {allUserEvents}
         />
 
-        <!-- <FeatureSummary /> -->
+        <FeatureSummary
+            pb_url={data.pb_url}
+            {timeZone}
+            {myCalendars}
+            {myDynamicURLs}
+            {myEventLists}
+            {myImageFeeds}
+        />
 
         <div class="grid gap-6 lg:grid-cols-3">
             <div class="lg:col-span-2 space-y-6">
