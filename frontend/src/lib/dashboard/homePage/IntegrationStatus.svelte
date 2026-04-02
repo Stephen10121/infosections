@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { timeAgo, timeWhen, type EventDBModelPrivate, type IntegrationModel } from "@/utils";
-    import { Button } from "@/components/ui/button";
-    import * as Card from "@/components/ui/card/index";
-    import { AlertCircle, CheckCircle2, Cloud, RefreshCw } from "@lucide/svelte";
     import { updateSpecificUserEvents } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
+    import { timeAgo, timeWhen, type EventDBModelPrivate, type IntegrationModel } from "@/utils";
+    import { AlertCircle, CheckCircle2, Cloud, RefreshCw } from "@lucide/svelte";
+    import * as Card from "@/components/ui/card/index";
+    import { Button } from "@/components/ui/button";
     import { toast } from "svelte-sonner";
 
     let { myIntegrations, allUserEvents }: { myIntegrations: IntegrationModel[], allUserEvents: EventDBModelPrivate[] } = $props();
