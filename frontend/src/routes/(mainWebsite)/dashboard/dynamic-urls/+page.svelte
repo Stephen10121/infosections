@@ -85,6 +85,7 @@
                     }, 50);
                 }
             }
+            newDynamicURLOpen = $page.url.searchParams.get("new") === "1";
 		}
 	});
 </script>

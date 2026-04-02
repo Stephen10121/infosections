@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getAllUserEvents } from './backend.remote.js';
+    import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getAllUserEvents, getMyIntegrations } from './backend.remote.js';
     import UpcomingEvents from '@/dashboard/homePage/UpcomingEvents.svelte';
     import RecentActivity from '@/dashboard/homePage/RecentActivity.svelte';
     import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
+    import QuickActions from '@/dashboard/homePage/QuickActions.svelte';
 
     let { data } = $props();
 
@@ -11,13 +12,15 @@
         myImageFeeds,
         myEventLists,
         myDynamicURLs,
-        allUserEvents
+        allUserEvents,
+        myIntegrations
     ] = $derived(await Promise.all([
         getMyCalendars(),
         getMyImageFeeds(),
         getMyEventLists(),
         getMyDynamicURLS(),
-        getAllUserEvents()
+        getAllUserEvents(),
+        getMyIntegrations()
     ]));
 </script>
 
@@ -57,7 +60,7 @@
                 />
             </div>
             <div class="space-y-6">
-                <!-- <QuickActions /> -->
+                <QuickActions />
                 <!-- <IntegrationStatus integration={mockIntegration} eventsAmount={mockMetrics.eventAmount} /> -->
             </div>
         </div>
