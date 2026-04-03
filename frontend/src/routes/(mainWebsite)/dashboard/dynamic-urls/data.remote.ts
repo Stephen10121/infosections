@@ -2,6 +2,7 @@ import { command, getRequestEvent } from "$app/server";
 import * as v from "valibot";
 import { config } from "dotenv";
 import type { DynamicURLModel, UserModel } from "@/utils";
+import { getMyDynamicURLS } from "../backend.remote";
 
 config();
 
@@ -110,6 +111,7 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
         }
     }
 
+    getMyDynamicURLS().refresh();
     return {
         error: false,
         msg: "Successfully created dynamic URL."
@@ -176,7 +178,7 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
         }
     }
 
-try {
+    try {
         let data: Partial<DynamicURLModel> = {
             "defaultRedirectTo": updatedURLData.defaultRedirectTo,
             "timeZone": updatedURLData.timeZone,
@@ -204,6 +206,7 @@ try {
         }
     }
 
+    getMyDynamicURLS().refresh();
     return {
         error: false,
         msg: "Successfully updated dynamic URL."
@@ -267,6 +270,7 @@ export const deleteDynamicURLCommand = command(DeleteDynamicURLSchema, async (up
         }
     }
 
+    getMyDynamicURLS().refresh();
     return {
         error: false,
         msg: "Successfully deleted dynamic URL."

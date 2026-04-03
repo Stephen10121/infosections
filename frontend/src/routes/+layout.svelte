@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Toaster } from "@/components/ui/sonner";
 	import favicon from "../lib/assets/logo.png";
-	import "../app.css";
+	import "./layout.css";
 	
 	let { children } = $props();
 </script>

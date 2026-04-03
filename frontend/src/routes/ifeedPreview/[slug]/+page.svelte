@@ -134,7 +134,7 @@
             {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
                 <Carousel.Item class="w-screen h-screen">
                     <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.name} class="w-full h-full">
+                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.linkText} class="w-full h-full">
                         {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
                             <div class="extrastuff overflow-hidden">
                                 <div class="info">

@@ -35,29 +35,38 @@
         let newFilteredTerms: FilteredTermsList[] = [];
 
         for (let i=0;i<calendars.length;i++) {
-            if (calendars[i].id.toLowerCase().includes(searchTerm) ||
-            calendars[i].name.toLowerCase().includes(searchTerm) ||
-            calendars[i].description.toLowerCase().includes(searchTerm) ||
+            const cal = calendars[i];
+            if (!cal) continue
+
+            if (cal.id.toLowerCase().includes(searchTerm) ||
+            cal.name.toLowerCase().includes(searchTerm) ||
+            cal.description.toLowerCase().includes(searchTerm) ||
             "calendar".includes(searchTerm)) {
-                newFilteredTerms.push({ type: "calendar", data: calendars[i] });
+                newFilteredTerms.push({ type: "calendar", data: cal });
             }
         }
 
         for (let i=0;i<imageFeeds.length;i++) {
-            if (imageFeeds[i].id.toLowerCase().includes(searchTerm) ||
-            imageFeeds[i].name.toLowerCase().includes(searchTerm) ||
-            imageFeeds[i].description.toLowerCase().includes(searchTerm) ||
+            const feed = imageFeeds[i];
+            if (!feed) continue
+
+            if (feed.id.toLowerCase().includes(searchTerm) ||
+            feed.name.toLowerCase().includes(searchTerm) ||
+            feed.description.toLowerCase().includes(searchTerm) ||
             "image feed".includes(searchTerm)) {
-                newFilteredTerms.push({ type: "image-feed", data: imageFeeds[i] });
+                newFilteredTerms.push({ type: "image-feed", data: feed });
             }
         }
 
         for (let i=0;i<eventLists.length;i++) {
-            if (eventLists[i].id.toLowerCase().includes(searchTerm) ||
-            eventLists[i].name.toLowerCase().includes(searchTerm) ||
-            eventLists[i].description.toLowerCase().includes(searchTerm) ||
+            const list = eventLists[i];
+            if (!list) continue
+
+            if (list.id.toLowerCase().includes(searchTerm) ||
+            list.name.toLowerCase().includes(searchTerm) ||
+            list.description.toLowerCase().includes(searchTerm) ||
             "event list".includes(searchTerm)) {
-                newFilteredTerms.push({ type: "event-list", data: eventLists[i] });
+                newFilteredTerms.push({ type: "event-list", data: list });
             }
         }
 
@@ -97,7 +106,10 @@
         }
 
         if (event.key === "Enter" && arrowDownIndex !== -1) {
-            goto(`/dashboard/${filteredTerms[arrowDownIndex - 1].type === "calendar" ? "calendars" : filteredTerms[arrowDownIndex - 1].type === "event-list" ? "event-lists" : "image-feeds"}/${filteredTerms[arrowDownIndex - 1].data.id}`);
+            const selectedTerm = filteredTerms[arrowDownIndex - 1];
+            if (selectedTerm) {
+                goto(`/dashboard/${selectedTerm.type === "calendar" ? "calendars" : selectedTerm.type === "event-list" ? "event-lists" : "image-feeds"}/${selectedTerm.data.id}`);
+            }
             resetSearch();
         }
     }

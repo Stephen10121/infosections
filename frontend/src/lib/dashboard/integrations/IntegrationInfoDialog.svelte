@@ -1,13 +1,13 @@
 <script lang="ts">
-    import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { availableIntegrations, refreshingEvents, timeWhen, type IntegrationModel } from "@/utils";
-    import IntegrationIcon from "./IntegrationIcon.svelte";
-    import StatusBadge from "./StatusBadge.svelte";
-    import { Button } from "@/components/ui/button";
-    import { ExternalLink, Loader2, RefreshCw, Trash2 } from "@lucide/svelte";
     import { removeAnIntegration } from "../../../routes/(mainWebsite)/dashboard/integrations.remote";
-    import { toast } from "svelte-sonner";
     import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
+    import { refreshingEvents, timeWhen, type IntegrationModel } from "@/utils";
+    import * as Dialog from "$lib/components/ui/dialog/index.js";
+    import { Loader2, RefreshCw, Trash2 } from "@lucide/svelte";
+    import IntegrationIcon from "./IntegrationIcon.svelte";
+    import { Button } from "@/components/ui/button";
+    import StatusBadge from "./StatusBadge.svelte";
+    import { toast } from "svelte-sonner";
 
     let { integration = $bindable() }: { integration: IntegrationModel | null } = $props();
 
@@ -15,7 +15,7 @@
         if (integration?.service === "planningcenter") {
             await refreshingEvents();
             const myIntegrations = (await getMyIntegrations()).filter((int) => int.service === "planningcenter")
-            integration = myIntegrations.length > 0 ? myIntegrations[0] : null;
+            integration = myIntegrations.length > 0 ? myIntegrations[0] ? myIntegrations[0] : null : null;
         }
     }
 
@@ -47,13 +47,6 @@
                     <span class="text-sm text-muted-foreground">Next sync event</span>
                     <span class="text-sm">{timeWhen((new Date(integration.lastEventsFetch)).setHours((new Date(integration.lastEventsFetch)).getHours() + 1))}</span>
                 </div>
-
-                {#if integration.eventsCount !== undefined}
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-muted-foreground">Events imported</span>
-                        <span class="text-sm font-medium">{integration.eventsCount}</span>
-                    </div>
-                {/if}
             </div>
 
             <Dialog.Footer class="flex-col gap-2 sm:flex-col">
@@ -70,22 +63,6 @@
                         <RefreshCw class="mr-2 h-4 w-4" />
                     {/if}
                     Sync Now
-                </Button>
-                <Button variant="outline" class="flex-1">
-                    <a
-                        href={availableIntegrations.find((i) => {
-                            if (integration) {
-                                return i.slug === integration.slug
-                            }
-                            return false;
-                        })?.docsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="flex"
-                    >
-                        <ExternalLink class="mr-2 h-4 w-4" />
-                        View Docs
-                    </a>
                 </Button>
                 </div>
                 <form {...removeAnIntegration.enhance(async ({ submit }) => {

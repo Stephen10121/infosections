@@ -5,7 +5,7 @@ import type { UserModel } from "@/utils";
 config();
 
 export async function handle ({ event, resolve }) {
-    event.locals.pb = new PocketBase(process.env.PB_URL);
+    event.locals.pb = new PocketBase(process.env["PB_URL"]);
     // event.locals.pb.authStore.save(process.env.POCKETBASE_TOKEN!, null);
     event.locals.pb.authStore.clear();
 

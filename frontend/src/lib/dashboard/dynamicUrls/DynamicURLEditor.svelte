@@ -10,7 +10,6 @@
     import WeekSheetGrid from "./WeekSheetGrid.svelte";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
-    import { invalidateAll } from "$app/navigation";
     import { Badge } from "@/components/ui/badge";
     import { toast } from "svelte-sonner";
 
@@ -25,7 +24,6 @@
                 toast.error(response.msg);
             } else {
                 toast.success(response.msg);
-                invalidateAll();
             }
         } catch(err) {
             console.log(err);
@@ -83,7 +81,6 @@
                 toast.error(response.msg);
             } else {
                 toast.success(response.msg);
-                invalidateAll();
             }
         } catch (err) {
             toast.dismiss(loading);

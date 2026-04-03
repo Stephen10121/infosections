@@ -9,16 +9,15 @@ export async function load({ locals, url }) {
         try {
             const user: UserModel = await locals.pb.collection("users").getOne(locals.user.id, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
             
             return {
                 user,
                 avatar: locals.pb.files.getURL(user, user.avatar),
-                hasAccess: user.hasAccess,
                 pathname: url.pathname,
-                stripeCustomerPortal: process.env.STRIPE_CUSTOMER_PORTAL_LINK!
+                stripeCustomerPortal: process.env["STRIPE_CUSTOMER_PORTAL_LINK"]!
             }
         } catch (err) {
             console.log(err);
@@ -28,6 +27,6 @@ export async function load({ locals, url }) {
     }
     return {
         pathname: url.pathname,
-        stripeCustomerPortal: process.env.STRIPE_CUSTOMER_PORTAL_LINK!
+        stripeCustomerPortal: process.env["STRIPE_CUSTOMER_PORTAL_LINK"]!
     }
 }

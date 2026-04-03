@@ -30,8 +30,10 @@
         //@ts-ignore
         const files = event.target.files as File[];
         if (files.length === 0) return;
-        uploadNewAvatar = files[0];
-        avatarLinkBindable = "";
+        if (files[0]) {
+            uploadNewAvatar = files[0];
+            avatarLinkBindable = "";
+        }
     }
 
     $effect(() => {
@@ -52,7 +54,7 @@
             <div class="relative">
                 {#if avatarLinkBindable.length > 0 || uploadNewAvatar}
                     {#if avatarLinkBindable.length > 0}
-                        <input {...updateEventListForm.fields.avatarLink.as("hidden", avatarLinkBindable)} />
+                        <input {...updateEventListForm.fields["avatarLink"]?.as("hidden", avatarLinkBindable)} />
                     {/if}
 
                     <div class="relative group">
@@ -84,7 +86,7 @@
                         <Upload class="h-4 w-4 mr-2" />
                         Upload Image
                         <input
-                            {...updateEventListForm.fields.newAvatar.as("file")}
+                            {...updateEventListForm.fields["newAvatar"]?.as("file")}
                             id="imageUploaderEventList"
                             type="file"
                             accept="image/*"

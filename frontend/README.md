@@ -2,23 +2,20 @@
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-Emails i need to add:
-dmca@infosections.com
-contact@infosections.com
-privacy@infosections.com
-support@infosections.com
-sales@infosections.com
-
 ## Creating a project
 
 If you're seeing this, you've probably already done this step. Congrats!
 
 ```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
+# create a new project
 npx sv create my-app
+```
+
+To recreate this project with the same configuration:
+
+```sh
+# recreate this project
+bun x sv@0.13.2 create --template minimal --types ts --add tailwindcss="plugins:none" --install bun .
 ```
 
 ## Developing

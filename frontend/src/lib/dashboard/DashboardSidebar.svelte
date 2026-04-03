@@ -1,15 +1,15 @@
 <script lang="ts">
-    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, RefreshCcw, Gift, Link2, Flag, RefreshCw, Plus } from "@lucide/svelte";
+    import { Calendar, Home, GalleryHorizontalEnd, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, LayoutList, Gift, Link2, Flag, RefreshCw, Plus } from "@lucide/svelte";
+    import { getMyIntegrations } from "../../routes/(mainWebsite)/dashboard/backend.remote";
+    import { capitalizeFirstLetter, type IntegrationModel, type UserModel } from "@/utils";
+    import IntegrationInfoDialog from "./integrations/IntegrationInfoDialog.svelte";
+    import AddIntegrationDialog from "./integrations/AddIntegrationDialog.svelte";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import { useSidebar } from "$lib/components/ui/sidebar/index.js";
-    import { capitalizeFirstLetter, refreshingEvents, type IntegrationModel, type UserModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import * as Avatar from "$lib/components/ui/avatar/index.js";
-    import { getMyIntegrations } from "../../routes/(mainWebsite)/dashboard/backend.remote";
-    import AddIntegrationDialog from "./integrations/AddIntegrationDialog.svelte";
-    import BreezeIcon from "./integrations/BreezeIcon.svelte";
-    import IntegrationInfoDialog from "./integrations/IntegrationInfoDialog.svelte";
     import StatusBadge from "./integrations/StatusBadge.svelte";
+    import BreezeIcon from "./integrations/BreezeIcon.svelte";
 
     let { 
         user,
@@ -89,7 +89,7 @@
             </Sidebar.Menu>
         </Sidebar.Group>
 
-        {#if sidebar.open}
+        {#if sidebar.open && !sidebar.isMobile}
             <Sidebar.Group>
                 <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
                 <Sidebar.GroupAction title="Add Integration" onclick={() => {
@@ -199,14 +199,6 @@
                                     {/snippet}
                                 </DropdownMenu.Item>
                             {/if}
-                            <DropdownMenu.Item>
-                                {#snippet child({ props })}
-                                    <button style="width:100%;" {...props} onclick={refreshingEvents}>
-                                        <RefreshCcw class="data-highlighted:text-primary" />
-                                        Refresh My Events
-                                    </button>
-                                {/snippet}
-                            </DropdownMenu.Item>
                         </DropdownMenu.Group>
 
                         <DropdownMenu.Separator />

@@ -1,34 +1,34 @@
 <script lang="ts">
+    import * as Avatar from "$lib/components/ui/avatar/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
-    import * as Card from "$lib/components/ui/card/index.js";
     import { Input } from "$lib/components/ui/input/index.js";
     import { Label } from "$lib/components/ui/label/index.js";
-    import * as Avatar from "$lib/components/ui/avatar/index.js";
-    import { enhance } from "$app/forms";
-    import { toast } from "svelte-sonner";
-    import { goto } from "$app/navigation";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import * as Card from "$lib/components/ui/card/index.js";
+    import { toast } from "svelte-sonner";
+    import { enhance } from "$app/forms";
+    import { onDestroy } from "svelte";
 
     let { data, form } = $props();
 
-    let updatingToast: undefined | string | number = $state("");
+    let updatingToast: null | string | number = $state("");
 
     function dismissToast() {
-        if (updatingToast !== undefined) {
+        if (updatingToast !== null) {
             toast.dismiss(updatingToast);
-            updatingToast = undefined;
+            updatingToast = null;
         }
     }
 
     $effect(() => {
-        if (!form?.success && form?.message) {
+        if (form?.message) {
             toast.error(form.message);
             dismissToast();
         }
-        if (form?.success) {
-            dismissToast();
-            goto(`/cal/${data.id}`);
-        }
+    });
+
+    onDestroy(() => {
+        dismissToast();
     });
 </script>
 

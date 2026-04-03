@@ -1,18 +1,21 @@
 <script lang="ts">
     import SingleDynamicURL from "@/dashboard/dynamicUrls/SingleDynamicURL.svelte";
+    import { afterNavigate, invalidateAll } from "$app/navigation";
     import { TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
     import { createDynamicURLCommand } from "./data.remote.js";
+    import { getMyDynamicURLS } from "../backend.remote.js";
     import { Label } from "@/components/ui/label/index.js";
     import { Input } from "@/components/ui/input/index.js";
     import * as Dialog from "@/components/ui/dialog/index";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
-    import { invalidateAll } from "$app/navigation";
     import { Link2, Plus } from "@lucide/svelte";
     import { Temporal } from "temporal-polyfill";
+    import { browser } from "$app/environment";
     import { toast } from "svelte-sonner";
+    import { page } from "$app/stores";
 
     function getTotalHits(url: DynamicURLModel) {
         return url.refs.reduce((sum, ref) => sum + ref.hits, 0)
@@ -56,7 +59,6 @@
                     timeZone = Temporal.Now.timeZoneId();
 
                     let updating = toast.info("Updating Dynamic URL List");
-                    await invalidateAll();
                     toast.dismiss(updating);
                 }
             } catch (err) {
@@ -68,6 +70,24 @@
             toast.error("Missing Fields.");
         }
     }
+
+    afterNavigate(() => {
+		if (browser) {
+            const expandAURL = $page.url.searchParams.get("expanded");
+            if (expandAURL && expandAURL.length > 0) {
+                openId = expandAURL;
+                const openIdElem = document.getElementById(`aDynamicURL${openId}`);
+                if (openIdElem) {
+                    setTimeout(() => {
+                        openIdElem.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }, 50);
+                }
+            }
+            newDynamicURLOpen = $page.url.searchParams.get("new") === "1";
+		}
+	});
 </script>
 
 <svelte:head>
@@ -92,34 +112,34 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card.Root class="p-4">
             <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total URLs</p>
-            <p class="text-2xl font-semibold text-foreground mt-1">{data.dynamic_urls.length}</p>
+            <p class="text-2xl font-semibold text-foreground mt-1">{(await getMyDynamicURLS()).length}</p>
         </Card.Root>
         <Card.Root class="p-4">
             <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active</p>
             <p class="text-2xl font-semibold text-foreground mt-1">
-                {data.dynamic_urls.filter((u) => !u.disableURL).length}
+                {(await getMyDynamicURLS()).filter((u) => !u.disableURL).length}
             </p>
         </Card.Root>
         <Card.Root class="p-4">
             <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Hits</p>
             <p class="text-2xl font-semibold text-foreground mt-1">
-                {data.dynamic_urls.reduce((sum, u) => sum + getTotalHits(u), 0).toLocaleString()}
+                {(await getMyDynamicURLS()).reduce((sum, u) => sum + getTotalHits(u), 0).toLocaleString()}
             </p>
         </Card.Root>
         <Card.Root class="p-4">
             <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Time Slots</p>
             <p class="text-2xl font-semibold text-foreground mt-1">
-                {data.dynamic_urls.reduce((sum, u) => sum + getTimeSlotCount(u), 0)}
+                {(await getMyDynamicURLS()).reduce((sum, u) => sum + getTimeSlotCount(u), 0)}
             </p>
         </Card.Root>
     </div>
 
     <div class="space-y-3">
-        {#each data.dynamic_urls as dynamic_url (`aDynamicURL${dynamic_url.id}`)}
+        {#each await getMyDynamicURLS() as dynamic_url (`aDynamicURL${dynamic_url.id}`)}
             <SingleDynamicURL bind:openId={openId} url={dynamic_url} websiteURL={data.websiteURL} />
         {/each}
 
-        {#if data.dynamic_urls.length === 0}
+        {#if (await getMyDynamicURLS()).length === 0}
             <Card.Root class="p-12 text-center">
                 <Link2 class="h-10 w-10 text-muted-foreground mx-auto mb-4" />
                 <h3 class="text-lg font-medium text-foreground">No dynamic URLs yet</h3>

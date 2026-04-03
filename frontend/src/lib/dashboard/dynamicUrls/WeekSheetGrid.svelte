@@ -94,19 +94,25 @@
 				};
 			}
 		} else if (state.type === "resizing") {
-			const day = [...weekSheet[state.dayIndex]];
+			let day: WeekSheetTimeSlot[] = [];
+			const newWeekSheet = weekSheet[state.dayIndex];
+			if (newWeekSheet) {
+				day = [...newWeekSheet];
+			}
 			const slot = day[state.slotIndex];
 
-			let newStart = slot.startMinute;
-			let newEnd = slot.endMinute;
+			if (slot) {
+				let newStart = slot.startMinute;
+				let newEnd = slot.endMinute;
 
-			if (state.edge === "top") {
-				newStart = Math.min(state.currentMinute, slot.endMinute - SNAP_INTERVAL);
-			} else {
-				newEnd = Math.max(state.currentMinute, slot.startMinute + SNAP_INTERVAL);
+				if (state.edge === "top") {
+					newStart = Math.min(state.currentMinute, slot.endMinute - SNAP_INTERVAL);
+				} else {
+					newEnd = Math.max(state.currentMinute, slot.startMinute + SNAP_INTERVAL);
+				}
+
+				day[state.slotIndex] = { ...slot, startMinute: newStart, endMinute: newEnd };
 			}
-
-			day[state.slotIndex] = { ...slot, startMinute: newStart, endMinute: newEnd };
 
 			const updated = [...weekSheet];
 			updated[state.dayIndex] = day;
@@ -156,17 +162,19 @@
 		e.stopPropagation();
 		e.preventDefault();
 
-		const slot = weekSheet[dayIndex][slotIndex];
-		const startMinute = edge === "top" ? slot.startMinute : slot.endMinute;
-
-		dragState = {
-			type: "resizing",
-			dayIndex,
-			slotIndex,
-			edge,
-			startMinute,
-			currentMinute: startMinute
-		};
+		const slot = weekSheet[dayIndex] ? weekSheet[dayIndex][slotIndex] : undefined;
+		if (slot) {
+			const startMinute = edge === "top" ? slot.startMinute : slot.endMinute;
+	
+			dragState = {
+				type: "resizing",
+				dayIndex,
+				slotIndex,
+				edge,
+				startMinute,
+				currentMinute: startMinute
+			};
+		}
 	}
 
 	function handleBlockClick(e: MouseEvent, dayIndex: number, slotIndex: number) {
@@ -183,8 +191,10 @@
 		const { dayIndex, link, startMinute, endMinute } = editingSlot;
 
 		const updated = [...weekSheet];
-		updated[dayIndex] = [...updated[dayIndex], { startMinute, endMinute, link }];
-		updated[dayIndex].sort((a, b) => a.startMinute - b.startMinute);
+		if (updated[dayIndex]) {
+			updated[dayIndex] = [...updated[dayIndex], { startMinute, endMinute, link }];
+			updated[dayIndex].sort((a, b) => a.startMinute - b.startMinute);
+		}
 
 		onchange(updated);
 		editingSlot = null;
@@ -192,7 +202,9 @@
 
 	function handleDeleteSlot(dayIndex: number, slotIndex: number) {
 		const updated = [...weekSheet];
-		updated[dayIndex] = updated[dayIndex].filter((_, i) => i !== slotIndex);
+		if (updated[dayIndex]) {
+			updated[dayIndex] = updated[dayIndex].filter((_, i) => i !== slotIndex);
+		}
 		onchange(updated);
 		selectedSlot = null;
 	}
@@ -228,22 +240,25 @@
 
 	$effect(() => {
 		if (dragState && dragState.type === "resizing") {
-			const slot = weekSheet[dragState.dayIndex][dragState.slotIndex];
-			let start = slot.startMinute;
-			let end = slot.endMinute;
-
-			if (dragState.edge === "top") {
-				start = Math.min(dragState.currentMinute, end - SNAP_INTERVAL);
-			} else {
-				end = Math.max(dragState.currentMinute, start + SNAP_INTERVAL);
+			const dayCol = weekSheet[dragState.dayIndex];
+			const slot = dayCol ? dayCol[dragState.slotIndex] : undefined;
+			if (slot) {
+				let start = slot.startMinute;
+				let end = slot.endMinute;
+	
+				if (dragState.edge === "top") {
+					start = Math.min(dragState.currentMinute, end - SNAP_INTERVAL);
+				} else {
+					end = Math.max(dragState.currentMinute, start + SNAP_INTERVAL);
+				}
+	
+				resizePreview = {
+					dayIndex: dragState.dayIndex,
+					slotIndex: dragState.slotIndex,
+					startMinute: start,
+					endMinute: end
+				};
 			}
-
-			resizePreview = {
-				dayIndex: dragState.dayIndex,
-				slotIndex: dragState.slotIndex,
-				startMinute: start,
-				endMinute: end
-			};
 		} else {
 			resizePreview = null;
 		}
@@ -329,42 +344,45 @@
 	{/if}
 
 	{#if selectedSlot && weekSheet[selectedSlot.dayIndex]?.[selectedSlot.slotIndex]}
-		<div class="rounded-lg border border-border bg-secondary/50 p-3 space-y-3">
-			<div class="flex items-center justify-between">
-				<p class="text-xs font-medium text-foreground">
-					{DAY_LABELS[selectedSlot.dayIndex]}{" "}
-					{formatTime(weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].startMinute)} -{" "}
-					{formatTime(weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].endMinute)}
-				</p>
-				<Button
-					size="sm"
-					onclick={() => {
-						if(selectedSlot) {
-							handleDeleteSlot(selectedSlot.dayIndex, selectedSlot.slotIndex)
+		{@const currentSlot = weekSheet[selectedSlot.dayIndex]?.[selectedSlot.slotIndex]}
+
+		{#if currentSlot}
+			<div class="rounded-lg border border-border bg-secondary/50 p-3 space-y-3">
+				<div class="flex items-center justify-between">
+					<p class="text-xs font-medium text-foreground">
+						{DAY_LABELS[selectedSlot.dayIndex]}{" "}
+						{formatTime(currentSlot.startMinute)} -{" "}
+						{formatTime(currentSlot.endMinute)}
+					</p>
+					<Button
+						size="sm"
+						onclick={() => {
+							if(selectedSlot) {
+								handleDeleteSlot(selectedSlot.dayIndex, selectedSlot.slotIndex)
+							}
+						}}
+						class="gap-1 text-destructive-foreground hover:text-destructive-foreground hover:bg-destructive/10 h-7"
+					>
+						<Trash2 class="h-3.5 w-3.5" />
+						Delete
+					</Button>
+				</div>
+				<Input
+					value={currentSlot.link}
+					oninput={(e) => {
+						if (selectedSlot) {
+							currentSlot.link = e.currentTarget.value;;
+							weekSheet = weekSheet;
+							onchange(weekSheet);
 						}
 					}}
-					class="gap-1 text-destructive-foreground hover:text-destructive-foreground hover:bg-destructive/10 h-7"
-				>
-					<Trash2 class="h-3.5 w-3.5" />
-					Delete
+					placeholder="https://example.com/redirect-url"
+					class="text-sm"
+				/>
+				<Button size="sm" variant="outline" onclick={() => selectedSlot = null} class="text-xs">
+					Done
 				</Button>
 			</div>
-			<Input
-				value={weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].link}
-				oninput={(e) => {
-					if (selectedSlot) {
-						//@ts-ignore
-						weekSheet[selectedSlot.dayIndex][selectedSlot.slotIndex].link = e.target.value;
-						weekSheet = weekSheet;
-						onchange(weekSheet);
-					}
-				}}
-				placeholder="https://example.com/redirect-url"
-				class="text-sm"
-			/>
-			<Button size="sm" variant="outline" onclick={() => selectedSlot = null} class="text-xs">
-				Done
-			</Button>
-		</div>
+		{/if}
 	{/if}
 </div>

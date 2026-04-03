@@ -1,10 +1,9 @@
-import { clsx, type ClassValue } from "clsx";
-import type { RecordModel } from "pocketbase";
-import { toast } from "svelte-sonner";
-import { twMerge } from "tailwind-merge";
-import { invalidateAll } from "$app/navigation";
-import { Temporal } from "temporal-polyfill";
 import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/backend.remote";
+import type { RecordModel } from "pocketbase";
+import { clsx, type ClassValue } from "clsx";
+import { Temporal } from "temporal-polyfill";
+import { twMerge } from "tailwind-merge";
+import { toast } from "svelte-sonner";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -265,20 +264,12 @@ export const defaultEventListFilters: EventListFilters = {
 }
 
 export interface UserModel extends RecordModel {
-	// userEmail: string,
-	// username: string,
 	name: string,
 	avatar: string,
-	// subscriptionEmail: string
 	customerId: string,
 	priceId: string,
 	new: boolean,
-	// authToken: string,
-	// refreshToken: string,
 	accessLevel: "none" | "standard" | "premium",
-	// refreshTokenExpires: number,
-	// accessTokenExpires: number
-	// lastEventsFetch: string
 	subscriptionURL: string
 	freeTrialURL: string
 }
@@ -467,8 +458,10 @@ export interface DynamicURLModel extends RecordModel {
 	enableWeekSheet: boolean,
 	overrideRedirectTo: string
 	enableOverrideRedirect: boolean,
-	disableURL: boolean;
-	refs: URLRefHits[]
+	disableURL: boolean,
+	refs: URLRefHits[],
+	created: string,
+	updated: string,
 }
 
 export const TIMEZONES = [
