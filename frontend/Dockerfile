@@ -29,4 +29,4 @@ ENV NODE_ENV=production
 EXPOSE 5173
 
 # SvelteKit Bun adapter entrypoint
-CMD ["sh", "-c", "PORT=5173 bun build/index.js"]
+CMD ["bun", "build/index.js"]

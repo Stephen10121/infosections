@@ -24,7 +24,7 @@ export async function GET({ locals, url, cookies }) {
             redirectURL = url.origin + "/google_oath";
         }
     } else {
-        redirectURL = process.env.VITE_WEBSITE_URL + "/google_oath";
+        redirectURL = process.env["VITE_WEBSITE_URL"] + "/google_oath";
     }
         
     const state = url.searchParams.get("state");
@@ -38,7 +38,7 @@ export async function GET({ locals, url, cookies }) {
     try {
         const authMethods = await locals.pb.collection("users").listAuthMethods({
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     
@@ -48,8 +48,9 @@ export async function GET({ locals, url, cookies }) {
         }
     
         for (let i=0;i<authMethods.oauth2.providers.length;i++) {
-            if (authMethods.oauth2.providers[i].name === "google") {
-                provider = authMethods.oauth2.providers[i];
+            const provider2 = authMethods.oauth2.providers[i];
+            if (provider2 !== undefined && provider2.name === "google") {
+                provider = provider2;
             }
         }
     } catch (err) {
@@ -73,11 +74,12 @@ export async function GET({ locals, url, cookies }) {
             new: true
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 
-        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
+        const authCookie = locals.pb.authStore.exportToCookie().split(";");
+        cookies.set("pb_auth", authCookie[0] ? authCookie[0] : "", {
             path: "/"
         })
     } catch (err) {
@@ -87,15 +89,15 @@ export async function GET({ locals, url, cookies }) {
 
     const newUserRecord = locals.pb.authStore.record;
     if (newUserRecord && res.meta) {
-        const fileResp = await fetchFileFromURL(res.meta.avatarUrl);
+        const fileResp = await fetchFileFromURL(res.meta["avatarUrl"]);
         
-        if (newUserRecord.new) {
+        if (newUserRecord["new"]) {
             let stripeTrialSubscriptionUrl = "";
             let stripeSubscriptionUrl = "";
             let stripeCustomerID = "";
 
             try {
-                const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+                const stripe = new Stripe(process.env["STRIPE_PRIVATE_KEY"]!);
                 const customer = await stripe.customers.create({
                     metadata: {
                         internal_id: newUserRecord.id
@@ -103,18 +105,18 @@ export async function GET({ locals, url, cookies }) {
                 });
 
                 const session = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                    line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
                     mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+                    cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
                     customer: customer.id,
                 });
         
                 const freeTrialSession = await stripe.checkout.sessions.create({
-                    line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+                    line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
                     mode: 'subscription',
-                    success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-                    cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+                    success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+                    cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
                     customer: customer.id,
                     subscription_data: {
                         trial_period_days: 14
@@ -131,23 +133,23 @@ export async function GET({ locals, url, cookies }) {
             await locals.pb.collection("users").update(newUserRecord.id, {
                 new: false,
                 avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
+                name: res.meta["name"] ? res.meta["name"] : "New User",
                 accessLevel: "none",
                 customerId: stripeCustomerID,
                 subscriptionURL: stripeSubscriptionUrl,
                 freeTrialURL: stripeTrialSubscriptionUrl,
             }, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
         } else {
             await locals.pb.collection("users").update(newUserRecord.id, {
                 avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta.name ? res.meta.name : "New User",
+                name: res.meta["name"] ? res.meta["name"] : "New User",
             }, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
         }
