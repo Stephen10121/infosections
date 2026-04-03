@@ -26,7 +26,7 @@ COPY --from=build /app/.svelte-kit ./.svelte-kit
 COPY package.json .
 
 ENV NODE_ENV=production
-EXPOSE 3000
+EXPOSE 5173
 
 # SvelteKit Bun adapter entrypoint
 CMD ["bun", "build/index.js"]
