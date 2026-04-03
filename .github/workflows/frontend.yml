@@ -1,10 +1,10 @@
-name: Docker Build InfoSections frontend Bun test
+name: Docker Build InfoSections frontend
 
 on:
     push:
-        branches: [ bun-migration ]
+        branches: [ release ]
     pull_request:
-        branches: [ bun-migration ]
+        branches: [ release ]
 
 jobs:
   build:
@@ -18,8 +18,8 @@ jobs:
         run: |
             cd frontend
             echo "${{ secrets.DOCKERPW }}" | docker login -u "stephen10121" --password-stdin
-            docker build -t stephen10121/infosectionsfrontendtest:1.${{ github.run_number }} .
-            docker tag stephen10121/infosectionsfrontendtest:1.${{ github.run_number }} stephen10121/infosectionsfrontendtest:prod
-            docker tag stephen10121/infosectionsfrontendtest:1.${{ github.run_number }} stephen10121/infosectionsfrontendtest:1.${{ github.run_number }}
-            docker image push stephen10121/infosectionsfrontendtest:prod
-            docker image push stephen10121/infosectionsfrontendtest:1.${{ github.run_number }}
+            docker build -t stephen10121/infosectionsfrontend:1.${{ github.run_number }} .
+            docker tag stephen10121/infosectionsfrontend:1.${{ github.run_number }} stephen10121/infosectionsfrontend:prod
+            docker tag stephen10121/infosectionsfrontend:1.${{ github.run_number }} stephen10121/infosectionsfrontend:1.${{ github.run_number }}
+            docker image push stephen10121/infosectionsfrontend:prod
+            docker image push stephen10121/infosectionsfrontend:1.${{ github.run_number }}
