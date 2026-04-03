@@ -1,4 +1,3 @@
-import type { EventDBModelPrivate, EventListDBModel } from '@/utils.js';
 import { redirect } from '@sveltejs/kit';
 import { config } from "dotenv";
 

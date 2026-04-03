@@ -1,3 +1,10 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Disallow: 
+Disallow: /cgi-bin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /oath/
+Disallow: /cal/
+Disallow /ifeed/
+
+Sitemap: https://infosections.com/sitemap.xml
