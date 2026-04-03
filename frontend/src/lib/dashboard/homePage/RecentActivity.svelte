@@ -1,24 +1,25 @@
 <script lang="ts">
-    import { getAllUserEvents, getMyCalendars, getMyDynamicURLS, getMyEventLists, getMyImageFeeds } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
-    import { Calendar, CalendarDays, LayoutList, Image, Link2, Eye, ArrowUpRight } from "@lucide/svelte";
-    import * as Card from "@/components/ui/card/index";
-    import { cn, timeAgo, type CalendarDBModel, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
-    import { Button } from "@/components/ui/button";
-    import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import { timeAgo, type CalendarDBModel, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import NoEventListAvatar from "@/NoEventListAvatar.svelte";
     import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
     import DynamicFeedAvatar from "@/DynamicFeedAvatar.svelte";
+    import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import * as Card from "@/components/ui/card/index";
+    import { Button } from "@/components/ui/button";
+    import { ArrowUpRight } from "@lucide/svelte";
 
     const {
         myCalendars,
         myImageFeeds,
         myEventLists,
         myDynamicURLs,
+        pb_url
     }: {
         myCalendars: CalendarDBModel[],
         myImageFeeds: ImageFeedDBModel[],
         myEventLists: EventListDBModel[],
         myDynamicURLs: DynamicURLModel[],
+        pb_url: string
     } = $props();
 
     type ActivityType = {
@@ -59,8 +60,16 @@
                 {@const config = typeConfig[activity.type]}
                 <div class="flex items-center justify-between py-2.5 border-b border-border/50 last:border-0">
                     <div class="flex items-center gap-3 min-w-0">
-                        <div class={`h-8 w-8 rounded-md ${config.bgColor} flex items-center justify-center shrink-0`}>
-                            <config.icon small />
+                        <div class="h-8 w-8 rounded-md {config.bgColor} flex items-center justify-center shrink-0">
+                            {#if activity.logo !== null && activity.logo !== undefined && activity.logo.length > 0}
+                                <img
+                                    src="{pb_url}/api/files/{activity.collectionId}/{activity.id}/{activity.logo}"
+                                    alt="{activity.name} logo"
+                                    class="w-8 h-8 rounded-lg object-cover overflow-hidden"
+                                />
+                            {:else}
+                                <config.icon small />
+                            {/if}
                         </div>
                         <div class="min-w-0">
                             <p class="text-sm font-medium text-foreground truncate">

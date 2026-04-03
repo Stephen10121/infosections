@@ -121,9 +121,9 @@
             <div class="grid gap-0 sm:grid-cols-3">
                 {#each myDynamicURLs as url (`adurl${url.id}`)}
                     <DynamicUrlItem
-                        name={url.name}
-                        redirect={url.defaultRedirect}
-                        hits={url.hits}
+                        name={url.id}
+                        redirect={307}
+                        hits={100}
                     />
                 {/each}
             </div>
