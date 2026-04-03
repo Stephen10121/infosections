@@ -12,7 +12,7 @@ export async function load({ parent }) {
 
     return {
         ...data,
-        pb_url: process.env.PB_URL!,
+        pb_url: process.env["PB_URL"]!,
         stripeSubscriptionUrl: data.user.subscriptionURL,
         stripeTrialSubscriptionUrl: data.user.freeTrialURL
     }

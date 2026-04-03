@@ -1,8 +1,8 @@
-import { command, getRequestEvent } from "$app/server";
-import * as v from "valibot";
-import { config } from "dotenv";
 import type { DynamicURLModel, UserModel } from "@/utils";
+import { command, getRequestEvent } from "$app/server";
 import { getMyDynamicURLS } from "../backend.remote";
+import { config } from "dotenv";
+import * as v from "valibot";
 
 config();
 
@@ -26,7 +26,7 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
     try {
         dynamicURL = await locals.pb.collection("dynamic_url").getOne(newURLData.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch(_err) {
@@ -45,7 +45,7 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
     try {
         user = await locals.pb.collection("users").getOne(locals.user.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -68,7 +68,7 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
         dynamicURLs = await locals.pb.collection('dynamic_url').getFullList({
             filter: `owner = "${user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -99,7 +99,7 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
 
         await locals.pb.collection('dynamic_url').create(data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -154,7 +154,7 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
     try {
         dynamicURL = await locals.pb.collection("dynamic_url").getOne(updatedURLData.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch(_err) {
@@ -194,7 +194,7 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
 
         await locals.pb.collection('dynamic_url').update(dynamicURL.id, data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -231,7 +231,7 @@ export const deleteDynamicURLCommand = command(DeleteDynamicURLSchema, async (up
     try {
         dynamicURL = await locals.pb.collection("dynamic_url").getOne(updatedURLData.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch(_err) {
@@ -258,7 +258,7 @@ export const deleteDynamicURLCommand = command(DeleteDynamicURLSchema, async (up
     try {
         await locals.pb.collection('dynamic_url').delete(dynamicURL.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

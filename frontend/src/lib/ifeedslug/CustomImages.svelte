@@ -24,7 +24,10 @@
     }
 
     async function deleteEvent() {
-        const response = await deleteCustomImageCommand({ id: customImages[selectedEventIndex].id, currentFeedID });
+        const selectedCustomImage = customImages[selectedEventIndex];
+        if (!selectedCustomImage) return;
+
+        const response = await deleteCustomImageCommand({ id: selectedCustomImage.id, currentFeedID });
         if (response.error) {
             toast.error(response.msg);
         } else {
@@ -38,7 +41,7 @@
     <Table.Root>
         <Table.Header>
             <Table.Row>
-                <Table.Head class="w-[100px]">Picture</Table.Head>
+                <Table.Head class="w-25">Picture</Table.Head>
                 <Table.Head class="text-end">Has Link</Table.Head>
             </Table.Row>
         </Table.Header>

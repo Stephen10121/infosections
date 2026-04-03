@@ -265,6 +265,7 @@ export const defaultEventListFilters: EventListFilters = {
 
 export interface UserModel extends RecordModel {
 	name: string,
+	email: string,
 	avatar: string,
 	customerId: string,
 	priceId: string,

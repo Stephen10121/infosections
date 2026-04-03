@@ -11,7 +11,7 @@ export async function load({ params, locals }) {
             expand: "additionalCalendars",
             fields: "*,expand.additionalCalendars.displaySettings,expand.additionalCalendars.filters,expand.additionalCalendars.id",
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -19,7 +19,7 @@ export async function load({ params, locals }) {
         return error(404, "Image Feed Not Found");
     }
 
-    const additionalCalendars: {displaySettings: CalendarCustomizations, filters: CalendarFilters, id: string}[] = imageFeed.expand ? imageFeed.expand.additionalCalendars : [];
+    const additionalCalendars: {displaySettings: CalendarCustomizations, filters: CalendarFilters, id: string}[] = imageFeed.expand ? imageFeed.expand["additionalCalendars"] : [];
 
     // These variables and the for loop checks if any of the cals need to access a private event. If so, we need to change the event fetch filtering.
     let visibleInChurchCenterEventRequired = false;
@@ -27,11 +27,12 @@ export async function load({ params, locals }) {
 
     if (additionalCalendars) {
         for (let i=0;i<additionalCalendars.length;i++) {
-            if (additionalCalendars[i].filters.onlyShowFeatured === false) {
+            const currentAdditionalCal = additionalCalendars[i];
+            if (currentAdditionalCal && currentAdditionalCal.filters.onlyShowFeatured === false) {
                 featuredEventRequired = true;
             }
     
-            if (additionalCalendars[i].filters.hideUnpublished === false) {
+            if (currentAdditionalCal && currentAdditionalCal.filters.hideUnpublished === false) {
                 visibleInChurchCenterEventRequired = true;
             }
         }
@@ -62,7 +63,7 @@ export async function load({ params, locals }) {
             sort: 'startTime',
             fields: "id,recEventId,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -83,7 +84,7 @@ export async function load({ params, locals }) {
             filter,
             fields: "id,picture,registrationURL,created,updated,collectionId,showLink,linkText",
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -98,7 +99,7 @@ export async function load({ params, locals }) {
         logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo.toString()),
         displaySettings: imageFeed.displaySettings,
         description: imageFeed.description,
-        apiServer: process.env.PB_URL!,
+        apiServer: process.env["PB_URL"]!,
         additionalCalendars,
         filters: imageFeed.filters
     }

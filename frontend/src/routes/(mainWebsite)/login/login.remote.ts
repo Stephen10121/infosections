@@ -1,11 +1,8 @@
-import { type AuthProviderInfo, type RecordModel } from "pocketbase";
-import { error, invalid, redirect } from "@sveltejs/kit";
 import { EmailSchema } from "@/valibotSchemaHelpers";
 import { form, getRequestEvent } from "$app/server";
-import { dev } from "$app/environment";
+import { invalid, redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import * as v from "valibot";
-import Stripe from "stripe";
 
 config();
 
@@ -23,7 +20,8 @@ export const emailPasswordLogin = form(EmailPasswordLoginSchema, async (newSignu
             newSignupData.password,
         );
 
-        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
+        const authCookieString = locals.pb.authStore.exportToCookie().split(";");
+        cookies.set("pb_auth", authCookieString[0] ? authCookieString[0] : "", {
             path: "/"
         })
     } catch (err) {

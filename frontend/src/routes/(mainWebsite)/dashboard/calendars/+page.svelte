@@ -103,7 +103,7 @@
                 <Plus class="h-4 w-4" />
                 New Calendar
             </Dialog.Trigger>
-            <Dialog.Content class="sm:max-w-[500px]">
+            <Dialog.Content class="sm:max-w-125">
                 <Dialog.Header>
                 <Dialog.Title>Create New Calendar</Dialog.Title>
                     <Dialog.Description>You can change more settings after creating the calendar.</Dialog.Description>

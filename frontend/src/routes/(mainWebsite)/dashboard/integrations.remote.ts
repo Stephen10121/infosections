@@ -30,12 +30,13 @@ export const addAnIntegration = form(AddIntegrationData, async (integrationData)
             redirectURL = url.origin + "/oath";
         }
     } else {
-        redirectURL = process.env.VITE_WEBSITE_URL + "/oath";
+        redirectURL = process.env["VITE_WEBSITE_URL"] + "/oath";
     }
 
     let authProvider: AuthProviderInfo | undefined;
     for (let i=0;i<authMethods.oauth2.providers.length;i++) {
-        if (authMethods.oauth2.providers[i].name === integrationData.provider) {
+        const currentAuthProvider = authMethods.oauth2.providers[i];
+        if (currentAuthProvider && currentAuthProvider.name === integrationData.provider) {
             authProvider = authMethods.oauth2.providers[i];
         }
     }
@@ -87,13 +88,13 @@ export const removeAnIntegration = form(RemoveIntegrationData, async (integratio
     try {
         const record = await locals.pb.collection('integration').getFirstListItem(`id="${integrationData.id}" && owner ="${locals.user.id}"`, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 
         await locals.pb.collection('integration').delete(record.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 

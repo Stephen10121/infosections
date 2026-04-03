@@ -98,7 +98,7 @@
             <Plus class="h-4 w-4" />
             New Event List
         </Dialog.Trigger>
-        <Dialog.Content class="sm:max-w-[500px]">
+        <Dialog.Content class="sm:max-w-125">
             <Dialog.Header>
             <Dialog.Title>Create New Event List</Dialog.Title>
                 <Dialog.Description>You can change more settings after creating the list.</Dialog.Description>

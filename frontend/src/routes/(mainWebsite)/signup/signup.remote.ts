@@ -25,7 +25,7 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
     try {
         existingEmailUser = await locals.pb.collection('users').getFirstListItem(`email="${newSignupData.email}"`, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -44,11 +44,11 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
             accessLevel: "none"
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 
-        const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY!);
+        const stripe = new Stripe(process.env["STRIPE_PRIVATE_KEY"]!);
         const customer = await stripe.customers.create({
             email: newSignupData.email,
             metadata: {
@@ -57,18 +57,18 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
         });
 
         const session = await stripe.checkout.sessions.create({
-            line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+            line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
             mode: 'subscription',
-            success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-            cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+            cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
             customer: customer.id,
         });
 
         const freeTrialSession = await stripe.checkout.sessions.create({
-            line_items: [{ price: process.env.STRIPE_PRICE_ID!, quantity: 1 }],
+            line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
             mode: 'subscription',
-            success_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
-            cancel_url: process.env.VITE_WEBSITE_URL! + "/dashboard",
+            success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+            cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
             customer: customer.id,
             subscription_data: {
                 trial_period_days: 14
@@ -81,7 +81,7 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
             subscriptionURL: session.url
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 
@@ -90,7 +90,8 @@ export const createEmailPasswordSignup = form(CreateEmailPasswordSignupSchema, a
             newSignupData.password,
         );
 
-        cookies.set("pb_auth", locals.pb.authStore.exportToCookie().split(";")[0], {
+        const authCookieString = locals.pb.authStore.exportToCookie().split(";");
+        cookies.set("pb_auth", authCookieString[0] ? authCookieString[0] : "", {
             path: "/"
         })
     } catch (err) {
@@ -105,7 +106,7 @@ const GoogleLoginSchema = v.object({
     id: v.string()
 });
 
-export const googleLoginSignup = form(GoogleLoginSchema, async (id, issue) => {
+export const googleLoginSignup = form(GoogleLoginSchema, async (_id, issue) => {
     const { locals, cookies, url } = getRequestEvent();
     
     locals.pb.authStore.clear();
@@ -126,13 +127,14 @@ export const googleLoginSignup = form(GoogleLoginSchema, async (id, issue) => {
             redirectURL = url.origin + "/google_oath";
         }
     } else {
-        redirectURL = process.env.VITE_WEBSITE_URL + "/google_oath";
+        redirectURL = process.env["VITE_WEBSITE_URL"] + "/google_oath";
     }
 
     let authProvider: AuthProviderInfo | undefined;
 
     for (let i=0;i<authMethods.oauth2.providers.length;i++) {
-        if (authMethods.oauth2.providers[i].name === "google") {
+        const currentAuthProvider = authMethods.oauth2.providers[i];
+        if (currentAuthProvider && currentAuthProvider.name === "google") {
             authProvider = authMethods.oauth2.providers[i];
         }
     }

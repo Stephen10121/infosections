@@ -23,11 +23,14 @@ export const updateIncludedCalendarsToIFeed = command(v.object({
     let newCals = imageFeed.additionalCalendars;
 
     for (let i=0;i<data.calIds.length;i++) {
-        if (imageFeed.additionalCalendars.includes(data.calIds[i])) continue;
+        const currentCalId = data.calIds[i];
+        if (!currentCalId) continue;
 
-        if (myCalendars.filter((cal) => cal.id === data.calIds[i]).length === 0) continue
+        if (imageFeed.additionalCalendars.includes(currentCalId)) continue;
 
-        newCals.push(data.calIds[i]);
+        if (myCalendars.filter((cal) => cal.id === currentCalId).length === 0) continue
+
+        newCals.push(currentCalId);
     }
 
     try {
@@ -35,7 +38,7 @@ export const updateIncludedCalendarsToIFeed = command(v.object({
             "additionalCalendars": newCals,
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -73,7 +76,7 @@ export const removeIncludedCalendarsToIFeed = command(v.object({
             "additionalCalendars": imageFeed.additionalCalendars.filter((cal) => cal !== data.calId),
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

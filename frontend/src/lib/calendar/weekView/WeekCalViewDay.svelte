@@ -1,9 +1,7 @@
 <script lang="ts">
-    import MonthCalViewDayEvent from "../monthView/MonthCalViewDayEvent.svelte";
     import { cn, getEventsForDate, isSameDay, type CalendarCustomizations, type EventDBModel } from "../../utils";
-    import Event from "../../Event.svelte";
-    import { Temporal } from "temporal-polyfill";
     import WeekCalViewDayEvent from "./WeekCalViewDayEvent.svelte";
+    import { Temporal } from "temporal-polyfill";
 
     let {
         index,
@@ -31,7 +29,7 @@
 
 <div
     class={cn(
-        "min-h-[80px] p-1 border-b border-r relative border-[#333333]",
+        "min-h-20 p-1 border-b border-r relative border-[#333333]",
         !isCurrentMonth && "bg-muted/30 opacity-[.40]",
         index % 7 === 6 && "border-r-0"
     )}

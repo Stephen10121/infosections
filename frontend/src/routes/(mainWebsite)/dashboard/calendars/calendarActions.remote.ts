@@ -52,7 +52,7 @@ export const createCalendarCommand = command(CreateCalendarSchema, async (newCal
 
         await locals.pb.collection('calendars').create(data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -135,7 +135,7 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
 
         await locals.pb.collection('calendars').update(calendar.id, data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -167,7 +167,7 @@ export const deleteCalendarCommand = command(v.string(), async (id) => {
     try {
         await locals.pb.collection('calendars').delete(calendar.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

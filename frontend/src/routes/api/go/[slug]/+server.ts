@@ -1,7 +1,7 @@
 import type { DynamicURLModel, URLRefHits, WeekSheetTimeSlot } from "@/utils.js";
+import { Temporal } from "temporal-polyfill";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
-import { Temporal } from "temporal-polyfill";
 
 config();
 
@@ -16,6 +16,8 @@ async function recordRefHit(url: URL, record: DynamicURLModel, locals: App.Local
 
         for (let i=0;i<record.refs.length;i++) {
             let currentRef = record.refs[i];
+            if (!currentRef) continue;
+
             if (ref !== currentRef.name) {
                 newRef.push(currentRef);
             } else {
@@ -40,7 +42,7 @@ async function recordRefHit(url: URL, record: DynamicURLModel, locals: App.Local
                 refs: newRef,
             }, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
         } catch (err) {
@@ -56,7 +58,7 @@ export async function GET({ params, locals, url }) {
     try {
         record = await locals.pb.collection('dynamic_url').getOne(goID, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (_err) {
@@ -77,19 +79,24 @@ export async function GET({ params, locals, url }) {
         let today = Temporal.Now.zonedDateTimeISO(record.timeZone);
     
         const todaysTimeSheet = record.weekSheet[today.dayOfWeek - 1];
-        const currentMinute = today.hour * 60 + today.minute;
-    
-        let currentTimeSheet: WeekSheetTimeSlot | null = null;
-    
-        for (let i=0;i<todaysTimeSheet.length;i++) {
-            let thisTimeSheet = todaysTimeSheet[i];
-            if (thisTimeSheet.startMinute <= currentMinute && currentMinute <= thisTimeSheet.endMinute) {
-                currentTimeSheet = thisTimeSheet;
+
+        if (todaysTimeSheet) {
+            const currentMinute = today.hour * 60 + today.minute;
+        
+            let currentTimeSheet: WeekSheetTimeSlot | null = null;
+        
+            for (let i=0;i<todaysTimeSheet.length;i++) {
+                let thisTimeSheet = todaysTimeSheet[i];
+                if (!thisTimeSheet) continue;
+
+                if (thisTimeSheet.startMinute <= currentMinute && currentMinute <= thisTimeSheet.endMinute) {
+                    currentTimeSheet = thisTimeSheet;
+                }
             }
-        }
-    
-        if (currentTimeSheet) {
-            linkToRedirect = currentTimeSheet.link;
+        
+            if (currentTimeSheet) {
+                linkToRedirect = currentTimeSheet.link;
+            }
         }
     }
 
