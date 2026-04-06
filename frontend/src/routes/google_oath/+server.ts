@@ -93,6 +93,7 @@ export async function GET({ locals, url, cookies }) {
         let file: File | null = null;
         if (!fileFetchResp.error) {
             file = new File([fileFetchResp.blob], "logo.png", { type: fileFetchResp.blob.type });
+            console.log(file);
         }
         
         if (newUserRecord["new"]) {
