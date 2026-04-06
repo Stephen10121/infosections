@@ -117,7 +117,7 @@ export interface CalendarDBModel extends RecordModel {
 	password: string,
 	passwordEnabled: boolean,
 	owner: string,
-	logo: string | File,
+	logo: string,
 	visits: number,
 	filters: CalendarFilters,
 	description: string,
