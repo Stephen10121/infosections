@@ -536,3 +536,15 @@ export const availableIntegrations: AvailableIntegration[] = [
 		comingSoon: true,
 	},
 ];
+
+export const errorTypes = {
+	"signup_stripe_error": "Error using the stripe SDK.",
+	"signup_oath_no_state": "Error connecting with Oath provider.",
+	"signup_auth_method_get": "Failed to get Oath Method",
+	"signup_auth_signup_fail": "Failed to signup with Oath",
+	"signup_after_oath": "Failed to signup."
+}
+
+export function hasKey<T extends object>(obj: T, key: PropertyKey): key is keyof T {
+  return key in obj;
+}
