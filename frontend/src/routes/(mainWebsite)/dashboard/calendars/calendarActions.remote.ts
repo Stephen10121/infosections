@@ -121,12 +121,14 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
             data["password"] = updatedCalendar.newPassword;
         }
 
-        if (updatedCalendar.enablePassword) {
+        if (updatedCalendar.passwordScreenMessage && updatedCalendar.passwordScreenMessage.length > 0 && updatedCalendar.enablePassword) {
             data["passwordScreenMessage"] = updatedCalendar.passwordScreenMessage;
         }
 
         if (!updatedCalendar.avatarLink && updatedCalendar.newAvatar) {
-            data["logo"] = await updatedCalendar.newAvatar.text();
+            const file = new File([await updatedCalendar.newAvatar.arrayBuffer()], updatedCalendar.newAvatar.name, { type: updatedCalendar.newAvatar.type });
+            console.log(updatedCalendar.newAvatar, file);
+            data["logo"] = file;
         }
         
         if (!updatedCalendar.avatarLink && !updatedCalendar.newAvatar) {
