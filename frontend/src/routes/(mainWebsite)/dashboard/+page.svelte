@@ -1,16 +1,12 @@
 <script lang="ts">
     import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getAllUserEvents, getMyIntegrations } from './backend.remote.js';
+    import IntegrationStatus from '@/dashboard/homePage/IntegrationStatus.svelte';
     import UpcomingEvents from '@/dashboard/homePage/UpcomingEvents.svelte';
     import RecentActivity from '@/dashboard/homePage/RecentActivity.svelte';
-    import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
     import QuickActions from '@/dashboard/homePage/QuickActions.svelte';
-    import IntegrationStatus from '@/dashboard/homePage/IntegrationStatus.svelte';
-    // import FeatureSummary from '@/dashboard/homePage/FeatureSummary.svelte';
-    // import { Temporal } from 'temporal-polyfill';
+    import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
 
     let { data } = $props();
-
-    // let timeZone = $state(Temporal.Now.timeZoneId());
 
     const [
         myCalendars,
