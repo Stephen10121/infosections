@@ -86,10 +86,7 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 
 	events, eventTimes, resourceBookings, allTags := GetIncludedStructs(responseJson.Included)
 
-	allTagsJSON, err := json.Marshal(allTags)
-	if err == nil {
-		fmt.Println(string(allTagsJSON))
-	}
+	SaveTags(userId, allTags, app)
 
 	resources, err := FetchResources(userId, app)
 
