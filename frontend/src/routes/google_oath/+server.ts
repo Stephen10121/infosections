@@ -92,7 +92,7 @@ export async function GET({ locals, url, cookies }) {
         const fileFetchResp = await fetchFileFromURL(res.meta["avatarUrl"]);
         let file: File | null = null;
         if (!fileFetchResp.error) {
-            file = new File([fileFetchResp.blob], "logo.png", { type: fileFetchResp.blob.type })
+            file = new File([fileFetchResp.blob], "logo.png", { type: fileFetchResp.blob.type });
         }
         
         if (newUserRecord["new"]) {

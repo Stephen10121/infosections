@@ -126,7 +126,8 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
         }
 
         if (!updatedCalendar.avatarLink && updatedCalendar.newAvatar) {
-            data["logo"] = updatedCalendar.newAvatar;
+            const file = new File([await updatedCalendar.newAvatar.bytes() as BlobPart], updatedCalendar.newAvatar.name, { type: updatedCalendar.newAvatar.type });
+            data["logo"] = file;
         }
         
         if (!updatedCalendar.avatarLink && !updatedCalendar.newAvatar) {
