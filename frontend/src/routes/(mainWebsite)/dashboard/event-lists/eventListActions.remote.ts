@@ -66,7 +66,7 @@ const UpdateEventListSchema = v.object({
     name: v.string(),
     description: v.string(),
     avatarLink: v.optional(v.string()),
-    newAvatar: v.optional(v.file()),
+    newAvatar: v.optional(v.any()),
     displaySettings: v.optional(v.object({
         showEventName: v.optional(v.boolean(), false),
         showEventDescription: v.optional(v.boolean(), false),
@@ -109,7 +109,9 @@ export const updateEventListForm = form(UpdateEventListSchema, async (updatedELi
         };
 
         if (!updatedEList.avatarLink && updatedEList.newAvatar) {
-            data["logo"] = updatedEList.newAvatar;
+            const newAvatar = updatedEList.newAvatar as File;
+            const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, { type: newAvatar.type });
+            data["logo"] = file;
         }
         
         if (!updatedEList.avatarLink && !updatedEList.newAvatar) {

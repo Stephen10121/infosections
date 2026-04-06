@@ -8,7 +8,7 @@ import * as v from "valibot";
 config();
 
 const CreateCustomImageSchema = v.object({
-    picture: v.file(),
+    picture: v.any(),
     showLink: v.pipe(v.optional(v.boolean(), false), v.transform((val) => val ?? false)),
     linkText: v.pipe(v.optional(v.string(), ""), v.transform((val) => val ?? "")),
     registrationURL: v.optional(
@@ -29,7 +29,7 @@ export const createCustomImageForm = form(CreateCustomImageSchema, async (newCus
     }
 
     if (locals.user.accessLevel === "none") {
-        return invalid(issue.picture("You need to be subsrcibed to use this feature."));
+        return invalid(issue.registrationURL("You need to be subsrcibed to use this feature."));
     }
 
     if (newCustomImage.showLink && !newCustomImage.registrationURL) {
@@ -46,10 +46,16 @@ export const createCustomImageForm = form(CreateCustomImageSchema, async (newCus
             "registrationURL": newCustomImage.registrationURL,
             "showLink": newCustomImage.showLink,
             "imageFeed": [ newCustomImage.currentIFeed ],
-            "owner": locals.user.id,
-            //@ts-ignore
-            "picture": newCustomImage.picture
+            "owner": locals.user.id
         };
+
+        if (newCustomImage.picture) {
+            const newAvatar = newCustomImage.picture as File;
+            const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, { type: newAvatar.type });
+            data["picture"] = file;
+        } else {
+            return invalid(issue.registrationURL("A Picture is required."));
+        }
 
         await locals.pb.collection('customImageIfeed').create(data, {
             headers: {
@@ -59,7 +65,7 @@ export const createCustomImageForm = form(CreateCustomImageSchema, async (newCus
     } catch (err) {
         console.log(err);
 
-        return invalid(issue.picture("Failed to create custom image."));
+        return invalid(issue.registrationURL("Failed to create custom image."));
     }
 
     getCustomImagesForIFeed(newCustomImage.currentIFeed).refresh();
@@ -124,7 +130,7 @@ const UpdateCustomImageSchema = v.object({
     id: v.string(),
     eventPictureLink: v.optional(v.string()),
     included: v.array(v.string()),
-    uploadNewEventPicture: v.optional(v.file()),
+    uploadNewEventPicture: v.optional(v.any()),
     showLink: v.optional(v.boolean(), false),
     linkText: v.optional(v.string(), ""),
     registrationURL: v.optional(v.pipe(v.string(), v.url("Invalid Link URL. Please enter a valid URL."))),
@@ -139,7 +145,7 @@ export const updateCustomImageForm = form(UpdateCustomImageSchema, async (update
     }
 
     if (locals.user.accessLevel === "none") {
-        return invalid(issue.uploadNewEventPicture("You need to be subscibed to use this feature."));
+        return invalid(issue.registrationURL("You need to be subscibed to use this feature."));
     }
 
     if (updatedCustomImage.showLink && !updatedCustomImage.registrationURL) {
@@ -151,7 +157,7 @@ export const updateCustomImageForm = form(UpdateCustomImageSchema, async (update
     }
 
     if (!updatedCustomImage.eventPictureLink && !updatedCustomImage.uploadNewEventPicture) {
-        return invalid(issue.uploadNewEventPicture("Image is missing."));
+        return invalid(issue.registrationURL("Image is missing."));
 
     }
 
@@ -170,7 +176,9 @@ export const updateCustomImageForm = form(UpdateCustomImageSchema, async (update
         };
 
         if (updatedCustomImage.uploadNewEventPicture) {
-            data["picture"] = updatedCustomImage.uploadNewEventPicture;
+            const newAvatar = updatedCustomImage.uploadNewEventPicture as File;
+            const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, { type: newAvatar.type });
+            data["picture"] = file;
         }
         
 

@@ -66,7 +66,7 @@ const UpdateImageFeedSchema = v.object({
     name: v.string(),
     description: v.string(),
     avatarLink: v.optional(v.string()),
-    newAvatar: v.optional(v.file()),
+    newAvatar: v.optional(v.any()),
     displaySettings: v.object({
         showEventExtraInfo: v.optional(v.boolean(), false),
         showEventName: v.optional(v.boolean(), false),
@@ -103,7 +103,9 @@ export const updateImageFeedForm = form(UpdateImageFeedSchema, async (updatedIFe
         };
 
         if (!updatedIFeed.avatarLink && updatedIFeed.newAvatar) {
-            data["logo"] = updatedIFeed.newAvatar;
+            const newAvatar = updatedIFeed.newAvatar as File;
+            const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, { type: newAvatar.type });
+            data["logo"] = file;
         }
         
         if (!updatedIFeed.avatarLink && !updatedIFeed.newAvatar) {
