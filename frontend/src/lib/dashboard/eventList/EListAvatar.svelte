@@ -1,6 +1,7 @@
 <script lang="ts">
     import { updateEventListForm } from "../../../routes/(mainWebsite)/dashboard/event-lists/eventListActions.remote";
     import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
+    import { type RemoteFormField } from "@sveltejs/kit";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
     import { Upload, X } from "@lucide/svelte";
@@ -86,7 +87,7 @@
                         <Upload class="h-4 w-4 mr-2" />
                         Upload Image
                         <input
-                            {...updateEventListForm.fields["newAvatar"]?.as("file")}
+                            {...(updateEventListForm.fields.newAvatar as unknown as RemoteFormField<File>).as("file")}
                             id="imageUploaderEventList"
                             type="file"
                             accept="image/*"

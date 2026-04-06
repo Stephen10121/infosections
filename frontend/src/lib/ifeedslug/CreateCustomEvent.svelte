@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createCustomImageForm } from "../../routes/(mainWebsite)/dashboard/image-feeds/IFeedCustomImageActions.remote";
     import Spinner from "@/components/ui/spinner/spinner.svelte";
+    import { type RemoteFormField } from "@sveltejs/kit";
     import * as Dialog from "@/components/ui/dialog";
     import { Button } from "@/components/ui/button";
     import { Switch } from "@/components/ui/switch";
@@ -91,7 +92,7 @@
                         <Upload class="h-4 w-4 mr-2" />
                         Upload Image
                         <input
-                            {...createCustomImageForm.fields.picture.as("file")}
+                            {...(createCustomImageForm.fields.picture as unknown as RemoteFormField<File>).as("file")}
                             type="file"
                             accept="image/*"
                             onchange={handleEventPictureChange}

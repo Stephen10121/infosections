@@ -2,6 +2,7 @@
     import { updateCustomImageForm } from "../../routes/(mainWebsite)/dashboard/image-feeds/IFeedCustomImageActions.remote";
     import { clearFileInput, type CustomImageIFeedDBModel, type ImageFeedDBModel } from "@/utils";
     import Button from "@/components/ui/button/button.svelte";
+    import { type RemoteFormField } from "@sveltejs/kit";
     import { Switch } from "@/components/ui/switch";
     import { Input } from "@/components/ui/input";
     import { Label } from "@/components/ui/label";
@@ -122,7 +123,7 @@
                 <Upload class="h-4 w-4 mr-2" />
                 Upload Image
                 <input
-                    {...updateCustomImageForm.fields.uploadNewEventPicture.as("file")}
+                    {...(updateCustomImageForm.fields.uploadNewEventPicture as unknown as RemoteFormField<File>).as("file")}
                     id="imageUploaderIFeed"
                     type="file"
                     accept="image/*"
