@@ -78,7 +78,7 @@ const UpdateCalendarSchema = v.object({
     enablePassword: v.optional(v.boolean(), false),
     newPassword: v.optional(v.string()),
     avatarLink: v.optional(v.string()),
-    newAvatar: v.optional(v.file()),
+    newAvatar: v.optional(v.any()),
     passwordScreenMessage: v.optional(v.string()),
     displaySettings: v.object({
         viewType: v.picklist(["3day", "week", "month"]),
@@ -126,8 +126,8 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
         }
 
         if (!updatedCalendar.avatarLink && updatedCalendar.newAvatar) {
-            const file = new File([await updatedCalendar.newAvatar.arrayBuffer()], updatedCalendar.newAvatar.name, { type: updatedCalendar.newAvatar.type });
-            console.log(updatedCalendar.newAvatar, file);
+            const newAvatar = updatedCalendar.newAvatar as File;
+            const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, { type: newAvatar.type });
             data["logo"] = file;
         }
         

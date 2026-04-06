@@ -181,7 +181,7 @@
     :global(*) {
         box-sizing: border-box;
         /* Standard property */
-        user-drag: none;
+        /* user-drag: none; */
         /* WebKit (Chrome, Safari, newer Opera) */
         -webkit-user-drag: none;
         /* Firefox (older versions) */

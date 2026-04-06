@@ -94,6 +94,7 @@
             try {
                 await submit();
                 form.reset();
+
                 clearFileInput(document.getElementById("imageUploaderCalendar"));
                 uploadNewAvatar = null;
                 toast.dismiss(savingChanges);

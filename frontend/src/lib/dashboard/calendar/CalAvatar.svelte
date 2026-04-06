@@ -1,6 +1,7 @@
 <script lang="ts">
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import { type RemoteFormField } from "@sveltejs/kit";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
     import { Upload, X } from "@lucide/svelte";
@@ -86,7 +87,7 @@
                         <Upload class="h-4 w-4 mr-2" />
                         Upload Image
                         <input
-                            {...updateCalendarForm.fields.newAvatar.as("file")}
+                            {...(updateCalendarForm.fields.newAvatar as unknown as RemoteFormField<File>).as("file")}
                             id="imageUploaderCalendar"
                             type="file"
                             accept="image/*"
