@@ -10,6 +10,6 @@ export async function load({ parent, locals }) {
     }
 
     return {
-        websiteURL: process.env.VITE_WEBSITE_URL!
+        websiteURL: process.env["VITE_WEBSITE_URL"]!
     }
 }

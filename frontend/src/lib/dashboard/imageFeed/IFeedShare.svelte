@@ -25,7 +25,7 @@
     </Card.Header>
     <Card.Content class="space-y-3">
         <div class="flex items-center gap-2 p-3 bg-muted rounded-lg">
-            <Link2 class="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <Link2 class="h-4 w-4 text-muted-foreground shrink-0" />
             <span class="text-sm font-mono truncate">/ifeed/{feedId}</span>
         </div>
         <Button onclick={handleCopyLink} class="w-full gap-2 bg-transparent" variant="outline">

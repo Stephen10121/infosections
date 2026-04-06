@@ -30,6 +30,8 @@
         //@ts-ignore
         const files = event.target.files as File[];
         if (files.length === 0) return;
+        if (!files[0]) return;
+        
         uploadNewAvatar = files[0];
         avatarLinkBindable = "";
     }

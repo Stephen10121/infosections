@@ -26,15 +26,16 @@
 
     let uploadNewEventPicture: File | null = $state(null);
     let uploadNewEventPictureLink = $derived(uploadNewEventPicture ? URL.createObjectURL(uploadNewEventPicture) : null);
+    let currentCustomImage = $derived(customImages[selectedEventIndex] as CustomImageIFeedDBModel );
 
-    let eventPictureLink = $derived(customImages[selectedEventIndex].picture ? `${apiServer}api/files/${customImages[selectedEventIndex].collectionId}/${customImages[selectedEventIndex].id}/${customImages[selectedEventIndex].picture}` : "");
+    let eventPictureLink = $derived(currentCustomImage.picture ? `${apiServer}api/files/${currentCustomImage.collectionId}/${currentCustomImage.id}/${currentCustomImage.picture}` : "");
 
     // svelte-ignore state_referenced_locally
-    let linkText = $state(customImages[selectedEventIndex].linkText);
+    let linkText = $state(currentCustomImage.linkText);
     // svelte-ignore state_referenced_locally
-    let registrationURL = $state(customImages[selectedEventIndex].registrationURL);
+    let registrationURL = $state(currentCustomImage.registrationURL);
     // svelte-ignore state_referenced_locally
-    let showLink = $state(customImages[selectedEventIndex].showLink);
+    let showLink = $state(currentCustomImage.showLink);
 
     function handleRemoveEventPicture() {
         clearFileInput(document.getElementById("imageUploaderIFeed"))
@@ -46,6 +47,8 @@
         //@ts-ignore
         const files = event.target.files as File[];
         if (files.length === 0) return;
+        if (!files[0]) return;
+
         uploadNewEventPicture = files[0];
         eventPictureLink = ""
     }
@@ -74,8 +77,8 @@
     enctype="multipart/form-data"
     class="grid flex-1 auto-rows-min gap-5 px-4 w-full overflow-y-auto"
 >
-    {#if customImages[selectedEventIndex].id}
-        <input {...updateCustomImageForm.fields.id.as("hidden", customImages[selectedEventIndex].id)} />
+    {#if currentCustomImage.id}
+        <input {...updateCustomImageForm.fields.id.as("hidden", currentCustomImage.id)} />
     {/if}
     {#if currentFeedID}
         <input {...updateCustomImageForm.fields.currentIFeedId.as("hidden", currentFeedID)} />
@@ -164,7 +167,7 @@
 
     {#each imageFeeds as imageFeed (`includeInAnImageFeed${imageFeed.id}`)}
         <div class="flex items-center gap-3 {imageFeed.id === currentFeedID ? "sr-only" : ""}">
-            <input id="includehere{imageFeed.id}" {...updateCustomImageForm.fields.included.as("checkbox", imageFeed.id)} checked={customImages[selectedEventIndex].imageFeed.includes(imageFeed.id)} />
+            <input id="includehere{imageFeed.id}" {...updateCustomImageForm.fields.included.as("checkbox", imageFeed.id)} checked={currentCustomImage.imageFeed.includes(imageFeed.id)} />
             <Label for="includehere{imageFeed.id}">Include in "{imageFeed.name}" feed.</Label>
         </div>
     {/each}

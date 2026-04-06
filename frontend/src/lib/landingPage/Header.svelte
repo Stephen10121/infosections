@@ -5,7 +5,7 @@
     let { loggedIn }: { loggedIn: boolean } = $props();
 </script>
 
-<header class="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+<header class="border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <div class="flex items-center gap-2">

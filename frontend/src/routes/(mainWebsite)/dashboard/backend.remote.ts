@@ -17,7 +17,7 @@ export const getMyIntegrations = query(async () => {
         myIntegrations = await locals.pb.collection("integration").getFullList({
             filter: `owner="${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -37,7 +37,7 @@ export const getMyCalendars = query(async () => {
         calendars = await locals.pb.collection('calendars').getFullList({
             filter: `owner="${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -59,7 +59,7 @@ export const getCalendarById = query(v.string(), async (id) => {
     try {
         calendar = await locals.pb.collection('calendars').getOne(id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -84,7 +84,7 @@ export const getMyImageFeeds = query(async () => {
         imageFeeds = await locals.pb.collection('imageFeeds').getFullList({
             filter: `owner="${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -106,7 +106,7 @@ export const getImageFeedById = query(v.string(), async (id) => {
     try {
         imageFeed = await locals.pb.collection('imageFeeds').getOne(id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -131,7 +131,7 @@ export const getCustomImagesForIFeed = query(v.string(), async (id) => {
         customImages = await locals.pb.collection('customImageIfeed').getFullList({
             filter: `imageFeed ~ "${id}" && owner = "${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -152,7 +152,7 @@ export const updateSpecificUserEvents = command(async () => {
         }
     }
     
-    const response = await fetch(process.env.PB_URL + `updateSpecificUserEvents/${locals.user.id}`, {
+    const response = await fetch(process.env["PB_URL"] + `updateSpecificUserEvents/${locals.user.id}`, {
         method: 'PATCH',
         headers: {
             "X-PCO-Webhooks-Authenticity": locals.user.customerId
@@ -184,7 +184,7 @@ export const getMyEventLists = query(async () => {
         eventLists = await locals.pb.collection('eventLists').getFullList({
             filter: `owner="${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -206,7 +206,7 @@ export const getEventListById = query(v.string(), async (id) => {
     try {
         eventList = await locals.pb.collection('eventLists').getOne(id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -232,7 +232,7 @@ export const getAllUserEvents = query(async () => {
             filter: `owner="${locals.user.id}"`,
             sort: 'startTime',
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -252,7 +252,7 @@ export const getMyDynamicURLS = query(async () => {
         dynamic_urls = await locals.pb.collection('dynamic_url').getFullList({
             filter: `owner="${locals.user.id}"`,
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

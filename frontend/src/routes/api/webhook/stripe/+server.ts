@@ -1,18 +1,19 @@
 import { error, json } from "@sveltejs/kit";
-import Stripe from "stripe";
+import type { UserModel } from "@/utils.js";
 import { config } from "dotenv";
+import Stripe from "stripe";
 
 config();
 
 export async function POST({ request, locals }) {
     console.log("[server] Someone just subscribed to a plan.");
-    if (!process.env.STRIPE_PRIVATE_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+    if (!process.env["STRIPE_PRIVATE_KEY"] || !process.env["STRIPE_WEBHOOK_SECRET"]) {
         console.error("STRIPE_PRIVATE_KEY or STRIPE_WEBHOOK_SECRET env var is not set.");
         return json({msg: "not ok"}, { status: 500 });
     }
 
-    const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY);
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const stripe = new Stripe(process.env["STRIPE_PRIVATE_KEY"]);
+    const webhookSecret = process.env["STRIPE_WEBHOOK_SECRET"];
     const body = await request.text();
     const signature = request.headers.get('stripe-signature') || "";
 
@@ -37,11 +38,11 @@ export async function POST({ request, locals }) {
                 });
 
                 const customerId = session.customer;
-                const priceId = process.env.STRIPE_PRICE_ID;
+                const priceId = process.env["STRIPE_PRICE_ID"];
 
                 const user = await locals.pb.collection('users').getFirstListItem(`customerId="${customerId}"`, {
                     headers: {
-                        "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                        "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                     }
                 });
 
@@ -51,7 +52,7 @@ export async function POST({ request, locals }) {
                     customerId
                 }, {
                     headers: {
-                        "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                        "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                     }
                 });
 
@@ -63,9 +64,9 @@ export async function POST({ request, locals }) {
 
             const user = await locals.pb.collection('users').getFirstListItem(`customerId="${subscription.customer}"`, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
-            });
+            }) as UserModel;
 
             console.log(user.name, "is deleting their subscription.");
 
@@ -74,7 +75,7 @@ export async function POST({ request, locals }) {
                 priceId: ""
             }, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
 

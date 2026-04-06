@@ -42,7 +42,7 @@ export const createImageFeedCommand = command(CreateImageFeedSchema, async (newI
 
         await locals.pb.collection('imageFeeds').create(data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -112,7 +112,7 @@ export const updateImageFeedForm = form(UpdateImageFeedSchema, async (updatedIFe
 
         await locals.pb.collection('imageFeeds').update(currentImageFeed.id, data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -144,7 +144,7 @@ export const deleteImageFeedCommand = command(v.string(), async (id) => {
     try {
         await locals.pb.collection('imageFeeds').delete(imageFeed.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

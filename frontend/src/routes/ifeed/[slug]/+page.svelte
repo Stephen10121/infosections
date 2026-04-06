@@ -1,9 +1,8 @@
 <script lang="ts">
-    import Autoplay from "embla-carousel-autoplay";
+    import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import * as Carousel from "$lib/components/ui/carousel/index.js";
     import { SquareArrowOutUpRight } from "@lucide/svelte";
-    import type { CarouselAPI } from "@/components/ui/carousel/context.js";
-    import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
+    import Autoplay from "embla-carousel-autoplay";
     import { Temporal } from "temporal-polyfill";
     import Calendar from '@/Calendar.svelte';
 
@@ -11,7 +10,6 @@
 
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
-    let api = $state<CarouselAPI>();
 
     let eventIdUsed: string[] = [];
 
@@ -46,7 +44,6 @@
 
 <div class="h-screen w-screen">
     <Carousel.Root
-        setApi={(emblaApi) => (api = emblaApi)}
         opts={{
             loop: true,
         }}
@@ -91,7 +88,7 @@
             {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
                 <Carousel.Item class="w-screen h-screen">
                     <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.name} class="w-full h-full">
+                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.linkText} class="w-full h-full">
                         {#if data.displaySettings.showEventExtraInfo && (data.displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
                             <div class="extrastuff overflow-hidden">
                                 <div class="info">

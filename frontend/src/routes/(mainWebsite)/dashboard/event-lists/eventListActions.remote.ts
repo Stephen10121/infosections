@@ -42,7 +42,7 @@ export const createEventListCommand = command(CreateEventListSchema, async (newE
 
         await locals.pb.collection('eventLists').create(data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -118,7 +118,7 @@ export const updateEventListForm = form(UpdateEventListSchema, async (updatedELi
 
         await locals.pb.collection('eventLists').update(currentEventList.id, data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -150,7 +150,7 @@ export const deleteEventListCommand = command(v.string(), async (id) => {
     try {
         await locals.pb.collection('eventLists').delete(eventList.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

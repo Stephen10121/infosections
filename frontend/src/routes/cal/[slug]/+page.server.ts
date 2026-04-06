@@ -1,7 +1,7 @@
 import type { CalendarDBModel, EventDBModel } from "@/utils";
 import { error, redirect } from "@sveltejs/kit";
-import { config } from "dotenv";
 import { Temporal } from "temporal-polyfill";
+import { config } from "dotenv";
 
 config();
 
@@ -10,7 +10,7 @@ export async function load({ params, locals, cookies }) {
     try {
         calendar = await locals.pb.collection('calendars').getOne(params.slug, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -52,7 +52,7 @@ export async function load({ params, locals, cookies }) {
             sort: 'startTime',
             fields: "id,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -65,7 +65,7 @@ export async function load({ params, locals, cookies }) {
             visits: calendar.visits + 1
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

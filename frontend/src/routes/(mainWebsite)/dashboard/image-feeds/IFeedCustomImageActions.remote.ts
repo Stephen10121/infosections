@@ -9,9 +9,15 @@ config();
 
 const CreateCustomImageSchema = v.object({
     picture: v.file(),
-    showLink: v.optional(v.boolean(), false),
-    linkText: v.optional(v.string(), ""),
-    registrationURL: v.optional(v.pipe(v.string(), v.url("Invalid Link URL. Please enter a valid URL."))),
+    showLink: v.pipe(v.optional(v.boolean(), false), v.transform((val) => val ?? false)),
+    linkText: v.pipe(v.optional(v.string(), ""), v.transform((val) => val ?? "")),
+    registrationURL: v.optional(
+        v.union([
+            v.pipe(v.string(), v.url()),
+            v.literal("")
+        ]),
+        ""
+    ),
     currentIFeed: v.string()
 });
 
@@ -23,7 +29,7 @@ export const createCustomImageForm = form(CreateCustomImageSchema, async (newCus
     }
 
     if (locals.user.accessLevel === "none") {
-        return invalid(issue.picture("You need to be subscibed to use this feature."));
+        return invalid(issue.picture("You need to be subsrcibed to use this feature."));
     }
 
     if (newCustomImage.showLink && !newCustomImage.registrationURL) {
@@ -47,7 +53,7 @@ export const createCustomImageForm = form(CreateCustomImageSchema, async (newCus
 
         await locals.pb.collection('customImageIfeed').create(data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -83,7 +89,7 @@ export const getCustomImageById = command(v.string(), async (id): Promise<({
     try {
         customImageIfeed = await locals.pb.collection("customImageIfeed").getOne(id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch(err) {
@@ -170,7 +176,7 @@ export const updateCustomImageForm = form(UpdateCustomImageSchema, async (update
 
         await locals.pb.collection('customImageIfeed').update(customImageIfeed.id, data, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -206,7 +212,7 @@ export const deleteCustomImageCommand = command(v.object({
     try {
         await locals.pb.collection('customImageIfeed').delete(data.id, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

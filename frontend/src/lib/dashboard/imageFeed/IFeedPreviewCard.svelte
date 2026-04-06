@@ -3,7 +3,6 @@
     import * as Card from "@/components/ui/card/index";
     import { Switch } from "@/components/ui/switch";
     import { Label } from "@/components/ui/label";
-    import { Temporal } from "temporal-polyfill";
 
     let {
         displaySettings,

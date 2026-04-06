@@ -1,9 +1,8 @@
 <script lang="ts">
     import { createCustomImageForm } from "../../routes/(mainWebsite)/dashboard/image-feeds/IFeedCustomImageActions.remote";
     import Spinner from "@/components/ui/spinner/spinner.svelte";
-    import { Button } from "@/components/ui/button";
     import * as Dialog from "@/components/ui/dialog";
-    import { invalidateAll } from "$app/navigation";
+    import { Button } from "@/components/ui/button";
     import { Switch } from "@/components/ui/switch";
     import { Input } from "@/components/ui/input";
     import { Label } from "@/components/ui/label";
@@ -24,6 +23,8 @@
         //@ts-ignore
         const files = event.target.files as File[];
         if (files.length === 0) return;
+        if (!files[0]) return;
+
         uploadNewEventPicture = files[0];
     }
 
@@ -34,7 +35,7 @@
 </script>
 
 <Dialog.Root bind:open={dialogOpen}>
-    <Dialog.Content class="sm:max-w-[500px] max-h-screen overflow-y-auto" style="max-height: calc(100vh - 50px);">
+    <Dialog.Content class="sm:max-w-125 max-h-screen overflow-y-auto" style="max-height: calc(100vh - 50px);">
         <Dialog.Header>
             <Dialog.Title>Add Image</Dialog.Title>
             <Dialog.Description>Add an image to this feed.</Dialog.Description>

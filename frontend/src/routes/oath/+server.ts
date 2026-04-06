@@ -1,8 +1,8 @@
-import { dev } from "$app/environment";
-import { redirect } from "@sveltejs/kit";
-import type { AuthProviderInfo, RecordAuthResponse } from "pocketbase";
-import { config } from "dotenv";
 import { updateSpecificUserEvents } from "../(mainWebsite)/dashboard/backend.remote";
+import type { AuthProviderInfo } from "pocketbase";
+import { redirect } from "@sveltejs/kit";
+import { dev } from "$app/environment";
+import { config } from "dotenv";
 
 config();
 
@@ -26,7 +26,7 @@ export async function GET({ locals, url, cookies }) {
             redirectURL = url.origin + "/oath";
         }
     } else {
-        redirectURL = process.env.VITE_WEBSITE_URL + "/oath";
+        redirectURL = process.env["VITE_WEBSITE_URL"] + "/oath";
     }
         
     const state = url.searchParams.get("state");
@@ -40,7 +40,7 @@ export async function GET({ locals, url, cookies }) {
     try {
         const authMethods = await locals.pb.collection("integration").listAuthMethods({
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     
@@ -50,8 +50,9 @@ export async function GET({ locals, url, cookies }) {
         }
     
         for (let i=0;i<authMethods.oauth2.providers.length;i++) {
-            if (authMethods.oauth2.providers[i].name === expectedName) {
-                provider = authMethods.oauth2.providers[i]
+            const currentProvider = authMethods.oauth2.providers[i];
+            if (currentProvider && currentProvider.name === expectedName) {
+                provider = currentProvider;
             }
         }
     } catch (err) {
@@ -72,7 +73,7 @@ export async function GET({ locals, url, cookies }) {
     try {
         const record = await locals.pb.collection('integration').getFirstListItem(`service="${provider.name}" && owner ="${locals.user.id}"`, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
 
@@ -87,13 +88,13 @@ export async function GET({ locals, url, cookies }) {
         const token = await fetch("https://api.planningcenteronline.com/oauth/token", {
             method: "POST",
             headers: {
-                "Authorization": "Basic " + Buffer.from(`${process.env.PLANNING_CENTER_CLIENT_ID!}:${process.env.PLANNING_CENTER_CLIENT_SECRET!}`).toString("base64")
+                "Authorization": "Basic " + Buffer.from(`${process.env["PLANNING_CENTER_CLIENT_ID"]!}:${process.env["PLANNING_CENTER_CLIENT_SECRET"]!}`).toString("base64")
             },
             body: new URLSearchParams({
                 grant_type: "authorization_code",
                 code,
                 redirect_uri: redirectURL,
-                client_id: process.env.PLANNING_CENTER_CLIENT_ID!,
+                client_id: process.env["PLANNING_CENTER_CLIENT_ID"]!,
                 code_verifier: expectedVerifier
             })
         }).then(r => r.json());
@@ -116,7 +117,7 @@ export async function GET({ locals, url, cookies }) {
             status: "connected"
         }, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {

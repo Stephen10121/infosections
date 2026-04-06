@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Calendar, CreditCard, Layers, Smartphone } from "@lucide/svelte";
+    import { Calendar, Layers, Smartphone } from "@lucide/svelte";
 
     let features = $state([
         {

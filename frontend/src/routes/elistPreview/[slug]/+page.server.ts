@@ -9,7 +9,7 @@ export async function load({ params, locals }) {
     try {
         eventList = await locals.pb.collection('eventLists').getOne(params.slug, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -42,7 +42,7 @@ export async function load({ params, locals }) {
             sort: 'startTime',
             fields: "id,recEventId,name,description,imageURL,registrationURL,location,startTime,endTime,featured,visibleInChurchCenter,created,updated",
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -56,7 +56,7 @@ export async function load({ params, locals }) {
         logoLink: locals.pb.files.getURL(eventList, eventList.logo.toString()),
         displaySettings: eventList.displaySettings,
         description: eventList.description,
-        apiServer: process.env.PB_URL!,
+        apiServer: process.env["PB_URL"]!,
         filters: eventList.filters
     }
 }

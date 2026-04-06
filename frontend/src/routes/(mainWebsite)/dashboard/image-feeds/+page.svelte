@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createImageFeedCommand, deleteImageFeedCommand } from "./imageFeedActions.remote.js";
     import { Copy, MoreVertical, Plus, Trash2, Users } from "@lucide/svelte";
     import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
     import { Button, buttonVariants } from "@/components/ui/button";
@@ -6,17 +7,16 @@
     import { Spinner } from "@/components/ui/spinner/index.js";
     import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
     import * as Dialog from "@/components/ui/dialog/index";
+    import { getMyImageFeeds } from "../backend.remote.js";
     import { Textarea } from "@/components/ui/textarea";
     import * as Card from "@/components/ui/card/index";
-    import { afterNavigate, invalidateAll } from "$app/navigation";
+    import { afterNavigate } from "$app/navigation";
     import { Label } from "@/components/ui/label";
     import { Input } from "@/components/ui/input";
-    import { toast } from "svelte-sonner";
-    import { cn } from "@/utils";
     import { browser } from "$app/environment";
+    import { toast } from "svelte-sonner";
     import { page } from "$app/stores";
-    import { getMyImageFeeds } from "../backend.remote.js";
-    import { createImageFeedCommand, deleteImageFeedCommand } from "./imageFeedActions.remote.js";
+    import { cn } from "@/utils";
 
     let { data } = $props();
 
@@ -97,7 +97,7 @@
             <Plus class="h-4 w-4" />
             New Image Feed
         </Dialog.Trigger>
-        <Dialog.Content class="sm:max-w-[500px]">
+        <Dialog.Content class="sm:max-w-125">
             <Dialog.Header>
             <Dialog.Title>Create New Image Feed</Dialog.Title>
                 <Dialog.Description>You can change more settings after creating the feed.</Dialog.Description>

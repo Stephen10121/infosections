@@ -1,15 +1,15 @@
 import { error, fail, redirect } from '@sveltejs/kit';
+import type { CalendarDBModel } from '@/utils.js';
 import { config } from "dotenv";
-import type { RecordModel } from 'pocketbase';
 
 config();
 
 export async function load({ locals, params }) {
-    let calendar: RecordModel;
+    let calendar: CalendarDBModel;
     try {
         calendar = await locals.pb.collection('calendars').getFirstListItem(`id="${params.slug}"`, {
             headers: {
-                "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
         });
     } catch (err) {
@@ -24,7 +24,7 @@ export async function load({ locals, params }) {
     return {
         name: calendar.name,
         id: calendar.id,
-        logo: locals.pb.files.getURL(calendar, calendar.logo),
+        logo: locals.pb.files.getURL(calendar, calendar.logo as string),
         customMessage: calendar.passwordScreenMessage
     }
 }
@@ -33,11 +33,11 @@ export const actions = {
     default: async ({ cookies, params, request, locals }) => {
         const data = await request.formData();
 
-        let calendar: RecordModel;
+        let calendar: CalendarDBModel;
         try {
             calendar = await locals.pb.collection('calendars').getFirstListItem(`id="${params.slug}"`, {
                 headers: {
-                    "Authorization": "Bearer " + process.env.POCKETBASE_TOKEN!
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }
             });
         } catch (err) {

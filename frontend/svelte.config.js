@@ -23,7 +23,16 @@ const config = {
 		},
 		csrf: {
 			// checkOrigin: false,
-			trustedOrigins: ["https://tailorcal.com", "http://localhost:5173", "https://api.tailorcal.com", "https://www.tailorcal.com", "https://infosections.com", "https://www.infosections.com", "https://api.infosections.com"]
+			trustedOrigins: [
+				"https://tailorcal.com",
+				"http://localhost:5173",
+				"https://api.tailorcal.com",
+				"https://www.tailorcal.com",
+				"https://infosections.com",
+				"https://www.infosections.com",
+				"https://caldev.stephengruzin.dev",
+				"https://api.infosections.com"
+			]
 		},
 		experimental: {
 			remoteFunctions: true

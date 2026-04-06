@@ -1,6 +1,5 @@
 <script lang="ts">
     import SingleDynamicURL from "@/dashboard/dynamicUrls/SingleDynamicURL.svelte";
-    import { afterNavigate, invalidateAll } from "$app/navigation";
     import { TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Spinner } from "@/components/ui/spinner/index.js";
@@ -11,6 +10,7 @@
     import * as Dialog from "@/components/ui/dialog/index";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
+    import { afterNavigate } from "$app/navigation";
     import { Link2, Plus } from "@lucide/svelte";
     import { Temporal } from "temporal-polyfill";
     import { browser } from "$app/environment";
@@ -156,7 +156,7 @@
 </div>
 
 <Dialog.Root bind:open={newDynamicURLOpen}>
-    <Dialog.Content class="sm:max-w-[500px]">
+    <Dialog.Content class="sm:max-w-125">
         <Dialog.Header>
         <Dialog.Title>Create New Dynamic URL</Dialog.Title>
             <Dialog.Description>You can change more settings after creating the URL.</Dialog.Description>

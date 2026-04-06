@@ -31,7 +31,7 @@ export async function GET({ locals, url, cookies }) {
     const code = url.searchParams.get("code");
 
     if (!state || !code) {
-        return redirect(303, "/");
+        return redirect(303, "/?error=signup_oath_no_state");
     }
 
     let provider: AuthProviderInfo | undefined;
@@ -55,17 +55,17 @@ export async function GET({ locals, url, cookies }) {
         }
     } catch (err) {
         console.log("List auth methods error.", err);
-        return redirect(303, "/");
+        return redirect(303, "/?error=signup_auth_method_get");
     }
 
     if (!provider) {
         console.log("Provider not found.");
-        return redirect(303, "/");
+        return redirect(303, "/?error=signup_auth_method_get");
     }
 
     if (expectedState != state) {
         console.log("Returned state does not match expected state.");
-        return redirect(303, "/");
+        return redirect(303, "/?error=signup_auth_method_get");
     }
     
     let res: RecordAuthResponse;
@@ -84,12 +84,16 @@ export async function GET({ locals, url, cookies }) {
         })
     } catch (err) {
         console.log("Error signing up with oath", err);
-        return redirect(303, "/");
+        return redirect(303, "/?error=signup_auth_signup_fail");
     }
 
     const newUserRecord = locals.pb.authStore.record;
     if (newUserRecord && res.meta) {
-        const fileResp = await fetchFileFromURL(res.meta["avatarUrl"]);
+        const fileFetchResp = await fetchFileFromURL(res.meta["avatarUrl"]);
+        let file: File | null = null;
+        if (!fileFetchResp.error) {
+            file = new File([fileFetchResp.blob], "logo.png", { type: fileFetchResp.blob.type })
+        }
         
         if (newUserRecord["new"]) {
             let stripeTrialSubscriptionUrl = "";
@@ -127,31 +131,42 @@ export async function GET({ locals, url, cookies }) {
                 stripeSubscriptionUrl = session.url ? session.url : "";
                 stripeCustomerID = customer.id;
             } catch (err) {
-                console.log(err);
+                console.log("Failed to do stripe stuff", err);
+                return redirect(303, "/?error=signup_stripe_error");
             }
             
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                new: false,
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta["name"] ? res.meta["name"] : "New User",
-                accessLevel: "none",
-                customerId: stripeCustomerID,
-                subscriptionURL: stripeSubscriptionUrl,
-                freeTrialURL: stripeTrialSubscriptionUrl,
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-                }
-            });
+            try {
+                await locals.pb.collection("users").update(newUserRecord.id, {
+                    new: false,
+                    avatar: file,
+                    name: res.meta["name"] ? res.meta["name"] : "New User",
+                    accessLevel: "none",
+                    customerId: stripeCustomerID,
+                    subscriptionURL: stripeSubscriptionUrl,
+                    freeTrialURL: stripeTrialSubscriptionUrl,
+                }, {
+                    headers: {
+                        "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+                    }
+                });
+            } catch (err) {
+                console.log("Failed to update user data after signup:", err);
+                return redirect(303, "/?error=signup_after_oath");
+            }
         } else {
-            await locals.pb.collection("users").update(newUserRecord.id, {
-                avatar: fileResp.error ? null : fileResp.blob,
-                name: res.meta["name"] ? res.meta["name"] : "New User",
-            }, {
-                headers: {
-                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-                }
-            });
+            try {
+                await locals.pb.collection("users").update(newUserRecord.id, {
+                    avatar: file,
+                    name: res.meta["name"] ? res.meta["name"] : "New User",
+                }, {
+                    headers: {
+                        "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+                    }
+                });
+            } catch (err) {
+                console.log("Failed to update user data after signup:", err);
+                return redirect(303, "/?error=signup_after_oath");
+            }
         }
     }
 
