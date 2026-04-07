@@ -63,19 +63,20 @@ func RestructureTag(included IncludedType) (Tag, bool) {
 	return newEvent, true
 }
 
-func ParseTags(tagsRelationship TagsRelationship, allTags []Tag) []EventTag {
-	tags := []EventTag{}
+func ParseTags(tagsRelationship TagsRelationship, userId string) []string {
+	tags := []string{}
 
 	for a := 0; a < len(tagsRelationship.Data); a++ {
-		for _, aTag := range allTags {
-			if tagsRelationship.Data[a].Id == aTag.Id {
-				tags = append(tags, EventTag{
-					Id:    aTag.Id,
-					Color: aTag.Attributes.Color,
-					Name:  aTag.Attributes.Name,
-				})
-			}
-		}
+		tags = append(tags, (userId + tagsRelationship.Data[a].Id))
+		// for _, aTag := range allTags {
+		// 	if tagsRelationship.Data[a].Id == aTag.Id {
+		// 		tags = append(tags, EventTag{
+		// 			Id:    aTag.Id,
+		// 			Color: aTag.Attributes.Color,
+		// 			Name:  aTag.Attributes.Name,
+		// 		})
+		// 	}
+		// }
 	}
 
 	return tags
