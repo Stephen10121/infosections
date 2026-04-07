@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getAllUserEvents } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
+    import { getAllUserEvents } from "../../../routes/(mainWebsite)/dashboard/events.remote";
     import { Calendar, Clock, MapPin } from "@lucide/svelte";
     import * as Card from "@/components/ui/card/index";
     import { Badge } from "@/components/ui/badge";

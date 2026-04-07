@@ -1,4 +1,4 @@
-import { updateSpecificUserEvents } from "../(mainWebsite)/dashboard/backend.remote";
+import { updateSpecificUserEvents } from "../(mainWebsite)/dashboard/events.remote";
 import type { AuthProviderInfo } from "pocketbase";
 import { redirect } from "@sveltejs/kit";
 import { dev } from "$app/environment";

@@ -1,4 +1,4 @@
-import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/backend.remote";
+import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/events.remote";
 import type { RecordModel } from "pocketbase";
 import { clsx, type ClassValue } from "clsx";
 import { Temporal } from "temporal-polyfill";

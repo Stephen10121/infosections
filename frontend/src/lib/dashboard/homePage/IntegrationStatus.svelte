@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { updateSpecificUserEvents } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
+    import { updateSpecificUserEvents } from "../../../routes/(mainWebsite)/dashboard/events.remote";
     import { timeAgo, timeWhen, type EventDBModelPrivate, type IntegrationModel } from "@/utils";
     import { AlertCircle, CheckCircle2, Cloud, RefreshCw } from "@lucide/svelte";
     import * as Card from "@/components/ui/card/index";
