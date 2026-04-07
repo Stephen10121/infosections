@@ -1,5 +1,5 @@
 import { command, getRequestEvent, query } from "$app/server";
-import type { EventDBModelPrivate } from "@/event.utils";
+import type { EventDBModelPrivateExpanded } from "@/event.utils";
 import { getMyIntegrations } from "./backend.remote";
 import { config } from "dotenv";
 
@@ -7,13 +7,14 @@ config();
 
 export const getAllUserEvents = query(async () => {
     const { locals } = getRequestEvent();
-    let events: EventDBModelPrivate[] = [];
+    let events: EventDBModelPrivateExpanded[] = [];
     
     if (!locals.user) return events;
     
     try {
         events = await locals.pb.collection('events').getFullList({
             filter: `owner="${locals.user.id}"`,
+            expand: "tags,resources",
             sort: 'startTime',
             headers: {
                 "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!

@@ -47,8 +47,8 @@
                                         </p>
                                     {/if}
                                 </div>
-                                {#if event.tags}
-                                    {#each event.tags as tag (`aneventtag${tag.name}`)}
+                                {#if event.expand.tags}
+                                    {#each event.expand.tags as tag (`aneventtag${tag.name}`)}
                                         <Badge
                                             variant="outline"
                                             class="text-[10px] shrink-0"

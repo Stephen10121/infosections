@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Package,  Warehouse } from "@lucide/svelte";
-    import type { EventDBModel } from "./event.utils";
+    import type { EventDBModel, EventDBModelExpanded } from "./event.utils";
 
-    let { resources, showResourcePathname, showResources, showRooms }: { resources: EventDBModel["resources"], showResourcePathname: boolean, showResources: boolean, showRooms: boolean } = $props();
+    let { resources, showResourcePathname, showResources, showRooms }: { resources: EventDBModelExpanded["expand"]["resources"], showResourcePathname: boolean, showResources: boolean, showRooms: boolean } = $props();
 
     let res: Exclude<EventDBModel["resources"], null> = $state([]);
     let rooms: Exclude<EventDBModel["resources"], null> = $state([]);

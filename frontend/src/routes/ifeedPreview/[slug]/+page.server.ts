@@ -1,5 +1,6 @@
+import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
 import type { CalendarCustomizations, CalendarFilters, CustomImageIFeedDBModel, ImageFeedDBModel } from "@/utils";
-import type { EventDBModel } from "@/event.utils";
+import { Temporal } from "temporal-polyfill";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 
@@ -39,12 +40,13 @@ export async function load({ params, locals }) {
         }
     }
     
-    const today = new Date();
-    const now = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}-${(today.getDate()-2).toString().padStart(2, '0')}`;
+    const today = Temporal.Now.zonedDateTimeISO().startOfDay();
+    const monthAgo = today.subtract({ days: today.day + 7 });
+    const monthAgoStr = `${monthAgo.year}-${(monthAgo.month).toString().padStart(2, '0')}-${(monthAgo.day).toString().padStart(2, '0')}`;
 
-    let events: EventDBModel[] = [];
+    let events: EventDBModelExpanded[] = [];
     try {
-        let filter = `startTime > "${now}"`;
+        let filter = `startTime > "${monthAgoStr}"`;
 
         // This filter shows all events for the testing dev feed.
         if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
@@ -61,8 +63,9 @@ export async function load({ params, locals }) {
 
         events = await locals.pb.collection('events').getFullList({
             filter,
+            expand: "tags,resources",
             sort: 'startTime',
-            fields: "id,recEventId,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: eventFieldRequirementsPublic + "," + tagsExpandRequirementsPublic + "," + resourcesExpandRequirementsPublic,
             headers: {
                 "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }

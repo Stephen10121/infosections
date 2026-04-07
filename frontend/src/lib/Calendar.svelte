@@ -2,7 +2,7 @@
     import type { CalendarCustomizations, CalendarFilters } from "./utils";
     import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
     import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
-    import type { EventDBModel } from "./event.utils";
+    import type { EventDBModelExpanded } from "./event.utils";
     import { invalidateAll } from "$app/navigation";
     import { Temporal } from 'temporal-polyfill';
     import { onMount } from "svelte";
@@ -15,7 +15,7 @@
         filters,
         autoUpdate = true
     }: {
-        events: EventDBModel[],
+        events: EventDBModelExpanded[],
         displaySettings: CalendarCustomizations,
         timeZone: Temporal.TimeZoneLike,
         filters: CalendarFilters,

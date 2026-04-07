@@ -1,4 +1,4 @@
-import type { EventDBModel } from "@/event.utils";
+import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
 import { error, redirect } from "@sveltejs/kit";
 import type { CalendarDBModel } from "@/utils";
 import { Temporal } from "temporal-polyfill";
@@ -29,7 +29,7 @@ export async function load({ params, locals, cookies }) {
     let monthAgo = today.subtract({ days: today.day + 7 });
     let monthAgoStr = `${monthAgo.year}-${(monthAgo.month).toString().padStart(2, '0')}-${(monthAgo.day).toString().padStart(2, '0')}`;
 
-    let events: EventDBModel[] = [];
+    let events: EventDBModelExpanded[] = [];
     try {
         // let filter = `startTime >= "${seventyTwoHoursAgoStr}" && startTime <= "${seventyTwoHoursLaterStr}"`;
         let filter = `startTime >= "${monthAgoStr}"`;
@@ -50,8 +50,9 @@ export async function load({ params, locals, cookies }) {
 
         events = await locals.pb.collection('events').getFullList({
             filter,
+            expand: "tags,resources",
             sort: 'startTime',
-            fields: "id,name,description,imageURL,registrationURL,location,times,resources,tags,startTime,endTime,featured,visibleInChurchCenter,created,updated",
+            fields: eventFieldRequirementsPublic + "," + tagsExpandRequirementsPublic + "," + resourcesExpandRequirementsPublic,
             headers: {
                 "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
