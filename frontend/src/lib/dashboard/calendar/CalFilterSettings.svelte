@@ -1,9 +1,10 @@
 <script lang="ts">
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
     import * as Card from "@/components/ui/card/index";
     import type { CalendarFilters } from "@/cal.utils";
-    import { Label } from "@/components/ui/label";
     import { Switch } from "@/components/ui/switch";
+    import { Label } from "@/components/ui/label";
 
     let {
         filters,
@@ -53,6 +54,26 @@
                     id="hideUnpublished"
                     bind:checked={filtersBindable.hideUnpublished}
                 />
+            </div>
+
+            <div class="flex items-center justify-between flex-col space-y-2">
+                <Label for="showDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
+                    <span class="font-medium">Resource Filtering Type</span>
+                    <span class="text-sm text-muted-foreground">You can either choose a block list or allowlist for resource filtering. Block or allow as many resources.</span>
+                </Label>
+                <input {...updateCalendarForm.fields.filters.resourceFilterType.as("hidden", filtersBindable.resourceFilterType)} />
+                <Tabs.Root bind:value={filtersBindable.resourceFilterType} class="w-full">
+                    <Tabs.List class="w-full">
+                        <Tabs.Trigger value="allow">AllowList</Tabs.Trigger>
+                        <Tabs.Trigger value="block">BlockList</Tabs.Trigger>
+                    </Tabs.List>
+                    <Tabs.Content value="allow">
+                        allow
+                    </Tabs.Content>
+                    <Tabs.Content value="block">
+                        block
+                    </Tabs.Content>
+                </Tabs.Root>
             </div>
         </div>
     </Card.Content>

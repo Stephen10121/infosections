@@ -1,4 +1,4 @@
-import { defaultCalendarCustomizations, type CalendarDBModel } from "@/cal.utils";
+import { defaultCalendarCustomizations, defaultCalendarFilters, type CalendarDBModel } from "@/cal.utils";
 import { getCalendarById, getMyCalendars } from "../backend.remote";
 import { command, form, getRequestEvent } from "$app/server";
 import { invalid, redirect } from "@sveltejs/kit";
@@ -40,10 +40,7 @@ export const createCalendarCommand = command(CreateCalendarSchema, async (newCal
             "passwordEnabled": newCalendar.enablePassword,
             "owner": locals.user.id,
             "displaySettings": defaultCalendarCustomizations,
-            "filters": {
-                "hideUnpublished": true,
-                "onlyShowFeatured": true
-            }
+            "filters": defaultCalendarFilters
         };
 
         if (newCalendar.enablePassword) {
@@ -90,10 +87,13 @@ const UpdateCalendarSchema = v.object({
         showRooms: v.optional(v.boolean(), false),
         showDescription: v.optional(v.boolean(), false)
     }),
-    filters: v.optional(v.object({
+    filters: v.object({
         onlyShowFeatured: v.optional(v.boolean(), false),
-	    hideUnpublished: v.optional(v.boolean(), false)
-    }), undefined)
+	    hideUnpublished: v.optional(v.boolean(), false),
+        resourceFilterType: v.picklist(["allow", "block"]),
+        allowResources: v.array(v.string()),
+        blockResources: v.array(v.string()),
+    })
 });
 
 export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalendar, issue) => {
@@ -111,10 +111,7 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
             "description": updatedCalendar.description,
             "passwordEnabled": updatedCalendar.enablePassword,
             "displaySettings": updatedCalendar.displaySettings,
-            "filters": updatedCalendar.filters ? updatedCalendar.filters : {
-                "hideUnpublished": false,
-                "onlyShowFeatured": false
-            }
+            "filters": updatedCalendar.filters
         };
 
         if (updatedCalendar.newPassword && updatedCalendar.newPassword.length > 0 && updatedCalendar.enablePassword) {
