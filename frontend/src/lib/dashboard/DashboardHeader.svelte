@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { type CalendarDBModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
+    import { type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import * as Sidebar from "$lib/components/ui/sidebar/index.js";
     import EverythingSearch from "@/EverythingSearch.svelte";
+    import { type CalendarDBModel } from "@/cal.utils";
     import { Button } from "@/components/ui/button";
     import { Bell, Settings } from "@lucide/svelte";
 

@@ -1,7 +1,7 @@
 <script lang="ts">
+    import type { CalendarCustomizations } from "@/cal.utils";
     import { Temporal } from "temporal-polyfill";
     import Event from "@/Event.svelte";
-    import type { CalendarCustomizations } from "@/utils";
 
     let {
         displaySettings,

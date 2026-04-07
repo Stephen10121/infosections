@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Shield, CalendarDays, TriangleAlert, X } from "@lucide/svelte";
-    import { type CalendarDBModel } from "@/utils";
-    import { Button } from "@/components/ui/button";
     import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+    import { type CalendarDBModel } from "@/cal.utils";
+    import { Button } from "@/components/ui/button";
 
     let { 
         calendarId,

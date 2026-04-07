@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalendarCustomizations } from "@/utils";
+    import type { CalendarCustomizations } from "@/cal.utils";
     import type { EventDBModel } from "@/event.utils";
     import { Temporal } from "temporal-polyfill";
     import Time from "@/Time.svelte";

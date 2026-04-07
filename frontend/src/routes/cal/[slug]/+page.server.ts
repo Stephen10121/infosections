@@ -1,6 +1,6 @@
 import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
 import { error, redirect } from "@sveltejs/kit";
-import type { CalendarDBModel } from "@/utils";
+import type { CalendarDBModel } from "@/cal.utils";
 import { Temporal } from "temporal-polyfill";
 import { config } from "dotenv";
 

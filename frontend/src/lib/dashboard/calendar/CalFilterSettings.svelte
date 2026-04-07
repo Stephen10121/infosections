@@ -1,9 +1,9 @@
 <script lang="ts">
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
     import * as Card from "@/components/ui/card/index";
+    import type { CalendarFilters } from "@/cal.utils";
     import { Label } from "@/components/ui/label";
     import { Switch } from "@/components/ui/switch";
-    import type { CalendarFilters } from "@/utils";
 
     let {
         filters,

@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { dateRangeOverlaps, LONGDAYTOSTRING, MONTHTOSTRING, type CalendarCustomizations, type CalendarFilters } from "./utils";
+    import { type CalendarCustomizations, type CalendarFilters } from "./cal.utils";
+    import { dateRangeOverlaps, LONGDAYTOSTRING, MONTHTOSTRING } from "./utils";
     import { type EventDBModelExpanded } from "./event.utils";
     import { Temporal } from "temporal-polyfill";
     import Event from "./Event.svelte";

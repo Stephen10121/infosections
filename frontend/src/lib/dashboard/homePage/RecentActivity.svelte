@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { timeAgo, type CalendarDBModel, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
+    import { timeAgo, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import NoEventListAvatar from "@/NoEventListAvatar.svelte";
     import NoImageFeedAvatar from "@/NoImageFeedAvatar.svelte";
     import DynamicFeedAvatar from "@/DynamicFeedAvatar.svelte";
     import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
+    import { type CalendarDBModel } from "@/cal.utils";
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
     import { ArrowUpRight } from "@lucide/svelte";

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalendarCustomizations, CalendarFilters } from "./utils";
+    import type { CalendarCustomizations, CalendarFilters } from "./cal.utils";
     import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
     import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
     import type { EventDBModelExpanded } from "./event.utils";

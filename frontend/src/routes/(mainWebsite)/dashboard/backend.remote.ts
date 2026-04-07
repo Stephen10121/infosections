@@ -1,6 +1,7 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
-import type { CalendarDBModel, CustomImageIFeedDBModel, DynamicURLModel, EventListDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
+import type { CustomImageIFeedDBModel, DynamicURLModel, EventListDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
 import { getRequestEvent, query } from "$app/server";
+import type { CalendarDBModel } from "@/cal.utils";
 import { redirect } from "@sveltejs/kit";
 import { config } from "dotenv";
 import * as v from "valibot";

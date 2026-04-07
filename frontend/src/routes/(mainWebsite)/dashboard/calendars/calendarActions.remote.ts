@@ -1,4 +1,4 @@
-import { defaultCalendarCustomizations, type CalendarDBModel } from "@/utils";
+import { defaultCalendarCustomizations, type CalendarDBModel } from "@/cal.utils";
 import { getCalendarById, getMyCalendars } from "../backend.remote";
 import { command, form, getRequestEvent } from "$app/server";
 import { invalid, redirect } from "@sveltejs/kit";
