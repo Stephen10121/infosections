@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { getDayRange, type CalendarCustomizations, type EventDBModel } from "../../utils";
+    import { getDayRange, type CalendarCustomizations } from "../../utils";
+    import { type EventDBModel } from "../../event.utils";
     import WeekCalViewDay from "./WeekCalViewDay.svelte";
     import { Temporal } from "temporal-polyfill";
 

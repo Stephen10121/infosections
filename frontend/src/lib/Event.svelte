@@ -1,10 +1,11 @@
 <script lang="ts">
     import { CalendarPlus, ClipboardClock, Clock, MapPin } from "@lucide/svelte";
-    import { MONTHTOSTRING, type CalendarCustomizations, type EventDBModel } from "./utils";
+    import { MONTHTOSTRING, type CalendarCustomizations } from "./utils";
     import EventResources from "./EventResources.svelte";
-    import Time from "./Time.svelte";
+    import { type EventDBModel } from "./event.utils";
     import EventTimes from "./EventTimes.svelte";
     import { Temporal } from "temporal-polyfill";
+    import Time from "./Time.svelte";
 
     let { event, currentDay, calendarCustomizations, timeZone }: { event: EventDBModel, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();
 
@@ -65,7 +66,7 @@
 
     {#if event.times && event.times.length > 1}
         <div class="mb-3 flex items-start gap-2 text-sm text-gray-400">
-            <ClipboardClock class="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <ClipboardClock class="h-4 w-4 mt-0.5 shrink-0" />
             <div>
                 <div class="text-gray-400">Time Schedule:</div>
                 <div class="text-gray-300">
@@ -79,7 +80,7 @@
 
     {#if event.location && calendarCustomizations.showLocation}
         <div class="flex items-start gap-2 text-sm text-gray-400">
-            <MapPin class="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <MapPin class="h-4 w-4 mt-0.5 shrink-0" />
             <p>
                 <span class="text-gray-400">Location:</span>
                 <span class="text-gray-300">{#if calendarCustomizations.onlyShowLocationTitle}{event.location.split(" - ")[0]}{:else}{event.location}{/if}</span>

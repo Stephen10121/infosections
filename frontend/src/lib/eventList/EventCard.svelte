@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { Button } from "@/components/ui/button";
+    import type { ImageListCustomizations } from "@/utils";
     import * as Card from "@/components/ui/card/index";
+    import type { EventDBModel } from "@/event.utils";
+    import { Button } from "@/components/ui/button";
     import PrettyDate from "@/PrettyDate.svelte";
-    import type { EventDBModel, ImageListCustomizations } from "@/utils";
-    import { Calendar } from "@lucide/svelte";
     import { Temporal } from "temporal-polyfill";
+    import { Calendar } from "@lucide/svelte";
 
     let { event, timeZone, displaySettings }: { event: EventDBModel, timeZone: string, displaySettings: ImageListCustomizations } = $props();
 </script>

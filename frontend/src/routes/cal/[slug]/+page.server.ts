@@ -1,5 +1,6 @@
-import type { CalendarDBModel, EventDBModel } from "@/utils";
+import type { EventDBModel } from "@/event.utils";
 import { error, redirect } from "@sveltejs/kit";
+import type { CalendarDBModel } from "@/utils";
 import { Temporal } from "temporal-polyfill";
 import { config } from "dotenv";
 

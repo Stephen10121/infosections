@@ -1,4 +1,5 @@
-import type { CalendarCustomizations, CalendarFilters, CustomImageIFeedDBModel, EventDBModel, ImageFeedDBModel } from "@/utils";
+import type { CalendarCustomizations, CalendarFilters, CustomImageIFeedDBModel, ImageFeedDBModel } from "@/utils";
+import type { EventDBModel } from "@/event.utils";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 

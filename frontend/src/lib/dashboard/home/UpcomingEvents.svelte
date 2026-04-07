@@ -1,11 +1,12 @@
 <script lang="ts">
-    import * as Card from "@/components/ui/card/index";
-    import Time from "@/Time.svelte";
-    import { dateRangeOverlaps, type EventDBModel } from "@/utils";
     import { MapPin, Clock, Calendar, ArrowUpRightIcon } from "@lucide/svelte";
-    import { Temporal } from "temporal-polyfill";
     import * as Empty from "$lib/components/ui/empty/index.js";
+    import * as Card from "@/components/ui/card/index";
+    import { type EventDBModel } from "@/event.utils";
     import { Button } from "@/components/ui/button";
+    import { Temporal } from "temporal-polyfill";
+    import { dateRangeOverlaps } from "@/utils";
+    import Time from "@/Time.svelte";
 
     let { events }: { events: EventDBModel[] } = $props();
 

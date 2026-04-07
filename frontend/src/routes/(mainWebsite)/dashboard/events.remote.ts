@@ -1,6 +1,6 @@
 import { command, getRequestEvent, query } from "$app/server";
+import type { EventDBModelPrivate } from "@/event.utils";
 import { getMyIntegrations } from "./backend.remote";
-import type { EventDBModelPrivate } from "@/utils";
 import { config } from "dotenv";
 
 config();

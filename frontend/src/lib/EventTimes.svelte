@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { MONTHTOSTRING, type EventTimesType } from "./utils";
-    import Time from "./Time.svelte";
+    import type { EventTimesType } from "./event.utils";
     import { Temporal } from "temporal-polyfill";
+    import { MONTHTOSTRING } from "./utils";
+    import Time from "./Time.svelte";
 
     let { time, useAMPM, multiDayEvent, today, timeZone }: { time: EventTimesType, useAMPM: boolean, multiDayEvent: boolean, today: Temporal.ZonedDateTime, timeZone: Temporal.TimeZoneLike } = $props();
 
