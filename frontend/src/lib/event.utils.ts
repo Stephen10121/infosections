@@ -39,8 +39,6 @@ export interface EventDBModel extends RecordModel {
 	registrationURL: string,
 	location: string,
 	times: EventTimesType[] | null,
-	// resources: string[] | null
-	// tags: string[] | null,
 	startTime: string,
 	endTime: string,
 	featured: boolean,
@@ -58,6 +56,8 @@ export interface EventDBModelExpanded extends EventDBModel {
 
 export interface EventDBModelPrivate extends EventDBModel {
 	owner: string
+	resources: string[] | null
+	tags: string[] | null,
 }
 
 export interface EventDBModelPrivateExpanded extends EventDBModelPrivate {
