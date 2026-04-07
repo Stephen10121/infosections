@@ -1,4 +1,5 @@
-import type { EventDBModel, EventListDBModel } from "@/utils";
+import type { EventDBModel } from "@/event.utils";
+import type { EventListDBModel } from "@/utils";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 

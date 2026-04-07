@@ -105,8 +105,8 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 
 	for i := 0; i < len(responseJson.Data); i++ {
 		eventTime := ParseEventTimes(responseJson.Data[i].Relationships.EventTimes, eventTimes)
-		resources := ParseResourceBookings(responseJson.Data[i].Relationships.ResourceBookings, resourceBookings, resources)
-		tags := ParseTags(responseJson.Data[i].Relationships.Tags, allTags)
+		resources := ParseResourceBookings(responseJson.Data[i].Relationships.ResourceBookings, resourceBookings, userId)
+		tags := ParseTags(responseJson.Data[i].Relationships.Tags, userId)
 		eventItself, ok := ParseEventItself(responseJson.Data[i].Relationships.Event, events)
 		if !ok {
 			fmt.Println("No actuall event found for this event instance:", responseJson.Data[i].Id)

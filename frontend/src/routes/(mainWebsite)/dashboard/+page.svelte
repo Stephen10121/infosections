@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getAllUserEvents, getMyIntegrations } from './backend.remote.js';
+    import { getMyCalendars, getMyImageFeeds, getMyEventLists, getMyDynamicURLS, getMyIntegrations } from './backend.remote.js';
     import IntegrationStatus from '@/dashboard/homePage/IntegrationStatus.svelte';
     import UpcomingEvents from '@/dashboard/homePage/UpcomingEvents.svelte';
     import RecentActivity from '@/dashboard/homePage/RecentActivity.svelte';
     import QuickActions from '@/dashboard/homePage/QuickActions.svelte';
     import MetricCards from '@/dashboard/homePage/MetricCards.svelte';
+    import { getAllUserEvents } from './events.remote.js';
 
     let { data } = $props();
 

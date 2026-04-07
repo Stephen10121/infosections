@@ -97,23 +97,24 @@ func RestructureResourceBooking(included IncludedType) (ResourceBooking, bool) {
 	return newEvent, true
 }
 
-func ParseResourceBookings(resourcesRelation ResourceBookingsRelationship, resouceBookings []ResourceBooking, resourcesMap []ResourceJsonType) []Resource {
-	resources := []Resource{}
+func ParseResourceBookings(resourcesRelation ResourceBookingsRelationship, resouceBookings []ResourceBooking, userId string) []string {
+	resources := []string{}
 
 	for _, relation := range resourcesRelation.Data {
 		for _, resourceBooking := range resouceBookings {
 			if relation.Id == resourceBooking.Id {
-				for _, resource := range resourcesMap {
-					if resource.Id == resourceBooking.Relationships.Resource.Data.Id {
-						resources = append(resources, Resource{
-							Id:       resourceBooking.Relationships.Resource.Data.Id,
-							Name:     resource.Attributes.Name,
-							PathName: resource.Attributes.PathName,
-							Kind:     resource.Attributes.Kind,
-						})
-						break
-					}
-				}
+				resources = append(resources, (userId + resourceBooking.Relationships.Resource.Data.Id))
+				// for _, resource := range resourcesMap {
+				// 	if resource.Id == resourceBooking.Relationships.Resource.Data.Id {
+				// 		resources = append(resources, Resource{
+				// 			Id:       resourceBooking.Relationships.Resource.Data.Id,
+				// 			Name:     resource.Attributes.Name,
+				// 			PathName: resource.Attributes.PathName,
+				// 			Kind:     resource.Attributes.Kind,
+				// 		})
+				// 		break
+				// 	}
+				// }
 				break
 			}
 		}

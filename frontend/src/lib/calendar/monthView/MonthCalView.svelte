@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { Temporal } from "temporal-polyfill";
+    import { getDaysInMonth, type CalendarCustomizations } from "../../utils";
     import MonthCalViewDay from "./MonthCalViewDay.svelte";
-    import { getDaysInMonth, type CalendarCustomizations, type EventDBModel } from "../../utils";
+    import { type EventDBModel } from "../../event.utils";
+    import { Temporal } from "temporal-polyfill";
 
     let {
         events,
@@ -22,7 +23,7 @@
     <div class="overflow-hidden h-screen">
         <div class="grid grid-cols-7 dark bg-foreground">
             {#each ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as day (`aweekday${day}`)}
-                <div class="text-center py-2 text-xs text-muted-foreground dark font-semibold text-white border-b border-[#333333]">
+                <div class="text-center py-2 text-xs dark font-semibold text-white border-b border-[#333333]">
                     {day}
                 </div>
             {/each}

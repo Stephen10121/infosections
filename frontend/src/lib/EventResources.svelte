@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Package,  Warehouse } from "@lucide/svelte";
-    import type { EventDBModel } from "./utils";
+    import type { EventDBModel, EventDBModelExpanded } from "./event.utils";
 
-    let { resources, showResourcePathname, showResources, showRooms }: { resources: EventDBModel["resources"], showResourcePathname: boolean, showResources: boolean, showRooms: boolean } = $props();
+    let { resources, showResourcePathname, showResources, showRooms }: { resources: EventDBModelExpanded["expand"]["resources"], showResourcePathname: boolean, showResources: boolean, showRooms: boolean } = $props();
 
     let res: Exclude<EventDBModel["resources"], null> = $state([]);
     let rooms: Exclude<EventDBModel["resources"], null> = $state([]);
@@ -21,7 +21,7 @@
 
 {#if rooms.length > 0 && showRooms}
     <div class="flex items-start gap-2 text-sm text-gray-400">
-        <Warehouse class="h-4 w-4 mt-0.5 flex-shrink-0" />
+        <Warehouse class="h-4 w-4 mt-0.5 shrink-0" />
         <p>
             <span class="text-gray-400">Room{#if rooms.length > 1}s{/if}:</span>
             <span class="text-gray-300">
@@ -35,7 +35,7 @@
 
 {#if res.length > 0 && showResources}
     <div class="flex items-start gap-2 text-sm text-gray-400">
-        <Package class="h-4 w-4 mt-0.5 flex-shrink-0" />
+        <Package class="h-4 w-4 mt-0.5 shrink-0" />
         <p>
             <span class="text-gray-400">Resource{#if res.length > 1}s{/if}:</span>
             <span class="text-gray-300">

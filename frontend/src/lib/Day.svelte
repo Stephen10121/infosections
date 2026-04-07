@@ -1,9 +1,10 @@
 <script lang="ts">
+    import { dateRangeOverlaps, LONGDAYTOSTRING, MONTHTOSTRING, type CalendarCustomizations, type CalendarFilters } from "./utils";
+    import { type EventDBModelExpanded } from "./event.utils";
     import { Temporal } from "temporal-polyfill";
     import Event from "./Event.svelte";
-    import { dateRangeOverlaps, LONGDAYTOSTRING, MONTHTOSTRING, type CalendarCustomizations, type CalendarFilters, type EventDBModel } from "./utils";
 
-    let { events, day, dayNumber, calendarCustomizations, timeZone, filters }: { events: EventDBModel[], day: Temporal.ZonedDateTime, dayNumber: number, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike, filters: CalendarFilters } = $props();
+    let { events, day, dayNumber, calendarCustomizations, timeZone, filters }: { events: EventDBModelExpanded[], day: Temporal.ZonedDateTime, dayNumber: number, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike, filters: CalendarFilters } = $props();
 
     let nextDay = $derived(day.add({ hours: 23, minutes: 59, seconds: 59, milliseconds: 1 }));
 </script>

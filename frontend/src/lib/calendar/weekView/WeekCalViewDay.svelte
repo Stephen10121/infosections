@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { cn, getEventsForDate, isSameDay, type CalendarCustomizations, type EventDBModel } from "../../utils";
+    import { cn, getEventsForDate, isSameDay, type CalendarCustomizations } from "../../utils";
     import WeekCalViewDayEvent from "./WeekCalViewDayEvent.svelte";
+    import { type EventDBModel } from "../../event.utils";
     import { Temporal } from "temporal-polyfill";
 
     let {

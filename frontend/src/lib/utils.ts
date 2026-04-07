@@ -1,4 +1,5 @@
-import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/backend.remote";
+import { updateSpecificUserEvents } from "../routes/(mainWebsite)/dashboard/events.remote";
+import type { EventDBModel } from "./event.utils";
 import type { RecordModel } from "pocketbase";
 import { clsx, type ClassValue } from "clsx";
 import { Temporal } from "temporal-polyfill";
@@ -62,53 +63,12 @@ export function dateRangeOverlaps(a_start: number, a_end: number, b_start: numbe
     return false;
 }
 
-export type EventTimesType = {
-	name: string,
-	startTime: string,
-	endTime: string
-}
-
-export type EventResourcesType = {
-	id: string,
-	kind: string,
-	name: string,
-	path_name: string
-}
-
-export type EventTagsType = {
-	id: string,
-	color: string,
-	name: string
-}
-
-export interface EventDBModel extends RecordModel {
-	recEventId: string,
-	name: string,
-	description: string,
-	imageURL: string,
-	registrationURL: string,
-	location: string,
-	times: EventTimesType[] | null,
-	resources: EventResourcesType[] | null
-	tags: EventTagsType[] | null,
-	startTime: string,
-	endTime: string,
-	featured: boolean,
-	visibleInChurchCenter: boolean
-	recurrence: string,
-	service: "planningcenter"
-}
-
 export interface CustomImageIFeedDBModel extends RecordModel {
 	picture: string | File,
 	registrationURL: string,
 	showLink: boolean,
 	linkText: string,
 	imageFeed: string[],
-	owner: string
-}
-
-export interface EventDBModelPrivate extends EventDBModel {
 	owner: string
 }
 

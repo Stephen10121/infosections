@@ -27,9 +27,9 @@ type Event struct {
 	Name                 string               `json:"name"`
 	Location             string               `json:"location"`
 	Times                []SpecificEventTimes `json:"times"`
-	Resources            []Resource           `json:"resources"`
+	Resources            []string             `json:"resources"`
 	Recurrence           string               `json:"recurrence"`
-	Tags                 []EventTag           `json:"tags"`
+	Tags                 []string             `json:"tags"`
 	Description          string               `json:"description"`
 	ImageURL             string               `json:"imageURL"`
 	Featured             bool                 `json:"featured"`

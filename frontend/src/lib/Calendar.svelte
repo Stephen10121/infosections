@@ -1,11 +1,12 @@
 <script lang="ts">
-    import { invalidateAll } from "$app/navigation";
-    import { onMount } from "svelte";
-    import Day from "./Day.svelte";
-    import type { CalendarCustomizations, CalendarFilters, EventDBModel } from "./utils";
-    import { Temporal } from 'temporal-polyfill';
+    import type { CalendarCustomizations, CalendarFilters } from "./utils";
     import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
     import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
+    import type { EventDBModelExpanded } from "./event.utils";
+    import { invalidateAll } from "$app/navigation";
+    import { Temporal } from 'temporal-polyfill';
+    import { onMount } from "svelte";
+    import Day from "./Day.svelte";
 
     let {
         events,
@@ -14,7 +15,7 @@
         filters,
         autoUpdate = true
     }: {
-        events: EventDBModel[],
+        events: EventDBModelExpanded[],
         displaySettings: CalendarCustomizations,
         timeZone: Temporal.TimeZoneLike,
         filters: CalendarFilters,
