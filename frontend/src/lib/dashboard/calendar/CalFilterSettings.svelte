@@ -85,7 +85,7 @@
                     </Tabs.Root>
                     <div class="w-full bg-muted rounded-b-md p-2 {filtersBindable.resourceFilterType === "block" ? "hidden" : "mt-0.5"}">
                         <Label class="flex flex-col items-start space-y-0.5">
-                            <span class="text-sm text-muted-foreground">Allow events that contain this resource.</span>
+                            <span class="text-sm text-muted-foreground">Allow events that contain this resource.{#if filtersBindable.allowResources.length === 0}<br><span class="text-red-500">*If no resource is selected, then all events will go through and no filtering will happen.</span>{/if}</span>
                         </Label>
                         <div class="space-y-2 mt-2">
                             {#each myResources as resource (`allowAResource${resource.id}`)}
@@ -158,7 +158,7 @@
                     </Tabs.Root>
                     <div class="w-full bg-muted rounded-b-md p-2 {filtersBindable.tagFilterType === "block" ? "hidden" : "mt-0.5"}">
                         <Label class="flex flex-col items-start space-y-0.5">
-                            <span class="text-sm text-muted-foreground">Allow events that contain this tag.</span>
+                            <span class="text-sm text-muted-foreground">Allow events that contain this tag.{#if filtersBindable.allowTags.length === 0}<br><span class="text-red-500">*If no tag is selected, then all events will go through and no filtering will happen.</span>{/if}</span>
                         </Label>
                         <div class="space-y-2 mt-2">
                             {#each myTags as tag (`allowATag${tag.id}`)}

@@ -25,6 +25,8 @@
     featured: true,
     description: "This is a short description of this event.",
     times: [],
+    resources: [],
+    tags: [],
     expand: {
         resources: [{
             resource_id: "res1",
