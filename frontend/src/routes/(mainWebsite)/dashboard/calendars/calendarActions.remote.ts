@@ -91,8 +91,9 @@ const UpdateCalendarSchema = v.object({
         onlyShowFeatured: v.optional(v.boolean(), false),
 	    hideUnpublished: v.optional(v.boolean(), false),
         resourceFilterType: v.picklist(["allow", "block"]),
-        allowResources: v.array(v.string()),
-        blockResources: v.array(v.string()),
+        allowResources: v.optional(v.array(v.string()), []),
+        blockResources: v.optional(v.array(v.string()), []),
+        enableResourceFiltering: v.optional(v.boolean(), false)
     })
 });
 

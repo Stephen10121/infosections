@@ -27,7 +27,8 @@ export type CalendarFilters = {
 	hideUnpublished: boolean,
 	resourceFilterType: "allow" | "block"
 	allowResources: string[],
-	blockResources: string[]
+	blockResources: string[],
+	enableResourceFiltering: boolean
 };
 
 export const defaultCalendarFilters: CalendarFilters = {
@@ -35,7 +36,8 @@ export const defaultCalendarFilters: CalendarFilters = {
 	onlyShowFeatured: true,
 	resourceFilterType: "block",
 	allowResources: [],
-	blockResources: []
+	blockResources: [],
+	enableResourceFiltering: false
 }
 
 export interface CalendarDBModel extends RecordModel {
