@@ -3,8 +3,8 @@
     import * as Dialog from "$lib/components/ui/dialog/index.js";
     import AnIncludedCalendar from "./AnIncludedCalendar.svelte";
     import * as Empty from "$lib/components/ui/empty/index.js";
+    import { type CalendarDBModel } from "@/cal.utils";
     import { Button } from "@/components/ui/button";
-    import { type CalendarDBModel } from "@/utils";
     import { CalendarDays } from "@lucide/svelte";
     import ACalToAdd from "./ACalToAdd.svelte";
     import { toast } from "svelte-sonner";
@@ -107,7 +107,7 @@
 </div>
 
 <Dialog.Root bind:open={includeACalendarPopup}>
-    <Dialog.Content class="sm:max-w-[500px] max-h-screen overflow-y-auto" style="max-height: calc(100vh - 50px);">
+    <Dialog.Content class="sm:max-w-125 max-h-screen overflow-y-auto" style="max-height: calc(100vh - 50px);">
         <Dialog.Header>
             <Dialog.Title>Incude Calendar</Dialog.Title>
             <Dialog.Description>KEEP IN MIND that a password protected calendar will be public and will not require a password. Also, any calendar that has access to UNPUBLISHED events also will be public.

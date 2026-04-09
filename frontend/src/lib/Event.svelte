@@ -1,10 +1,11 @@
 <script lang="ts">
     import { CalendarPlus, ClipboardClock, Clock, MapPin } from "@lucide/svelte";
-    import { MONTHTOSTRING, type CalendarCustomizations } from "./utils";
-    import EventResources from "./EventResources.svelte";
+    import { type CalendarCustomizations } from "./cal.utils";
     import { type EventDBModelExpanded } from "./event.utils";
+    import EventResources from "./EventResources.svelte";
     import EventTimes from "./EventTimes.svelte";
     import { Temporal } from "temporal-polyfill";
+    import { MONTHTOSTRING } from "./utils";
     import Time from "./Time.svelte";
 
     let { event, currentDay, calendarCustomizations, timeZone }: { event: EventDBModelExpanded, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();

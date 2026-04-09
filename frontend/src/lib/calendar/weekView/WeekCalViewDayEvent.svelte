@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { type CalendarCustomizations, MONTHTOSTRING } from "@/utils";
+    import { type CalendarCustomizations } from "@/cal.utils";
     import { CalendarPlus, Clock, } from "@lucide/svelte";
     import { type EventDBModel } from "@/event.utils";
     import { Temporal } from "temporal-polyfill";
+    import { MONTHTOSTRING } from "@/utils";
     import Time from "@/Time.svelte";
 
     let { event, currentDay, calendarCustomizations, timeZone }: { event: EventDBModel, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();

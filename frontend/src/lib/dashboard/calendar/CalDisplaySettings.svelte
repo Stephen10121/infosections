@@ -1,7 +1,7 @@
 <script lang="ts">
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
+    import type { CalendarCustomizations } from "@/cal.utils";
     import * as Tabs from "$lib/components/ui/tabs/index.js";
-    import type { CalendarCustomizations } from "@/utils";
     import * as Card from "@/components/ui/card/index";
     import { Label } from "@/components/ui/label";
     import { Switch } from "@/components/ui/switch";

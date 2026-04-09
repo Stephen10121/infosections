@@ -1,7 +1,8 @@
 <script lang="ts">
-    import type { CalendarDBModel, EventListDBModel, ImageFeedDBModel } from "./utils";
+    import type { EventListDBModel, ImageFeedDBModel } from "./utils";
     import Badge from "./components/ui/badge/badge.svelte";
     import * as Kbd from "$lib/components/ui/kbd/index.js";
+    import type { CalendarDBModel } from "./cal.utils";
     import { Input } from "@/components/ui/input";
     import {  Search, } from "@lucide/svelte";
     import { goto } from "$app/navigation";

@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { cn, type CalendarDBModel, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
+    import { cn, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import { Calendar, CalendarDays, LayoutList, Image, Link2, Eye } from "@lucide/svelte";
     import { type EventDBModelPrivate } from "@/event.utils";
+    import { type CalendarDBModel } from "@/cal.utils";
     import * as Card from "@/components/ui/card/index";
 
     const {

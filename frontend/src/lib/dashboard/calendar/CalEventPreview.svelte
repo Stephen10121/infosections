@@ -1,7 +1,7 @@
 <script lang="ts">
+    import type { CalendarCustomizations } from "@/cal.utils";
     import { Temporal } from "temporal-polyfill";
     import Event from "@/Event.svelte";
-    import type { CalendarCustomizations } from "@/utils";
 
     let {
         displaySettings,
@@ -25,6 +25,8 @@
     featured: true,
     description: "This is a short description of this event.",
     times: [],
+    resources: [],
+    tags: [],
     expand: {
         resources: [{
             resource_id: "res1",

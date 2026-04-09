@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { CalendarDBModel } from "./utils";
+    import type { CalendarDBModel } from "./cal.utils";
 
     let {
         calendar,
@@ -21,7 +21,7 @@
         bind:checked={checked}
         onchange={(event) => addToCalsToAdd(event, calendar.id)}
     />
-    <label for="caltoadd{calendar.id}" class="w-full h-full block p-2 flex items-center gap-2 cursor-pointer">
+    <label for="caltoadd{calendar.id}" class="w-full h-full p-2 flex items-center gap-2 cursor-pointer">
         <div class="dot w-3 h-3 {checked ? "bg-green-600" : "bg-accent"} rounded-xl"></div>
         {calendar.name}
     </label>

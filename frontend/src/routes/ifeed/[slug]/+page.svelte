@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { filterEventsBasedOnTagAndResourceFilters } from "@/event.utils.js";
     import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import * as Carousel from "$lib/components/ui/carousel/index.js";
     import { SquareArrowOutUpRight } from "@lucide/svelte";
@@ -107,7 +108,7 @@
                     <Carousel.Item class="w-screen h-screen">
                         <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
                             <div id="cal-root" class="dark min-h-screen w-full bg-background relative">
-                                <Calendar autoUpdate={false} events={data.events} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                                <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
                             </div>
                         </AspectRatio>
                     </Carousel.Item>

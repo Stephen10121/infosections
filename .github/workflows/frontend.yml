@@ -3,6 +3,10 @@ name: Docker Build InfoSections frontend
 on:
     push:
         branches: [ release ]
+    workflow_run:
+      workflows: ["Frontend Check"]
+      types:
+        - completed
 
 jobs:
   build:

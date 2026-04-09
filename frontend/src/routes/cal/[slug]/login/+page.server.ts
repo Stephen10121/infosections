@@ -1,5 +1,5 @@
 import { error, fail, redirect } from '@sveltejs/kit';
-import type { CalendarDBModel } from '@/utils.js';
+import type { CalendarDBModel } from '@/cal.utils.js';
 import { config } from "dotenv";
 
 config();

@@ -1,5 +1,5 @@
 import { command, getRequestEvent, query } from "$app/server";
-import type { EventDBModelPrivateExpanded } from "@/event.utils";
+import type { EventDBModelPrivateExpanded, EventResourcesDBModelPrivate, EventTagsDBModelPrivate } from "@/event.utils";
 import { getMyIntegrations } from "./backend.remote";
 import { config } from "dotenv";
 
@@ -57,4 +57,44 @@ export const updateSpecificUserEvents = command(async () => {
         error: false,
         msg: "Successful sync"
     }
+});
+
+export const getMyEventTagsPrivate = query(async () => {
+    const { locals } = getRequestEvent();
+    let tags: EventTagsDBModelPrivate[] = [];
+
+    if (!locals.user) return tags;
+
+    try {
+        tags = await locals.pb.collection('tags').getFullList({
+            filter: `owner="${locals.user.id}"`,
+            headers: {
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to fetch tags.", err);
+    }
+
+    return tags;
+});
+
+export const getMyEventResourcesPrivate = query(async () => {
+    const { locals } = getRequestEvent();
+    let resources: EventResourcesDBModelPrivate[] = [];
+
+    if (!locals.user) return resources;
+
+    try {
+        resources = await locals.pb.collection('resources').getFullList({
+            filter: `owner="${locals.user.id}"`,
+            headers: {
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+            }
+        });
+    } catch (err) {
+        console.log("Failed to fetch resources.", err);
+    }
+
+    return resources;
 });

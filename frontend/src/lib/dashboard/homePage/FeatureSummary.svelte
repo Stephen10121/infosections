@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { type CalendarDBModel, type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
+    import { type DynamicURLModel, type EventListDBModel, type ImageFeedDBModel } from "@/utils";
     import { CalendarDays, LayoutList, Image, Link2 } from "@lucide/svelte";
     import DynamicUrlItem from "./DynamicUrlItem.svelte";
+    import { type CalendarDBModel } from "@/cal.utils";
     import { Button } from "@/components/ui/button";
     import FeatureCard from "./FeatureCard.svelte";
     import ViewItem from "./ViewItem.svelte";

@@ -1,5 +1,6 @@
 import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
-import type { CalendarCustomizations, CalendarFilters, CustomImageIFeedDBModel, ImageFeedDBModel } from "@/utils";
+import type { CalendarCustomizations, CalendarFilters } from "@/cal.utils";
+import type { CustomImageIFeedDBModel, ImageFeedDBModel } from "@/utils";
 import { Temporal } from "temporal-polyfill";
 import { error } from "@sveltejs/kit";
 import { config } from "dotenv";

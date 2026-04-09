@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { getDaysInMonth, type CalendarCustomizations } from "../../utils";
+    import { type CalendarCustomizations } from "../../cal.utils";
     import MonthCalViewDay from "./MonthCalViewDay.svelte";
     import { type EventDBModel } from "../../event.utils";
+    import { getDaysInMonth } from "../../utils";
     import { Temporal } from "temporal-polyfill";
 
     let {

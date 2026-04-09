@@ -48,15 +48,17 @@
                                     {/if}
                                 </div>
                                 {#if event.expand.tags}
-                                    {#each event.expand.tags as tag (`aneventtag${tag.name}`)}
-                                        <Badge
-                                            variant="outline"
-                                            class="text-[10px] shrink-0"
-                                            style="border-color: {tag.color}; color: {tag.color}"
-                                        >
-                                            {tag.name}
-                                        </Badge>
-                                    {/each}
+                                    <div class="flex gap-0.5">
+                                        {#each event.expand.tags as tag (`aneventtag${tag.name}`)}
+                                            <Badge
+                                                variant="outline"
+                                                class="text-[10px] shrink-0"
+                                                style="border-color: {tag.color}; color: {tag.color}"
+                                            >
+                                                {tag.name}
+                                            </Badge>
+                                        {/each}
+                                    </div>
                                 {/if}
                             </div>
                             <p class="text-xs text-muted-foreground flex items-center gap-1 mt-2">

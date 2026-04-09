@@ -1,0 +1,25 @@
+name: Frontend Check
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        # Uses the official action to install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+        working-directory: ./frontend
+
+      - name: Run check script
+        # This executes the "check" script defined in your package.json
+        run: bun run check
+        working-directory: ./frontend
