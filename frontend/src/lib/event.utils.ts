@@ -86,3 +86,19 @@ export function eventResourceBlockListToFilterString(blockedResources: string[])
 	}
 	return filterString;
 }
+
+export function eventTagAllowListToFilterString(allowedTags: string[]) {
+	let filterString = "";
+	for (let i=0;i<allowedTags.length;i++) {
+		filterString += ` && tags ~ "${allowedTags[i]}"`
+	}
+	return filterString;
+}
+
+export function eventTagBlockListToFilterString(blockedTags: string[]) {
+	let filterString = "";
+	for (let i=0;i<blockedTags.length;i++) {
+		filterString += ` && tags !~ "${blockedTags[i]}"`
+	}
+	return filterString;
+}

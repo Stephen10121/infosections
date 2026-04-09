@@ -93,7 +93,11 @@ const UpdateCalendarSchema = v.object({
         resourceFilterType: v.picklist(["allow", "block"]),
         allowResources: v.optional(v.array(v.string()), []),
         blockResources: v.optional(v.array(v.string()), []),
-        enableResourceFiltering: v.optional(v.boolean(), false)
+        enableResourceFiltering: v.optional(v.boolean(), false),
+        tagFilterType: v.picklist(["allow", "block"]),
+        allowTags: v.optional(v.array(v.string()), []),
+        blockTags: v.optional(v.array(v.string()), []),
+        enableTagFiltering: v.optional(v.boolean(), false)
     })
 });
 

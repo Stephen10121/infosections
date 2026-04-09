@@ -1,6 +1,6 @@
 <script lang="ts">
+    import { getMyEventResourcesPrivate, getMyEventTagsPrivate } from "../../../routes/(mainWebsite)/dashboard/events.remote";
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
-    import { getMyEventResourcesPrivate } from "../../../routes/(mainWebsite)/dashboard/events.remote";
     import * as Tabs from "$lib/components/ui/tabs/index.js";
     import * as Item from "$lib/components/ui/item/index.js";
     import * as Card from "@/components/ui/card/index";
@@ -17,6 +17,7 @@
     } = $props();
 
     let myResources = $derived(await getMyEventResourcesPrivate());
+    let myTags = $derived(await getMyEventTagsPrivate());
 
     // svelte-ignore state_referenced_locally
     let filtersBindable = $state(filters);
@@ -123,6 +124,73 @@
                                             </Item.Content>
                                             <Item.Actions>
                                                 <input disabled={!filtersBindable.enableResourceFiltering} id="blockResource{resource.id}" {...updateCalendarForm.fields.filters.blockResources.as("checkbox", resource.id)} bind:group={filtersBindable.blockResources} />
+                                            </Item.Actions>
+                                        </Item.Root>
+                                    </Label>
+                                </div>
+                            {/each}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between">
+                    <Label class="flex flex-col items-start space-y-1 cursor-pointer" for="enableTagFiltering">
+                        <span class="font-medium">Enable Tag Filtering</span>
+                        <span class="text-sm text-muted-foreground">Most events contain information regarding the tags that are required. You can allow or block events based on its tag requirements.</span>
+                    </Label>
+
+                    <input {...updateCalendarForm.fields.filters.enableTagFiltering.as("checkbox")} class="sr-only" bind:checked={filtersBindable.enableTagFiltering} type="checkbox" />
+                    <Switch
+                        id="enableTagFiltering"
+                        bind:checked={filtersBindable.enableTagFiltering}
+                    />
+                </div>
+
+                <div>
+                    <input {...updateCalendarForm.fields.filters.tagFilterType.as("hidden", filtersBindable.tagFilterType)} />
+                    <Tabs.Root bind:value={filtersBindable.tagFilterType} class="w-full mt-2">
+                        <Tabs.List class="w-full rounded-b-none">
+                            <Tabs.Trigger value="allow" disabled={!filtersBindable.enableTagFiltering}>Allow Events</Tabs.Trigger>
+                            <Tabs.Trigger value="block" disabled={!filtersBindable.enableTagFiltering}>Block Events</Tabs.Trigger>
+                        </Tabs.List>
+                    </Tabs.Root>
+                    <div class="w-full bg-muted rounded-b-md p-2 {filtersBindable.tagFilterType === "block" ? "hidden" : "mt-0.5"}">
+                        <Label class="flex flex-col items-start space-y-0.5">
+                            <span class="text-sm text-muted-foreground">Allow events that contain this tag.</span>
+                        </Label>
+                        <div class="space-y-2 mt-2">
+                            {#each myTags as tag (`allowATag${tag.id}`)}
+                                <div class="flex items-center gap-3">
+                                    <Label for="allowTag{tag.id}" class="w-full {!filtersBindable.enableTagFiltering ? "opacity-50" : ""}">
+                                        <Item.Root variant="outline">
+                                            <Item.Content>
+                                                <Item.Title>{tag.name}</Item.Title>
+                                            </Item.Content>
+                                            <Item.Actions>
+                                                <input disabled={!filtersBindable.enableTagFiltering} id="allowTag{tag.id}" {...updateCalendarForm.fields.filters.allowTags.as("checkbox", tag.id)} bind:group={filtersBindable.allowTags} />
+                                            </Item.Actions>
+                                        </Item.Root>
+                                    </Label>
+                                </div>
+                            {/each}
+                        </div>
+                    </div>
+                    <div class="w-full bg-muted rounded-b-md p-2 {filtersBindable.tagFilterType === "allow" ? "hidden" : "mt-0.5"}">
+                        <Label class="flex flex-col items-start space-y-0.5">
+                            <span class="text-sm text-muted-foreground">Block events that contain this tag.</span>
+                        </Label>
+                        <div class="space-y-2 mt-2">
+                            {#each myTags as tag (`blockATag${tag.id}`)}
+                                <div class="flex items-center gap-3">
+                                    <Label for="blockTag{tag.id}" class="w-full {!filtersBindable.enableTagFiltering ? "opacity-50" : ""}">
+                                        <Item.Root variant="outline">
+                                            <Item.Content>
+                                                <Item.Title>{tag.name}</Item.Title>
+                                            </Item.Content>
+                                            <Item.Actions>
+                                                <input disabled={!filtersBindable.enableTagFiltering} id="blockTag{tag.id}" {...updateCalendarForm.fields.filters.blockTags.as("checkbox", tag.id)} bind:group={filtersBindable.blockTags} />
                                             </Item.Actions>
                                         </Item.Root>
                                     </Label>

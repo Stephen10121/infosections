@@ -1,6 +1,15 @@
-import { eventFieldRequirementsPublic, eventResourceAllowListToFilterString, eventResourceBlockListToFilterString, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
-import { error, redirect } from "@sveltejs/kit";
+import {
+    eventResourceAllowListToFilterString,
+    eventResourceBlockListToFilterString,
+    resourcesExpandRequirementsPublic,
+    eventTagAllowListToFilterString,
+    eventTagBlockListToFilterString,
+    eventFieldRequirementsPublic,
+    tagsExpandRequirementsPublic,
+    type EventDBModelExpanded
+} from "@/event.utils";
 import type { CalendarDBModel } from "@/cal.utils";
+import { error, redirect } from "@sveltejs/kit";
 import { Temporal } from "temporal-polyfill";
 import { config } from "dotenv";
 
@@ -53,6 +62,14 @@ export async function load({ params, locals, cookies }) {
                 filter += eventResourceAllowListToFilterString(calendar.filters.allowResources);
             } else {
                 filter += eventResourceBlockListToFilterString(calendar.filters.blockResources);
+            }
+        }
+
+        if (calendar.filters.enableTagFiltering) {
+            if (calendar.filters.tagFilterType === "allow") {
+                filter += eventTagAllowListToFilterString(calendar.filters.allowTags);
+            } else {
+                filter += eventTagBlockListToFilterString(calendar.filters.blockTags);
             }
         }
 

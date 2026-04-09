@@ -28,7 +28,11 @@ export type CalendarFilters = {
 	resourceFilterType: "allow" | "block"
 	allowResources: string[],
 	blockResources: string[],
-	enableResourceFiltering: boolean
+	enableResourceFiltering: boolean,
+	tagFilterType: "allow" | "block",
+	allowTags: string[],
+	blockTags: string[],
+	enableTagFiltering: boolean
 };
 
 export const defaultCalendarFilters: CalendarFilters = {
@@ -37,7 +41,11 @@ export const defaultCalendarFilters: CalendarFilters = {
 	resourceFilterType: "block",
 	allowResources: [],
 	blockResources: [],
-	enableResourceFiltering: false
+	enableResourceFiltering: false,
+	tagFilterType: "block",
+	allowTags: [],
+	blockTags: [],
+	enableTagFiltering: false
 }
 
 export interface CalendarDBModel extends RecordModel {
