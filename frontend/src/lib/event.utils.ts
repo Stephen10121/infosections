@@ -70,3 +70,19 @@ export interface EventDBModelPrivateExpanded extends EventDBModelPrivate {
 export const eventFieldRequirementsPublic = "id,recEventId,name,description,imageURL,registrationURL,location,times,startTime,endTime,featured,visibleInChurchCenter,created,updated";
 export const tagsExpandRequirementsPublic = "expand.tags.tag_id,expand.tags.name,expand.tags.color";
 export const resourcesExpandRequirementsPublic = "expand.resources.resource_id,expand.resources.kind,expand.resources.name,expand.resources.path_name,expand.resources.description,expand.resources.quantity";
+
+export function eventResourceAllowListToFilterString(allowedResources: string[]) {
+	let filterString = "";
+	for (let i=0;i<allowedResources.length;i++) {
+		filterString += ` && resources ~ "${allowedResources[i]}"`
+	}
+	return filterString;
+}
+
+export function eventResourceBlockListToFilterString(blockedResources: string[]) {
+	let filterString = "";
+	for (let i=0;i<blockedResources.length;i++) {
+		filterString += ` && resources !~ "${blockedResources[i]}"`
+	}
+	return filterString;
+}

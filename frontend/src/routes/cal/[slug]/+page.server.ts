@@ -1,4 +1,4 @@
-import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
+import { eventFieldRequirementsPublic, eventResourceAllowListToFilterString, eventResourceBlockListToFilterString, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
 import { error, redirect } from "@sveltejs/kit";
 import type { CalendarDBModel } from "@/cal.utils";
 import { Temporal } from "temporal-polyfill";
@@ -46,6 +46,14 @@ export async function load({ params, locals, cookies }) {
 
         if (calendar.filters.hideUnpublished) {
             filter += " && visibleInChurchCenter=true"
+        }
+
+        if (calendar.filters.enableResourceFiltering) {
+            if (calendar.filters.resourceFilterType === "allow") {
+                filter += eventResourceAllowListToFilterString(calendar.filters.allowResources);
+            } else {
+                filter += eventResourceBlockListToFilterString(calendar.filters.blockResources);
+            }
         }
 
         events = await locals.pb.collection('events').getFullList({

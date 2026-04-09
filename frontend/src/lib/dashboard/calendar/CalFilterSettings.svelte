@@ -1,12 +1,12 @@
 <script lang="ts">
     import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
+    import { getMyEventResourcesPrivate } from "../../../routes/(mainWebsite)/dashboard/events.remote";
     import * as Tabs from "$lib/components/ui/tabs/index.js";
+    import * as Item from "$lib/components/ui/item/index.js";
     import * as Card from "@/components/ui/card/index";
     import type { CalendarFilters } from "@/cal.utils";
     import { Switch } from "@/components/ui/switch";
     import { Label } from "@/components/ui/label";
-    import { getMyEventResourcesPrivate } from "../../../routes/(mainWebsite)/dashboard/events.remote";
-    import * as Item from "$lib/components/ui/item/index.js";
 
     let {
         filters,
