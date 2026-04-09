@@ -89,7 +89,7 @@
             </Sidebar.Menu>
         </Sidebar.Group>
 
-        {#if sidebar.open && !sidebar.isMobile}
+        {#if sidebar.open || sidebar.isMobile}
             <Sidebar.Group>
                 <Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
                 <Sidebar.GroupAction title="Add Integration" onclick={() => {
