@@ -1,4 +1,5 @@
-name: Check
+name: Frontend Check
+
 on: [push, pull_request]
 
 jobs:
@@ -16,7 +17,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install
+        working-directory: ./frontend
 
       - name: Run check script
         # This executes the "check" script defined in your package.json
         run: bun run check
+        working-directory: ./frontend
