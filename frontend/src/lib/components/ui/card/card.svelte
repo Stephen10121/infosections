@@ -21,3 +21,9 @@
 >
 	{@render children?.()}
 </div>
+
+<style>
+	div {
+		max-width: calc(100vw - 8px) !important;
+	}
+</style>

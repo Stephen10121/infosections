@@ -33,4 +33,8 @@
     :global(.buttonHover:hover span) {
         background-color: rgb(61, 152, 212);
     }
+
+    header {
+        max-width: 100vw;
+    }
 </style>

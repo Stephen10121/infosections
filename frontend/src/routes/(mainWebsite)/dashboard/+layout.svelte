@@ -36,7 +36,7 @@
 	<div class="flex-1 flex flex-col h-full">
 		<DashboardHeader calendars={await getMyCalendars()} imageFeeds={await getMyImageFeeds()} eventLists={await getMyEventLists()} />
 
-		<main class="flex-1 p-6 space-y-6 mainPage relative h-full" id="ascrollableelement">
+		<main class="flex-1 p-1 sm:p-6 space-y-6 mainPage relative h-full" id="ascrollableelement">
 			{#if navigating.complete !== null}
 				<DashboardIsNavigating />
 			{/if}
@@ -48,6 +48,5 @@
 <style>
 	.mainPage {
 		max-height: calc(100vh - 64px);
-		overflow-y: auto;
 	}
 </style>
