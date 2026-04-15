@@ -49,18 +49,14 @@
         {/if}
     
         <div class="flex flex-col gap-4">
-            {#each events as event (`anEvent${event.id}`)}
-                <EventCard event={event} {timeZone} {displaySettings} />
+            {#each events as event, index (`anEvent${event.id}`)}
+                <EventCard event={event} {timeZone} {displaySettings} reverse={(index & 1)===1} />
             {/each}
         </div>
     </div>
 </main>
 
 <style>
-    main {
-        padding: 10px;
-    }
-
     :global(body) {
         background: none transparent;
     }
