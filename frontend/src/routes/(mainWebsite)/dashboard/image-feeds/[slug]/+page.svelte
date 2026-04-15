@@ -76,7 +76,7 @@
     <title>{selectedImageFeed.name} | InfoSections</title>
 </svelte:head>
 
-<div class="max-w-5xl mx-auto space-y-6 isolate">
+<div class="main max-w-5xl mx-auto space-y-6 isolate">
     <div class="flex items-center gap-4">
         <Button variant="ghost" size="icon" href="/dashboard/image-feeds">
             <ArrowLeft class="h-5 w-5" />
