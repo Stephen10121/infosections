@@ -2,7 +2,6 @@
     import { filterEventsBasedOnTagAndResourceFilters } from "@/event.utils";
     import type { CarouselAPI } from "@/components/ui/carousel/context.js";
     import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
-    import * as Carousel from "$lib/components/ui/carousel/index.js";
     import { SquareArrowOutUpRight } from "@lucide/svelte";
     import Autoplay from "embla-carousel-autoplay";
     import { Temporal } from "temporal-polyfill";
@@ -78,104 +77,87 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-<div class="h-screen w-screen">
-    <Carousel.Root
-        setApi={(emblaApi) => (api = emblaApi)}
-        opts={{
-            loop: true,
-        }}
-        plugins={[Autoplay({
-            delay: data.displaySettings.feedDurationMS,
-            playOnInit: true,
-            stopOnFocusIn: false,
-            stopOnInteraction: false,
-            stopOnMouseEnter: false,
-            stopOnLastSnap: false,
-        })]}
-        class="w-full h-full"
-    >
-        <Carousel.Content class="w-screen h-screen">
-            {#each events as event (`anEvent${event.id}`)}
-                <Carousel.Item class="w-screen h-screen">
-                    <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <img src={event.imageURL} alt={event.name} class="w-full h-full">
-                        {#if displaySettings.showEventExtraInfo && (displaySettings.showEventName || (displaySettings.showEventDescription && event.description.length > 0) || (displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
-                            <div class="extrastuff overflow-hidden">
-                                <div class="info">
-                                    {#if displaySettings.showEventName}
-                                        <h2 class="text-2xl">{event.name}</h2>
-                                    {/if}
+<div class="h-screen w-screen grid grid-cols-1 bigger-grid">
+    {#each events as event (`anEvent${event.id}`)}
+        <div class="w-full">
+            <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
+                <img src={event.imageURL} alt={event.name} class="w-full h-full">
+                {#if displaySettings.showEventExtraInfo && (displaySettings.showEventName || (displaySettings.showEventDescription && event.description.length > 0) || (displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
+                    <div class="extrastuff overflow-hidden">
+                        <div class="info">
+                            {#if displaySettings.showEventName}
+                                <h2 class="text-2xl">{event.name}</h2>
+                            {/if}
 
-                                    {#if displaySettings.showEventDescription && event.description.length > 0}
-                                        <p class="text-sm">{event.description}</p>
-                                    {/if}
+                            {#if displaySettings.showEventDescription && event.description.length > 0}
+                                <p class="text-sm">{event.description}</p>
+                            {/if}
 
-                                    {#if displaySettings.showEventRegistration && event.registrationURL.length !== 0}
-                                        <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
-                                            Register Now
-                                            <SquareArrowOutUpRight class="h-4 w-4" />
-                                        </a>
-                                    {/if}
-                                </div>
-                            </div>
-                        {/if}
-                        {#if debugToggle}
-                            <div class="debugger">
-                                <p>Type: Event</p>
-                                <p>Id: {event.id}</p>
-                                <p>Recurring Id: {event.recEventId}</p>
-                                <p>Name: {event.name}</p>
-                                <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
-                                <p>Image href: <a href="{event.imageURL}" class="underline" target="_blank">here</a></p>
-                            </div>
-                        {/if}
-                    </AspectRatio>
-                </Carousel.Item>
-            {/each}
-            {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
-                <Carousel.Item class="w-screen h-screen">
-                    <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                        <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.linkText} class="w-full h-full">
-                        {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
-                            <div class="extrastuff overflow-hidden">
-                                <div class="info">
-                                    <a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
-                                        {customImage.linkText}
-                                        <SquareArrowOutUpRight class="h-4 w-4" />
-                                    </a>
-                                </div>
-                            </div>
-                        {/if}
-                        {#if debugToggle}
-                            <div class="debugger">
-                                <p>Type: Custom Image</p>
-                                <p>Id: {customImage.id}</p>
-                                <p>Show Link: {customImage.showLink}</p>
-                                <p>Link href: <a href="{customImage.registrationURL}" class="underline" target="_blank">here</a></p>
-                            </div>
-                        {/if}
-                    </AspectRatio>
-                </Carousel.Item>
-            {/each}
-            {#if data.additionalCalendars}
-                {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
-                    <Carousel.Item class="w-screen h-screen">
-                        <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
-                            <div id="cal-root" class="dark min-h-screen w-full bg-background relative">
-                                <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
-                            </div>
-                            {#if debugToggle}
-                            <div class="debugger">
-                                <p>Type: Calendar</p>
-                                <p>Id: {additionalCalendar.id}</p>
-                            </div>
-                        {/if}
-                        </AspectRatio>
-                    </Carousel.Item>
-                {/each}
-            {/if}
-        </Carousel.Content>
-    </Carousel.Root>
+                            {#if displaySettings.showEventRegistration && event.registrationURL.length !== 0}
+                                <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
+                                    Register Now
+                                    <SquareArrowOutUpRight class="h-4 w-4" />
+                                </a>
+                            {/if}
+                        </div>
+                    </div>
+                {/if}
+                {#if debugToggle}
+                    <div class="debugger">
+                        <p>Type: Event</p>
+                        <p>Id: {event.id}</p>
+                        <p>Recurring Id: {event.recEventId}</p>
+                        <p>Name: {event.name}</p>
+                        <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
+                        <p>Image href: <a href="{event.imageURL}" class="underline" target="_blank">here</a></p>
+                    </div>
+                {/if}
+            </AspectRatio>
+        </div>
+    {/each}
+    {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
+        <div class="w-full">
+            <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
+                <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.linkText} class="w-full h-full">
+                {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
+                    <div class="extrastuff overflow-hidden">
+                        <div class="info">
+                            <a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
+                                {customImage.linkText}
+                                <SquareArrowOutUpRight class="h-4 w-4" />
+                            </a>
+                        </div>
+                    </div>
+                {/if}
+                {#if debugToggle}
+                    <div class="debugger">
+                        <p>Type: Custom Image</p>
+                        <p>Id: {customImage.id}</p>
+                        <p>Show Link: {customImage.showLink}</p>
+                        <p>Link href: <a href="{customImage.registrationURL}" class="underline" target="_blank">here</a></p>
+                    </div>
+                {/if}
+            </AspectRatio>
+        </div>
+    {/each}
+    {#if data.additionalCalendars}
+        {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
+            <div class="w-full">
+                <AspectRatio ratio={16 / 9} class="relative w-full h-full aspect-video">
+                    <p class="absolute bottom-0 left-1/2 -translate-x-1/2 text-red-500 z-200 bg-white/70 text-xs">*Looks better on bigger screens</p>
+                    <div id="cal-root" class="dark max-h-full bg-background relative overflow-hidden">
+                        <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                    </div>
+                    {#if debugToggle}
+                        <div class="debugger">
+                            <p>Type: Calendar</p>
+                            <p>Id: {additionalCalendar.id}</p>
+                        </div>
+                    {/if}
+                </AspectRatio>
+            </div>
+        {/each}
+    {/if}
 </div>
 
 <style>
@@ -197,15 +179,6 @@
         margin: 0;
         padding: 0;
         background:none transparent;
-    }
-
-    :global(.centered-div) {
-        margin: 0 auto;
-        position: absolute;
-        max-width: 100vw;
-        max-height: 100vh;
-        width: calc(min(100vw, 100vh * 16 / 9));
-        height: calc(min(100vh, 100vw * 9 / 16));
     }
 
     .extrastuff {
@@ -248,5 +221,11 @@
         border: 1px solid #ffffff;
         width: fit-content;
         padding: 5px;
+    }
+
+    @media (width >= 350px) {
+        .bigger-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
     }
 </style>
