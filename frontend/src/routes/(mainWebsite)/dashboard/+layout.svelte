@@ -48,5 +48,6 @@
 <style>
 	.mainPage {
 		max-height: calc(100vh - 64px);
+		overflow-y: auto;
 	}
 </style>
