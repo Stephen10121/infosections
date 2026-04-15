@@ -42,7 +42,7 @@
                 src="/elistPreview/{listId}"
                 scrolling="no"
                 title="Event List Preview"
-                id="eventListPreviewFrame"
+                id="iframe{listId}"
                 frameborder="0"
             ></iframe>
         </div>

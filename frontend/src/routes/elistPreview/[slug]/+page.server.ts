@@ -58,6 +58,7 @@ export async function load({ params, locals }) {
         displaySettings: eventList.displaySettings,
         description: eventList.description,
         apiServer: process.env["PB_URL"]!,
-        filters: eventList.filters
+        filters: eventList.filters,
+        id: params.slug
     }
 }

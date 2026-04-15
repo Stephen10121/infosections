@@ -106,6 +106,7 @@ export async function load({ params, locals }) {
         description: imageFeed.description,
         apiServer: process.env["PB_URL"]!,
         additionalCalendars,
-        filters: imageFeed.filters
+        filters: imageFeed.filters,
+        id: params.slug
     }
 }

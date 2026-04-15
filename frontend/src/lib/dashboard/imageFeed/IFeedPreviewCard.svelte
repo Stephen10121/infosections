@@ -44,7 +44,7 @@
                 src="/ifeedPreview/{feedId}"
                 scrolling="no"
                 title="Image Feed Preview"
-                id="imageFeedPreviewFrame"
+                id="iframe{feedId}"
                 frameborder="0"
             ></iframe>
         </div>
