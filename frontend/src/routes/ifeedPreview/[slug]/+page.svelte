@@ -61,7 +61,7 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-<div class="h-screen w-screen grid grid-cols-1 bigger-grid overflow-hidden">
+<div class="h-screen w-screen grid grid-cols-1 bigger-grid">
     {#each events as event (`anEvent${event.id}`)}
         <div class="w-full">
             <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
@@ -127,9 +127,9 @@
     {#if data.additionalCalendars}
         {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
             <div class="w-full">
-                <AspectRatio ratio={16 / 9} class="relative w-full h-full aspect-video">
+                <AspectRatio ratio={16 / 9} class="relative w-full aspect-video overflow-hidden">
                     <p class="absolute bottom-0 left-1/2 -translate-x-1/2 text-red-500 z-200 bg-white/70 text-xs">*Looks better on bigger screens</p>
-                    <div id="cal-root" class="dark max-h-full bg-background relative overflow-hidden">
+                    <div class="dark bg-background relative overflow-hidden w-full h-full">
                         <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
                     </div>
                     {#if debugToggle}
