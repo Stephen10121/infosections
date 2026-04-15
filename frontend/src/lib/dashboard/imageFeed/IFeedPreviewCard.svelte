@@ -3,6 +3,7 @@
     import * as Card from "@/components/ui/card/index";
     import { Switch } from "@/components/ui/switch";
     import { Label } from "@/components/ui/label";
+    import { browser } from "$app/environment";
 
     let {
         displaySettings,
@@ -17,26 +18,15 @@
     $effect(() => {
         if (displaySettings && previewIFrame && previewIFrame.contentWindow) {
             previewIFrame.contentWindow.postMessage({ call: 'displaySettings', value: JSON.stringify(displaySettings) });
-            setTimeout(() => {
-                iframeLoaded();
-            }, 0);
         }
     });
-
-    function iframeLoaded() {
-        try {
-           const iFrameID = document.getElementById('imageFeedPreviewFrame');
-            if(iFrameID) {
-                // @ts-ignore
-                iFrameID.height = "";
-                // @ts-ignore
-                iFrameID.height = iFrameID.contentWindow.document.body.scrollHeight + 39 + "px";
-            }  
-        } catch (_err) {
-            console.log("Oops. Iframe wasnt loaded.")
-        }
-    }
 </script>
+
+<svelte:head>
+    {#if browser}
+        <script async src="/resizeObserver.js"></script>
+    {/if}
+</svelte:head>
 
 <Card.Root>
     <Card.Header>
@@ -47,12 +37,12 @@
         <div class="w-full">
             <iframe     
                 bind:this={previewIFrame}
-                onload={iframeLoaded}
-                style="background: none transparent;border:none;"
+                style="background: none transparent; border: none;display:block;"
                 allowtransparency
                 width="100%"
                 height="100%"
                 src="/ifeedPreview/{feedId}"
+                scrolling="no"
                 title="Image Feed Preview"
                 id="imageFeedPreviewFrame"
                 frameborder="0"

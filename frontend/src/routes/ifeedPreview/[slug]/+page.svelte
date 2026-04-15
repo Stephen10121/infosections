@@ -15,6 +15,16 @@
 
     let eventIdUsed: string[] = [];
 
+    $effect(() => {
+        const observer = new ResizeObserver(() => {
+            window.parent.postMessage({ height: document.body.scrollHeight }, "*");
+        });
+
+        observer.observe(document.body);
+
+        return () => observer.disconnect();
+    });
+
     let events = $derived(data.events.filter((event, index) => {
         if (index === 0) {
             eventIdUsed = [];

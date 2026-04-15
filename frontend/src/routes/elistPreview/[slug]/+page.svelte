@@ -11,6 +11,16 @@
 
     let eventIdUsed: string[] = [];
 
+    $effect(() => {
+        const observer = new ResizeObserver(() => {
+            window.parent.postMessage({ height: document.body.scrollHeight }, "*");
+        });
+
+        observer.observe(document.body);
+
+        return () => observer.disconnect();
+    });
+
     function parentSentMessage(event: MessageEvent) {
         try {
             if (event.data.call === "displaySettings") {
@@ -52,7 +62,7 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-<main style="height: 100vh; {displaySettings.setTransparentBackground ? "" : "background: #fff;"}">
+<main style="{displaySettings.setTransparentBackground ? "" : "background: #fff;"}">
     <div class="mx-auto max-w-4xl">
         {#if displaySettings.showUpcomingEventsTextAndDesc}
             <div class="mb-3">

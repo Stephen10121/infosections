@@ -11,6 +11,16 @@
 
     let eventIdUsed: string[] = [];
 
+    $effect(() => {
+        const observer = new ResizeObserver(() => {
+            window.parent.postMessage({ height: document.body.scrollHeight }, "*");
+        });
+
+        observer.observe(document.body);
+
+        return () => observer.disconnect();
+    });
+
     let events = $derived(data.events.filter((event, index) => {
         if (index === 0) {
             eventIdUsed = [];
@@ -37,7 +47,7 @@
     <meta name="description" content={data.description}>
 </svelte:head>
 
-<main style="height: 100vh; {displaySettings.setTransparentBackground ? "" : "background: #fff;"}">
+<main style="{displaySettings.setTransparentBackground ? "" : "background: #fff;"}">
     <div class="mx-auto max-w-4xl">
         {#if displaySettings.showUpcomingEventsTextAndDesc}
             <div class="mb-3">
