@@ -28,7 +28,7 @@
                 // @ts-ignore
                 iFrameID.height = "";
                 // @ts-ignore
-                iFrameID.height = iFrameID.contentWindow.document.body.scrollHeight + "px";
+                iFrameID.height = iFrameID.contentWindow.document.body.scrollHeight + 39 + "px";
             }  
         } catch (_err) {
             console.log("Oops. Iframe wasnt loaded.")
