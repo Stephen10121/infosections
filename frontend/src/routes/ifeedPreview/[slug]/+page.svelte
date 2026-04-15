@@ -1,9 +1,7 @@
 <script lang="ts">
     import { filterEventsBasedOnTagAndResourceFilters } from "@/event.utils";
-    import type { CarouselAPI } from "@/components/ui/carousel/context.js";
     import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
     import { SquareArrowOutUpRight } from "@lucide/svelte";
-    import Autoplay from "embla-carousel-autoplay";
     import { Temporal } from "temporal-polyfill";
     import Calendar from '@/Calendar.svelte';
 
@@ -13,7 +11,6 @@
 
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
-    let api = $state<CarouselAPI>();
     let debugToggle = $state(false);
 
     let eventIdUsed: string[] = [];
@@ -54,19 +51,6 @@
             console.log(err);
         }
     }
-
-    $effect(() => {
-        if (api && displaySettings && displaySettings.feedDurationMS) {
-            api.reInit(undefined, [Autoplay({
-                delay: displaySettings.feedDurationMS,
-                playOnInit: true,
-                stopOnFocusIn: false,
-                stopOnInteraction: false,
-                stopOnMouseEnter: false,
-                stopOnLastSnap: false,
-            })]);
-        }
-    });
 </script>
 
 <svelte:head>
@@ -77,7 +61,7 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-<div class="h-screen w-screen grid grid-cols-1 bigger-grid">
+<div class="h-screen w-screen grid grid-cols-1 bigger-grid overflow-hidden">
     {#each events as event (`anEvent${event.id}`)}
         <div class="w-full">
             <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
