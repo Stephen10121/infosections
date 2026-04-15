@@ -13,7 +13,7 @@
 
     $effect(() => {
         const observer = new ResizeObserver(() => {
-            window.parent.postMessage({ height: document.body.scrollHeight }, "*");
+            window.parent.postMessage({ height: document.body.scrollHeight, frameId: "iframe" + data.id }, "*");
         });
 
         observer.observe(document.body);
