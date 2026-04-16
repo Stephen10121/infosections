@@ -139,7 +139,7 @@
 
         <!-- This is the sticky side options section. -->
         <div class="space-y-6 stickySidebar h-fit">
-            <IFeedShare feedId={selectedImageFeed.id} />
+            <IFeedShare feedId={selectedImageFeed.id} feedName={selectedImageFeed.name}/>
 
             <IFeedStatistics
                 visits={selectedImageFeed.visits}

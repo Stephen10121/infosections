@@ -131,7 +131,7 @@
 
         <!-- This is the sticky side options section. -->
         <div class="space-y-6 stickySidebar h-fit">
-            <EListShare listId={selectedEventList.id} />
+            <EListShare listId={selectedEventList.id} listName={selectedEventList.name} />
 
             <EListStatistics
                 visits={selectedEventList.visits}

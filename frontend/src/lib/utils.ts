@@ -466,3 +466,40 @@ export const errorTypes = {
 export function hasKey<T extends object>(obj: T, key: PropertyKey): key is keyof T {
   return key in obj;
 }
+
+export function generateIframeCode(iframeLink: string, iframeTitle: string, id: string, infosectionsLink: string, removeScript?: boolean) {
+	let text: string[] = [];
+	if (removeScript) {
+		text = [
+			'<iframe',
+			'  style="background:none transparent;border:none;display:block;"',
+			'  allowtransparency',
+			'  width="100%"',
+			'  height="100%"',
+			`  src="${iframeLink}"`,
+			'  scrolling="no"',
+			`  title="${iframeTitle}"`,
+			`  id="iframe${id}"`,
+			'  frameborder="0"',
+			'></iframe>'
+		]
+	} else {
+		text = [
+			`<script async src="${infosectionsLink}/resizeObserver.js">`,
+			'</script>',
+			'<iframe',
+			'  style="background:none transparent;border:none;display:block;"',
+			'  allowtransparency',
+			'  width="100%"',
+			'  height="100%"',
+			`  src="${iframeLink}"`,
+			'  scrolling="no"',
+			`  title="${iframeTitle}"`,
+			`  id="iframe${id}"`,
+			'  frameborder="0"',
+			'></iframe>'
+		]
+	}
+
+	return text.join("\n");
+}
