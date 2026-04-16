@@ -1,9 +1,9 @@
 <script lang="ts">
+    import { updateEventListForm } from "../../../routes/(mainWebsite)/dashboard/event-lists/eventListActions.remote";
     import * as Card from "@/components/ui/card/index";
     import { Switch } from "@/components/ui/switch";
     import type { ImageFeedFilters } from "@/utils";
     import { Label } from "@/components/ui/label";
-    import { updateEventListForm } from "../../../routes/(mainWebsite)/dashboard/event-lists/eventListActions.remote";
 
     let {
         filters,
