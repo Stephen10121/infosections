@@ -104,6 +104,7 @@
         row-gap: 3px;
         min-width: 0;
         min-height: 0;
+        background-color: #ffffff;
     }
 
     .event-description {
