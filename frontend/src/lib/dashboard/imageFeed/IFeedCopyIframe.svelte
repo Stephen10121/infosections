@@ -36,7 +36,7 @@
         <Code class="h-4 w-4 mr-2" />
         Copy Iframe
     </Dialog.Trigger>
-    <Dialog.Content class="sm:max-w-lg max-h-screen overflow-y-auto">
+    <Dialog.Content class="sm:max-w-lg max-h-full overflow-y-auto">
         <Dialog.Header>
             <Dialog.Title>Embed Image Feed</Dialog.Title>
             <Dialog.Description>
