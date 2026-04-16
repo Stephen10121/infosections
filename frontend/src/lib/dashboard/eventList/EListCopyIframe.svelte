@@ -23,6 +23,7 @@
         const link = generateIframeCode(`${infosectionsLink}/elist/${listId}`, `Infosections List | ${listName}`, listId, infosectionsLink);
         navigator.clipboard.writeText(link);
         iframeCopied = true;
+        setTimeout(() => iframeCopied = false, 5000);
 
         toast.info("Copied", {
             description: "Paste it in your html."

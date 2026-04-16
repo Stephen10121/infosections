@@ -23,6 +23,7 @@
         const link = generateIframeCode(`${infosectionsLink}/ifeed/${feedId}`, `Infosections Feed | ${feedName}`, feedId, infosectionsLink, true);
         navigator.clipboard.writeText(link);
         iframeCopied = true;
+        setTimeout(() => iframeCopied = false, 5000);
 
         toast.info("Copied", {
             description: "Paste it in your html."
