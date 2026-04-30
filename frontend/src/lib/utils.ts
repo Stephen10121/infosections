@@ -196,7 +196,7 @@ export interface UserModel extends RecordModel {
 export interface IntegrationModel extends RecordModel {
 	prettyName: string,
 	owner: string,
-	service: "planningcenter" | "breeze" | "google" | "outlook"
+	service: "planningcenter" | "breeze" | "google" | "twitter"
 	refreshToken: string,
 	accessToken: string,
 	refreshTokenExpires: number,
@@ -427,6 +427,15 @@ export const availableIntegrations: AvailableIntegration[] = [
 		comingSoon: false,
 	},
 	{
+		id: "twitter",
+		name: "X AI (Experimental!!)",
+		slug: "twitter",
+		description: "Integrate X Ai features like speech to text and translation.",
+		icon: "twitter",
+		docsUrl: "https://docs.x.com",
+		comingSoon: false,
+	},
+	{
 		id: "breeze",
 		name: "Breeze ChMS",
 		slug: "breeze",
@@ -443,16 +452,7 @@ export const availableIntegrations: AvailableIntegration[] = [
 		icon: "google",
 		docsUrl: "https://calendar.google.com/",
 		comingSoon: true,
-	},
-	{
-		id: "outlook",
-		name: "Outlook Calendar",
-		slug: "outlook",
-		description: "Sync events from Microsoft Outlook and Office 365 calendars.",
-		icon: "outlook",
-		docsUrl: "https://outlook.com/",
-		comingSoon: true,
-	},
+	}
 ];
 
 export const errorTypes = {

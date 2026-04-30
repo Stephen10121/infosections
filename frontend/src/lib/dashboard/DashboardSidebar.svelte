@@ -10,6 +10,7 @@
     import * as Avatar from "$lib/components/ui/avatar/index.js";
     import StatusBadge from "./integrations/StatusBadge.svelte";
     import BreezeIcon from "./integrations/BreezeIcon.svelte";
+    import XIcon from "./integrations/XIcon.svelte";
 
     let { 
         user,
@@ -113,6 +114,8 @@
                                 <Flag />
                             {:else if integration.service === "breeze"}
                                 <BreezeIcon />
+                            {:else if integration.service === "twitter"}
+                                <XIcon />
                             {:else}
                                 <RefreshCw />
                             {/if}

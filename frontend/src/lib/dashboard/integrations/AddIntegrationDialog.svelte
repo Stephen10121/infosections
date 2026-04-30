@@ -1,10 +1,10 @@
 <script lang="ts">
-    import * as Dialog from "$lib/components/ui/dialog/index.js";
-    import { availableIntegrations, cn } from "@/utils";
-    import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
-    import IntegrationIcon from "./IntegrationIcon.svelte";
-    import { Badge } from "@/components/ui/badge";
     import { addAnIntegration } from "../../../routes/(mainWebsite)/dashboard/integrations.remote";
+    import { getMyIntegrations } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
+    import * as Dialog from "$lib/components/ui/dialog/index.js";
+    import IntegrationIcon from "./IntegrationIcon.svelte";
+    import { availableIntegrations, cn } from "@/utils";
+    import { Badge } from "@/components/ui/badge";
     import { toast } from "svelte-sonner";
 
     let { open = $bindable() }: { open: boolean } = $props();
