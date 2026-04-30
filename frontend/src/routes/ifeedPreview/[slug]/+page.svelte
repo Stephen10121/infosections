@@ -140,7 +140,7 @@
                 <AspectRatio ratio={16 / 9} class="relative w-full aspect-video overflow-hidden">
                     <p class="absolute bottom-0 left-1/2 -translate-x-1/2 text-red-500 z-200 bg-white/70 text-xs">*Looks better on bigger screens</p>
                     <div class="dark bg-background relative overflow-hidden w-full h-full">
-                        <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                        <Calendar calId={additionalCalendar.id} autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
                     </div>
                     {#if debugToggle}
                         <div class="debugger">

@@ -1,19 +1,22 @@
 <script lang="ts">
-    import Calendar from '@/Calendar.svelte';
-    import * as Popover from "$lib/components/ui/popover/index.js";
     import { CircleQuestionMark, Fullscreen } from '@lucide/svelte';
-    import { Label } from '@/components/ui/label/index.js';
-    import { Switch } from '@/components/ui/switch/index.js';
+    import * as Popover from "$lib/components/ui/popover/index.js";
+    import { getEventsForCalendar } from './eventFetch.remote.js';
     import Button from '@/components/ui/button/button.svelte';
-    import { toggleFullScreen } from '@/utils.js';
-    import { onMount } from 'svelte';
-    import { Temporal } from 'temporal-polyfill';
+    import { Switch } from '@/components/ui/switch/index.js';
     import TimeZoneSelector from '@/TimeZoneSelector.svelte';
+    import { Label } from '@/components/ui/label/index.js';
+    import { toggleFullScreen } from '@/utils.js';
+    import { Temporal } from 'temporal-polyfill';
+    import Calendar from '@/Calendar.svelte';
+    import { onMount } from 'svelte';
 
     let { data } = $props();
 
     let invisibleTooltip = $state(false);
     let timeZone = $state(Temporal.Now.timeZoneId());
+
+    let events = $derived(await getEventsForCalendar(data.id));
 
     onMount(() => {
         document.body.classList.add("dark");
@@ -26,7 +29,7 @@
 </svelte:head>
 
 <div id="cal-root" class="dark min-h-screen w-full bg-background relative">
-    <Calendar events={data.events} displaySettings={data.displaySettings} timeZone={timeZone} filters={data.filters} />
+    <Calendar calId={data.id} events={events} displaySettings={data.displaySettings} timeZone={timeZone} filters={data.filters} />
     <Popover.Root>
         <Popover.Trigger class="absolute bottom-1 right-1 z-50 {invisibleTooltip ? "opacity-0" : "text-muted-foreground bg-foreground"} rounded p-2" style={invisibleTooltip ? "border:none;" : "border: 1px solid #333333"}>
             <CircleQuestionMark />

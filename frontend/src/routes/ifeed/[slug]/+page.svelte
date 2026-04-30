@@ -108,7 +108,7 @@
                     <Carousel.Item class="w-screen h-screen">
                         <AspectRatio ratio={16 / 9} class="relative max-w-screen max-h-screen aspect-video centered-div">
                             <div id="cal-root" class="dark min-h-screen w-full bg-background relative">
-                                <Calendar autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
+                                <Calendar calId={additionalCalendar.id} autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
                             </div>
                         </AspectRatio>
                     </Carousel.Item>

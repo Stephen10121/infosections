@@ -1,14 +1,15 @@
 <script lang="ts">
+    import { getEventsForCalendar } from "../routes/cal/[slug]/eventFetch.remote";
     import type { CalendarCustomizations, CalendarFilters } from "./cal.utils";
     import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
     import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
     import type { EventDBModelExpanded } from "./event.utils";
-    import { invalidateAll } from "$app/navigation";
     import { Temporal } from 'temporal-polyfill';
     import { onMount } from "svelte";
     import Day from "./Day.svelte";
 
     let {
+        calId,
         events,
         displaySettings,
         timeZone,
@@ -19,7 +20,8 @@
         displaySettings: CalendarCustomizations,
         timeZone: Temporal.TimeZoneLike,
         filters: CalendarFilters,
-        autoUpdate?: boolean
+        autoUpdate?: boolean,
+        calId: string
     } = $props();
 
     let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
@@ -36,7 +38,7 @@
         tomorrow = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay();
         thirdDay = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay();
 
-        invalidateAll();
+        getEventsForCalendar(calId).refresh();
     }
 
     $effect(() => {
