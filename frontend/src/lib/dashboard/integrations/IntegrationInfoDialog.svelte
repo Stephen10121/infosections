@@ -43,28 +43,32 @@
                     <StatusBadge status={integration.status} />
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <span class="text-sm text-muted-foreground">Next sync event</span>
-                    <span class="text-sm">{timeWhen((new Date(integration.lastEventsFetch)).setHours((new Date(integration.lastEventsFetch)).getHours() + 1))}</span>
-                </div>
+                {#if integration.service === "planningcenter"}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-muted-foreground">Next sync event</span>
+                        <span class="text-sm">{timeWhen((new Date(integration.lastEventsFetch)).setHours((new Date(integration.lastEventsFetch)).getHours() + 1))}</span>
+                    </div>
+                {/if}
             </div>
 
             <Dialog.Footer class="flex-col gap-2 sm:flex-col">
-                <div class="flex gap-2 w-full">
-                <Button
-                    variant="outline"
-                    class="flex-1"
-                    onclick={handleSync}
-                    disabled={syncing}
-                >
-                    {#if syncing}
-                        <Loader2 class="mr-2 h-4 w-4 animate-spin" />
-                    {:else}
-                        <RefreshCw class="mr-2 h-4 w-4" />
-                    {/if}
-                    Sync Now
-                </Button>
-                </div>
+                {#if integration.service === "planningcenter"}
+                    <div class="flex gap-2 w-full">
+                        <Button
+                            variant="outline"
+                            class="flex-1"
+                            onclick={handleSync}
+                            disabled={syncing}
+                        >
+                            {#if syncing}
+                                <Loader2 class="mr-2 h-4 w-4 animate-spin" />
+                            {:else}
+                                <RefreshCw class="mr-2 h-4 w-4" />
+                            {/if}
+                            Sync Now
+                        </Button>
+                    </div>
+                {/if}
                 <form {...removeAnIntegration.enhance(async ({ submit }) => {
                     let loading = toast.loading("Removing Integration.", { duration: Number.POSITIVE_INFINITY });
                     await submit();
