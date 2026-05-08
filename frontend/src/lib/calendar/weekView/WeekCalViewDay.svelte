@@ -11,14 +11,16 @@
         day,
         timeZone,
         calendarCustomizations,
-        currentDate
+        currentDate,
+        fontScale
     }: {
         index: number,
         events: EventDBModel[],
         day: Temporal.ZonedDateTime,
         timeZone: Temporal.TimeZoneLike,
         calendarCustomizations: CalendarCustomizations,
-        currentDate: Temporal.ZonedDateTime
+        currentDate: Temporal.ZonedDateTime,
+        fontScale: number
     } = $props();
 
     let nextDay = $derived(day.add({ hours: 23, minutes: 59, seconds: 59, milliseconds: 1 }));
@@ -48,7 +50,7 @@
 
     <div class="space-y-1">
         {#each dayEvents as event (`aneventfortheday${event.id}`)}
-            <WeekCalViewDayEvent {calendarCustomizations} {event} {timeZone} currentDay={day} />
+            <WeekCalViewDayEvent {calendarCustomizations} {event} {timeZone} currentDay={day} {fontScale} />
         {/each}
     </div>
 </div>

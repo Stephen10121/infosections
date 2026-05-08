@@ -9,8 +9,10 @@
         events,
         currentDate,
         timeZone,
-        calendarCustomizations
+        calendarCustomizations,
+        fontScale
     }: {
+        fontScale: number,
         events: EventDBModel[],
         currentDate: Temporal.ZonedDateTime,
         timeZone: Temporal.TimeZoneLike,
@@ -24,7 +26,7 @@
     <div class="overflow-hidden h-screen">
         <div class="grid grid-cols-7 dark bg-foreground">
             {#each ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as day (`aweekday${day}`)}
-                <div class="text-center py-2 text-xs dark font-semibold text-white border-b border-[#333333]">
+                <div class="text-center py-2 dark font-semibold text-white border-b border-[#333333]" style="font-size: {fontScale * 12}px;">
                     {day}
                 </div>
             {/each}
@@ -32,7 +34,7 @@
 
         <div class="grid grid-cols-7 h-full">
             {#each days as day, index (`adayinmonth${index}`)}
-                <MonthCalViewDay {index} {events} {day} {currentDate} {timeZone} {calendarCustomizations} />
+                <MonthCalViewDay {index} {events} {day} {currentDate} {timeZone} {calendarCustomizations} {fontScale} />
             {/each}
         </div>
     </div>

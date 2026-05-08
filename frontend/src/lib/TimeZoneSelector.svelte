@@ -31,7 +31,7 @@
 </script>
  
 <Select.Root type="single" name="selectTimezone" bind:value={timeZone}>
-    <Select.Trigger class="w-45">
+    <Select.Trigger class="w-full dark">
         {triggerContent}
     </Select.Trigger>
     <Select.Content>

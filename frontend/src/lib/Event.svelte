@@ -8,7 +8,7 @@
     import { MONTHTOSTRING } from "./utils";
     import Time from "./Time.svelte";
 
-    let { event, currentDay, calendarCustomizations, timeZone }: { event: EventDBModelExpanded, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();
+    let { event, currentDay, calendarCustomizations, timeZone, fontScale }: { event: EventDBModelExpanded, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike, fontScale: number } = $props();
 
     const start = $derived(Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone));
     const end = $derived(Temporal.Instant.from(event.endTime).toZonedDateTimeISO(timeZone));
@@ -39,34 +39,34 @@
 
 <div class="dark rounded-lg bg-foreground p-4 flex flex-col gap-2" style="border: 1px solid #333333">
     <div class="dark flex items-start justify-between">
-        <h3 class="dark text-lg font-semibold text-white pr-2">{event.name}</h3>
-        <p class="dark text-sm text-gray-400" style="white-space: nowrap;">{#if EVENT_DAY_NUMBER !== 1}{MONTHTOSTRING[start.month]} {start.day}, {/if} <Time date={start} useAMPM={calendarCustomizations.useAMPM} /></p>
+        <h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 18}px;">{event.name}</h3>
+        <p class="dark text-gray-400" style="white-space: nowrap;font-size: {fontScale * 14}px;">{#if EVENT_DAY_NUMBER !== 1}{MONTHTOSTRING[start.month]} {start.day}, {/if} <Time date={start} useAMPM={calendarCustomizations.useAMPM} /></p>
     </div>
 
     {#if event.description && calendarCustomizations.showDescription}
-        <p class="text-sm text-gray-300 leading-relaxed">{event.description}</p>
+        <p class="text-gray-300 leading-relaxed" style="font-size: {fontScale * 14}px;">{event.description}</p>
     {/if}
     
-    <div class="flex items-center gap-2 text-sm text-gray-400">
+    <div class="flex items-center gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
         <Clock class="h-4 w-4" />
         {#if MULTI_DAY_EVENT}
-            <span class="text-sm text-gray-300">{MONTHTOSTRING[start.month]} {start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[end.month]} {end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
+            <span class="text-gray-300">{MONTHTOSTRING[start.month]} {start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[end.month]} {end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
         {:else}
-            <span class="text-sm text-gray-300"><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[end.month]} {end.day}, {/if} <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
+            <span class="text-gray-300"><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[end.month]} {end.day}, {/if} <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
         {/if}
     </div>
 
     {#if MULTI_DAY_EVENT}
-        <div class="flex items-center gap-2 text-sm text-gray-400">
+        <div class="flex items-center gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
             <CalendarPlus class="h-4 w-4" />
             <span class="text-gray-300">Multi-day event - Day {EVENT_DAY_NUMBER}</span>
         </div>
     {/if}
 
-    <EventResources resources={event.expand.resources} showResourcePathname={calendarCustomizations.showResourcePathname} showRooms={calendarCustomizations.showRooms} showResources={calendarCustomizations.showResources} />
+    <EventResources resources={event.expand.resources} showResourcePathname={calendarCustomizations.showResourcePathname} showRooms={calendarCustomizations.showRooms} showResources={calendarCustomizations.showResources} {fontScale} />
 
     {#if event.times && event.times.length > 1}
-        <div class="mb-3 flex items-start gap-2 text-sm text-gray-400">
+        <div class="mb-3 flex items-start gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
             <ClipboardClock class="h-4 w-4 mt-0.5 shrink-0" />
             <div>
                 <div class="text-gray-400">Time Schedule:</div>
@@ -80,7 +80,7 @@
     {/if}
 
     {#if event.location && calendarCustomizations.showLocation}
-        <div class="flex items-start gap-2 text-sm text-gray-400">
+        <div class="flex items-start gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
             <MapPin class="h-4 w-4 mt-0.5 shrink-0" />
             <p>
                 <span class="text-gray-400">Location:</span>
@@ -93,7 +93,7 @@
         <div class="flex h-fit gap-2">
             {#each event.expand.tags as tag (`taglist${tag.tag_id}${event.id}`)}
                 <div style="background-color: #ffffff;word-wrap:break-word;white-space: nowrap;text-overflow: ellipsis;" class="rounded">
-                    <span class="rounded px-2 py-1 text-xs font-medium" style="background-color: {tag.color}cc;border: 1px solid {tag.color};color: {getContrastYIQ(tag.color)};">
+                    <span class="rounded px-2 py-1 font-medium" style="font-size: {fontScale * 12}px;background-color: {tag.color}cc;border: 1px solid {tag.color};color: {getContrastYIQ(tag.color)};">
                         {tag.name}
                     </span>
                 </div>
