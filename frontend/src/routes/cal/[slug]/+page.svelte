@@ -45,7 +45,7 @@
                 <Label for="useinvis" class="dark text-sm">Hide tooltip (you can still click it)</Label>
                 <Switch class="dark" id="useinvis" bind:checked={invisibleTooltip} />
             </div>
-            <p>Font scale: {fontScale}</p>
+            <p>Font scale: {fontScale}x</p>
             <Slider type="single" bind:value={persistedFontScale.current} max={2} min={0.25} step={0.05} title="Change font scale" />
             <Button onclick={toggleFullScreen} title="Fullscreen"><Fullscreen /></Button>
         </Popover.Content>
