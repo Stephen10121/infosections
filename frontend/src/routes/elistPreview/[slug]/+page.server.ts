@@ -1,64 +1,9 @@
-import type { EventDBModel } from "@/event.utils";
-import type { EventListDBModel } from "@/utils";
-import { error } from "@sveltejs/kit";
 import { config } from "dotenv";
 
 config();
 
-export async function load({ params, locals }) {
-    let eventList: EventListDBModel;
-    try {
-        eventList = await locals.pb.collection('eventLists').getOne(params.slug, {
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Event list not found.", err);
-        return error(404, "Event list Not Found");
-    }
-
-    const today = new Date();
-    const now = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}-${(today.getDate()-2).toString().padStart(2, '0')}`;
-
-    let events: EventDBModel[] = [];
-    try {
-        let filter = `startTime > "${now}" && imageURL != ""`;
-
-        // This filter shows all events for the testing dev feed.
-        if (eventList.id !== "js44ym8zp9lfu3v") {
-            filter += ` && owner = "${eventList.owner}"`;
-        }
-
-        if (eventList.filters.onlyShowFeatured) {
-            filter += " && featured = true"
-        }
-
-        if (eventList.filters.hideUnpublished) {
-            filter += " && visibleInChurchCenter = true"
-        }
-
-        events = await locals.pb.collection('events').getFullList({
-            filter,
-            sort: 'startTime',
-            fields: "id,recEventId,name,description,imageURL,registrationURL,location,startTime,endTime,featured,visibleInChurchCenter,created,updated",
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Events not found.", err);
-        return error(500, "Internal Server error.");
-    }
-
+export async function load({ params }) {
     return {
-        events,
-        name: eventList.name,
-        logoLink: locals.pb.files.getURL(eventList, eventList.logo.toString()),
-        displaySettings: eventList.displaySettings,
-        description: eventList.description,
-        apiServer: process.env["PB_URL"]!,
-        filters: eventList.filters,
         id: params.slug
     }
 }
