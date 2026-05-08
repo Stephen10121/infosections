@@ -44,6 +44,8 @@
             return false;
         }
     });
+
+    console.log(events);
 </script>
 
 <svelte:head>

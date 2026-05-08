@@ -7,52 +7,53 @@ import type { EventListDBModel } from "@/utils";
 config();
 
 export const getEventsForElist = query(v.string(), async (listId) => {
-  const { locals } = getRequestEvent();
+	const { locals } = getRequestEvent();
 
-  let events: EventDBModel[] = [];
-  let eventList: EventListDBModel;
-  try {
-    eventList = await locals.pb.collection("eventLists").getOne(listId, {
-      headers: {
-        Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
-      },
-    });
-  } catch (err) {
-    console.log("Event list not found.", err);
-    return events;
-  }
+	let events: EventDBModel[] = [];
+	let eventList: EventListDBModel;
 
-  const today = new Date();
-  const now = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${(today.getDate() - 2).toString().padStart(2, "0")}`;
+	try {
+		eventList = await locals.pb.collection("eventLists").getOne(listId, {
+			headers: {
+			Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
+			},
+		});
+	} catch (err) {
+		console.log("Event list not found.", err);
+		return events;
+	}
 
-  try {
-    let filter = `startTime > "${now}" && imageURL != ""`;
+	const today = new Date();
+	const now = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${(today.getDate() - 2).toString().padStart(2, "0")}`;
 
-    // This filter shows all events for the testing dev feed.
-    if (eventList.id !== "js44ym8zp9lfu3v") {
-      filter += ` && owner = "${eventList.owner}"`;
-    }
+	try {
+		let filter = `startTime > "${now}" && imageURL != ""`;
 
-    if (eventList.filters.onlyShowFeatured) {
-      filter += " && featured = true";
-    }
+		// This filter shows all events for the testing dev feed.
+		if (eventList.id !== "js44ym8zp9lfu3v") {
+			filter += ` && owner = "${eventList.owner}"`;
+		}
 
-    if (eventList.filters.hideUnpublished) {
-      filter += " && visibleInChurchCenter = true";
-    }
+		if (eventList.filters.onlyShowFeatured) {
+			filter += " && featured = true";
+		}
 
-    events = await locals.pb.collection("events").getFullList({
-      filter,
-      sort: "startTime",
-      fields: eventFieldRequirementsPublic,
-      headers: {
-        Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
-      },
-    });
-  } catch (err) {
-    console.log("Events not found.", err);
-    return events;
-  }
+		if (eventList.filters.hideUnpublished) {
+			filter += " && visibleInChurchCenter = true";
+		}
 
-  return events;
+		events = await locals.pb.collection("events").getFullList({
+			filter,
+			sort: "startTime",
+			fields: eventFieldRequirementsPublic,
+			headers: {
+			Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
+			},
+		});
+	} catch (err) {
+		console.log("Events not found.", err);
+		return events;
+	}
+
+	return events;
 });

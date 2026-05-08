@@ -16,6 +16,9 @@
         displaySettings: ImageListCustomizations,
         reverse?: boolean
     } = $props();
+
+    console.log(event);
+    $inspect(event);
 </script>
 
 <div class="card {reverse ? "reverse" : ""}">
