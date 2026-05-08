@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { getEventsForElist } from "../../elist/elistEventFetch.remote.js";
+	import { getElistById } from "../../elist/elistData.remote.js";
     import EventCard from "@/eventList/EventCard.svelte";
     import { Temporal } from "temporal-polyfill";
 
     let { data } = $props();
 
-    let displaySettings = $derived(data.displaySettings);
+    let elist = $derived(await getElistById(data.id));
+
+    let displaySettings = $derived(elist.displaySettings);
 
     let timeZone = $state(Temporal.Now.timeZoneId());
     let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
@@ -34,13 +38,14 @@
         }
     }
 
-    let events = $derived(data.events.filter((event, index) => {
+    // svelte-ignore state_referenced_locally
+    let events = (await getEventsForElist(data.id)).filter((event, index) => {
         if (index === 0) {
             eventIdUsed = [];
         }
 
         if (today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()) {
-            if (data.filters.hideRecurringEvents) {
+            if (elist.filters.hideRecurringEvents) {
                 if (!eventIdUsed.includes(event.recEventId)) {
                     eventIdUsed.push(event.recEventId);
                     return true;
@@ -51,13 +56,12 @@
         } else {
             return false;
         }
-    }));
+    });
 </script>
 
 <svelte:head>
-    <title>{data.name}</title>
-    <link rel="shortcut icon" href={data.logoLink} type="image/x-icon">
-    <meta name="description" content={data.description}>
+    <title>{elist.name} | InfoSections</title>
+    <meta name="description" content={elist.description}>
 </svelte:head>
 
 <svelte:window onmessage={parentSentMessage} />
