@@ -78,4 +78,4 @@
     endTime: nowDate.toString(),
     collectionId: "",
     collectionName: ""
-}} currentDay={nowDate} timeZone={Temporal.Now.timeZoneId()} />
+}} currentDay={nowDate} timeZone={Temporal.Now.timeZoneId()} fontScale={1} />

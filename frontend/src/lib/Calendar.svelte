@@ -14,13 +14,15 @@
         displaySettings,
         timeZone,
         filters,
-        autoUpdate = true
+        autoUpdate = true,
+        fontScale = 1
     }: {
         events: EventDBModelExpanded[],
         displaySettings: CalendarCustomizations,
         timeZone: Temporal.TimeZoneLike,
         filters: CalendarFilters,
         autoUpdate?: boolean,
+        fontScale?: number
         calId: string
     } = $props();
 
@@ -58,15 +60,15 @@
 </script>
 
 {#if calendarCustomizations.viewType === "month"}
-    <MonthCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} />
+    <MonthCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} {fontScale} />
 {:else if calendarCustomizations.viewType === "week"}
-    <WeekCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} />
+    <WeekCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} {fontScale} />
 {:else}
     <div class="dark mx-auto p-6">
         <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} day={today} />
-            <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} day={tomorrow} />
-            <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} day={thirdDay} />
+            <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={today} />
+            <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={tomorrow} />
+            <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={thirdDay} />
         </div>
     </div>
 {/if}

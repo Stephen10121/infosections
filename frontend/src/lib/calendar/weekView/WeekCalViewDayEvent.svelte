@@ -6,7 +6,7 @@
     import { MONTHTOSTRING } from "@/utils";
     import Time from "@/Time.svelte";
 
-    let { event, currentDay, calendarCustomizations, timeZone }: { event: EventDBModel, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike } = $props();
+    let { event, currentDay, calendarCustomizations, timeZone, fontScale }: { event: EventDBModel, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike, fontScale: number } = $props();
 
     const start = $derived(Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone));
     const end = $derived(Temporal.Instant.from(event.endTime).toZonedDateTimeISO(timeZone));
@@ -19,20 +19,20 @@
 
 <div class="dark rounded bg-foreground p-2 flex flex-col gap-2" style="border: 1px solid #333333">
     <div class="dark flex items-start justify-between">
-        <h3 class="dark text-md font-semibold text-white pr-2">{event.name}</h3>
+        <h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 16}px;">{event.name}</h3>
     </div>
     
     <div class="flex items-center gap-2 text-sm text-gray-400">
         <Clock class="h-4 w-4" />
         {#if MULTI_DAY_EVENT}
-            <span class="text-sm text-gray-300">{MONTHTOSTRING[start.month]} {start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[end.month]} {end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
+            <span style="font-size: {fontScale * 14}px;" class="text-gray-300">{MONTHTOSTRING[start.month]} {start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[end.month]} {end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
         {:else}
-            <span class="text-sm text-gray-300"><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[end.month]} {end.day}, {/if} <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
+            <span style="font-size: {fontScale * 14}px;" class="text-gray-300"><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[end.month]} {end.day}, {/if} <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
         {/if}
     </div>
 
     {#if MULTI_DAY_EVENT}
-        <div class="flex items-center gap-2 text-sm text-gray-400">
+        <div class="flex items-center gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
             <CalendarPlus class="h-4 w-4" />
             <span class="text-gray-300">Multi-day event - Day {EVENT_DAY_NUMBER}</span>
         </div>
