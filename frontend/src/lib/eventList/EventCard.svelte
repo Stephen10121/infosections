@@ -42,7 +42,7 @@
             {#if event.registrationURL && displaySettings.showEventRegistration}
                 <div class="mt-2">
                     <Button class="w-full md:w-auto rounded-none font-light" variant="default">
-                        <a href={event.registrationURL} target="_blank" rel="noopener noreferrer">Register Now</a>
+                        <a href={event.registrationURL} target="_blank" rel="noopener noreferrer">More Info</a>
                     </Button>
                 </div>
             {/if}
