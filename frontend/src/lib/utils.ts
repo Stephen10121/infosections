@@ -138,6 +138,7 @@ export type ImageFeedCustomizations = {
 }
 
 export type ImageListCustomizations = {
+	displayStyle: "minimal" | "expanded",
 	showEventName: boolean,
 	showEventDescription: boolean,
 	showEventRegistration: boolean,
@@ -146,6 +147,7 @@ export type ImageListCustomizations = {
 }
 
 export const defaultImageListCustomizations: ImageListCustomizations = {
+	displayStyle: "minimal",
 	showEventName: true,
 	showEventDescription: true,
 	showEventRegistration: true,

@@ -67,13 +67,14 @@ const UpdateEventListSchema = v.object({
     description: v.string(),
     avatarLink: v.optional(v.string()),
     newAvatar: v.optional(v.any()),
-    displaySettings: v.optional(v.object({
+    displaySettings: v.object({
+        displayStyle: v.picklist(["minimal", "expanded"]),
         showEventName: v.optional(v.boolean(), false),
         showEventDescription: v.optional(v.boolean(), false),
         showEventRegistration: v.optional(v.boolean(), false),
         showUpcomingEventsTextAndDesc: v.optional(v.boolean(), false),
 	    setTransparentBackground: v.optional(v.boolean(), false)
-    }), undefined),
+    }),
     filters: v.optional(v.object({
         onlyShowFeatured: v.optional(v.boolean(), false),
         hideUnpublished: v.optional(v.boolean(), false),
@@ -94,13 +95,7 @@ export const updateEventListForm = form(UpdateEventListSchema, async (updatedELi
         let data: Partial<EventListDBModel> = {
             "name": updatedEList.name,
             "description": updatedEList.description,
-            "displaySettings": updatedEList.displaySettings ? updatedEList.displaySettings : {
-                "showEventName": false,
-                "showEventDescription": false,
-                "showEventRegistration": false,
-                "showUpcomingEventsTextAndDesc": false,
-                "setTransparentBackground": false
-            },
+            "displaySettings": updatedEList.displaySettings,
             "filters": updatedEList.filters ? updatedEList.filters : {
                 "hideUnpublished": false,
                 "onlyShowFeatured": false,
