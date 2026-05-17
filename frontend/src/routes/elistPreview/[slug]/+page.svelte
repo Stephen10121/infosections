@@ -67,7 +67,7 @@
 <svelte:window onmessage={parentSentMessage} />
 
 <main style="{displaySettings.setTransparentBackground ? "" : "background: #fff;"}">
-    <div class="mx-auto max-w-4xl">
+    <div class="mx-auto">
         {#if displaySettings.showUpcomingEventsTextAndDesc}
             <div class="mb-3">
                 <h1 class="text-balance text-3xl font-bold tracking-tight text-foreground md:text-4xl">Upcoming Events</h1>

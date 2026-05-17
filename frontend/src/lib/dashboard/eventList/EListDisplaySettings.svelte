@@ -1,5 +1,6 @@
 <script lang="ts">
     import { updateEventListForm } from "../../../routes/(mainWebsite)/dashboard/event-lists/eventListActions.remote";
+    import * as Tabs from "$lib/components/ui/tabs/index.js";
     import type { ImageListCustomizations } from "@/utils";
     import * as Card from "@/components/ui/card/index";
     import { Switch } from "@/components/ui/switch";
@@ -36,6 +37,19 @@
     <Card.Content>
         <div class="grid grid-cols-1 gap-6">
             {#if updateEventListForm.fields["displaySettings"]}
+                <div class="flex justify-between flex-col space-y-2">
+                    <Label for="showDescription" class="flex flex-col items-start space-y-1 cursor-pointer">
+                        <span class="font-medium">Display Style</span>
+                        <span class="text-sm text-muted-foreground">You can choose a minimal or expanded option.</span>
+                    </Label>
+                    <input {...updateEventListForm.fields["displaySettings"]["displayStyle"].as("hidden", displaySettingsBindable.displayStyle)} />
+                    <Tabs.Root bind:value={displaySettingsBindable.displayStyle} class="w-full">
+                        <Tabs.List class="w-full">
+                            <Tabs.Trigger value="minimal">Minimal</Tabs.Trigger>
+                            <Tabs.Trigger value="expanded">Expanded</Tabs.Trigger>
+                        </Tabs.List>
+                    </Tabs.Root>
+                </div>
                 <div class="flex items-center justify-between space-x-2">
                     <Label for="showUpcomingEventsTextAndDesc" class="flex flex-col items-start space-y-1 cursor-pointer">
                         <span class="font-medium">Display List Header</span>
