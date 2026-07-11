@@ -94,7 +94,8 @@ export const createDynamicURLCommand = command(CreateDynamicURLSchema, async (ne
             "timeZone": newURLData.timeZone,
             "weekSheet": [[],[],[],[],[],[],[]],
             "refs": [],
-            "owner": locals.user.id
+            "owner": locals.user.id,
+            "overrideExpireInStr": "never"
         };
 
         await locals.pb.collection('dynamic_url').create(data, {
@@ -129,6 +130,7 @@ const UpdateDynamicURLSchema = v.object({
     }))),
     enableWeekSheet: v.boolean(),
     enableOverrideRedirect: v.boolean(),
+    overrideExpiresIn: v.string(),
     disableURL: v.boolean(),
     overrideRedirectTo: v.nullish(v.union([v.pipe(v.string(), v.url()), v.pipe(v.string(), v.maxLength(0))])),
 });
@@ -185,12 +187,18 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
             "weekSheet": updatedURLData.weekSheet,
             "enableWeekSheet": updatedURLData.enableWeekSheet,
             "enableOverrideRedirect": updatedURLData.enableOverrideRedirect,
-            "disableURL": updatedURLData.disableURL,
+            "disableURL": updatedURLData.disableURL
         };
 
         if (updatedURLData.enableOverrideRedirect && updatedURLData.overrideRedirectTo && updatedURLData.overrideRedirectTo.length > 0) {
             data["overrideRedirectTo"] = updatedURLData.overrideRedirectTo;
         }
+
+        if (updatedURLData.enableOverrideRedirect) {
+            data["overrideExpiresIn"] = updatedURLData.overrideExpiresIn;
+        }
+
+        console.log(data);
 
         await locals.pb.collection('dynamic_url').update(dynamicURL.id, data, {
             headers: {

@@ -383,6 +383,8 @@ export interface DynamicURLModel extends RecordModel {
 	refs: URLRefHits[],
 	created: string,
 	updated: string,
+	overrideExpiresIn: string
+	overrideExpireInStr: "never" | "15min" | "30min" | "1hour" | "2hour" | "4hour" | "8hour" | "16hour" | "set"
 }
 
 export const TIMEZONES = [

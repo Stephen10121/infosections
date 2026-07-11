@@ -12,6 +12,7 @@
     import { Button } from "@/components/ui/button";
     import { Badge } from "@/components/ui/badge";
     import { toast } from "svelte-sonner";
+	import { Temporal } from "temporal-polyfill";
 
     async function deleteIt() {
         const loading = toast.loading("Deleting Dynamic URL");
@@ -33,6 +34,30 @@
 
     let { url, saveRequired = $bindable() }: { url: DynamicURLModel, saveRequired: boolean } = $props();
 
+    const overrideExpiresTimes = [
+        { value: "never", label: "Never" },
+        { value: "15min", label: "In 15 minutes" },
+        { value: "30min", label: "In 30 minutes" },
+        { value: "1hour", label: "In 1 hour" },
+        { value: "2hour", label: "In 2 hours" },
+        { value: "4hour", label: "In 4 hours" },
+        { value: "8hour", label: "In 8 hours" },
+        { value: "16hour", label: "In 16 hours" }
+    ] as const;
+
+    let selectedOverrideExpireTime: (typeof overrideExpiresTimes)[number]['value'] | "set" = $derived(url.overrideExpireInStr);
+    let selectedOverrideExpireTimeToDate = $derived({
+        never: 0,
+        "15min": 15,
+        "30min": 30,
+        "1hour": 60,
+        "2hour": 120,
+        "4hour": 240,
+        "8hour": 480,
+        "16hour": 960,
+        "set": 0
+    }[selectedOverrideExpireTime]);
+
     let confirmDelete = $state(false);
     let totalHits = $derived(url.refs.reduce((sum, ref) => sum + ref.hits, 0));
     let maxHits = $derived(Math.max(...url.refs.map((r) => r.hits), 1));
@@ -53,12 +78,14 @@
         const overrideURLChanged = overrideURL !== url.overrideRedirectTo;
         const enableWeeklyScheduleChanged = enableWeeklySchedule !== url.enableWeekSheet;
         const weekSheetChanged = weekSheet !== url.weekSheet;
+        const overrideExpiresInChanged = (selectedOverrideExpireTime === "never" ? "" : Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate}).toString()) !== url.overrideExpiresIn;
 
         saveRequired = defaultRedirectURLChanged ||
             currentTzChanged ||
             disableURLChanged ||
             enableOverrideChanged ||
             ( enableOverride && overrideURLChanged ) ||
+            ( enableOverride && overrideExpiresInChanged ) ||
             enableWeeklyScheduleChanged ||
             weekSheetChanged;
     });
@@ -74,7 +101,8 @@
                 enableWeekSheet: enableWeeklySchedule,
                 overrideRedirectTo: overrideURL,
                 enableOverrideRedirect: enableOverride,
-                disableURL
+                disableURL,
+                overrideExpiresIn: selectedOverrideExpireTime === "never" ? "" : Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate}).toString({ timeZoneName: 'never' }).replace('T', ' ')
             });
             toast.dismiss(loading);
             if (response.error) {
@@ -118,7 +146,7 @@
                 <Label for={`tz-${url.id}`}>Timezone</Label>
                 <Select.Root type="single" bind:value={currentTz} >
                     <Select.Trigger id={`tz-${url.id}`}>
-                    {currentTz}
+                        {currentTz}
                     </Select.Trigger>
                     <Select.Content>
                     {#each TIMEZONES as tz (`aTZ${tz}`)}
@@ -176,6 +204,32 @@
                         bind:value={overrideURL}
                         placeholder="https://zoom.us/j/special-event"
                     />
+                    <Label class="flex flex-col items-start mt-5">
+                        Override expires in:
+                        <div class="flex items-center gap-2">
+                            <Select.Root type="single" name="favoriteFruit" bind:value={selectedOverrideExpireTime}>
+                                <Select.Trigger class="w-45">
+                                    {overrideExpiresTimes.filter((a) => a["value"] === selectedOverrideExpireTime)[0]?.label}
+                                </Select.Trigger>
+                                <Select.Content>
+                                    <Select.Group>
+                                        {#each overrideExpiresTimes as expireTime (expireTime.value)}
+                                            <Select.Item
+                                                value={expireTime.value}
+                                                label={expireTime.label}
+                                            >
+                                                {expireTime.label}
+                                            </Select.Item>
+                                        {/each}
+                                    </Select.Group>
+                                </Select.Content>
+                            </Select.Root>
+                            {#if selectedOverrideExpireTime !== "never"}
+                                {@const estTime = Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate})}
+                                <p>Est. expire time {estTime.hour.toString().padStart(2, "0")}:{estTime.minute.toString().padStart(2, "0")}</p>
+                            {/if}
+                        </div>
+                    </Label>
                 </div>
             {/if}
         </div>
