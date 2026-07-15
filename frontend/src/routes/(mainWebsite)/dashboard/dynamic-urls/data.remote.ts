@@ -196,9 +196,8 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
 
         if (updatedURLData.enableOverrideRedirect) {
             data["overrideExpiresIn"] = updatedURLData.overrideExpiresIn;
+            data["overrideExpireInStr"] = "set";
         }
-
-        console.log(data);
 
         await locals.pb.collection('dynamic_url').update(dynamicURL.id, data, {
             headers: {

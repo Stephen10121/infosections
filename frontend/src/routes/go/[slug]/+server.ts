@@ -71,9 +71,10 @@ export async function GET({ params, locals, url }) {
     }
 
     let linkToRedirect = record.defaultRedirectTo;
+    const overrideExpired = record.overrideExpireInStr === "set" ? (new Date(record.overrideExpiresIn)).getTime() < (new Date()).getTime() : false;
 
     // If the dynamic_url owner enabled the override switch, we dont need to worry about anything else and just return the override URL
-    if (record.enableOverrideRedirect) {
+    if (record.enableOverrideRedirect && !overrideExpired) {
         linkToRedirect = record.overrideRedirectTo;
     } else if (record.enableWeekSheet) {
         let today = Temporal.Now.zonedDateTimeISO(record.timeZone);

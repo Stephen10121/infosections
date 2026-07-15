@@ -207,5 +207,48 @@ export const getMyDynamicURLS = query(async () => {
         console.log("Failed to dynamic urls.", err);
     }
 
+    let somethingChanged = false;
+    const batch = locals.pb.createBatch();
+    const now = (new Date()).getTime();
+    for (let i = 0; i<dynamic_urls.length;i++) {
+        const url = dynamic_urls[i];
+        if (!url) continue;
+        if (url.overrideExpireInStr !== "set") continue;
+        if((new Date(url.overrideExpiresIn)).getTime() > now) continue;
+        batch.collection('dynamic_url').update(url.id, {
+            "overrideExpiresIn": "",
+            "overrideExpireInStr": "never",
+            "enableOverrideRedirect": false
+        }, {
+            headers: {
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+            }
+        });
+        somethingChanged = true;
+    }
+
+    if (somethingChanged) {
+        try {
+            const result = await batch.send({
+                headers: {
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+                }
+            });
+            console.log({bod: result[0]?.body});
+        } catch (err) {
+            console.log("Error updating dynamic url override expire date resets,", err);
+        }
+        try {
+            dynamic_urls = await locals.pb.collection('dynamic_url').getFullList({
+                filter: `owner="${locals.user.id}"`,
+                headers: {
+                    "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+                }
+            });
+        } catch (err) {
+            console.log("Failed to dynamic urls.", err);
+        }
+    }
+
     return dynamic_urls;
 });

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { deleteDynamicURLCommand, updateDynamicURLCommand } from "../../../routes/(mainWebsite)/dashboard/dynamic-urls/data.remote";
-    import { cn, TIMEZONES, type DynamicURLModel } from "@/utils.js";
+    import { cn, timeWhen, TIMEZONES, type DynamicURLModel } from "@/utils.js";
     import * as Select from "$lib/components/ui/select/index.js";
     import { Switch } from "$lib/components/ui/switch/index.js";
     import * as Table from "$lib/components/ui/table/index.js";
@@ -11,8 +11,8 @@
     import * as Card from "@/components/ui/card/index";
     import { Button } from "@/components/ui/button";
     import { Badge } from "@/components/ui/badge";
-    import { toast } from "svelte-sonner";
 	import { Temporal } from "temporal-polyfill";
+    import { toast } from "svelte-sonner";
 
     async function deleteIt() {
         const loading = toast.loading("Deleting Dynamic URL");
@@ -78,7 +78,7 @@
         const overrideURLChanged = overrideURL !== url.overrideRedirectTo;
         const enableWeeklyScheduleChanged = enableWeeklySchedule !== url.enableWeekSheet;
         const weekSheetChanged = weekSheet !== url.weekSheet;
-        const overrideExpiresInChanged = (selectedOverrideExpireTime === "never" ? "" : Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate}).toString()) !== url.overrideExpiresIn;
+        const overrideExpiresInChanged = selectedOverrideExpireTime !== url.overrideExpireInStr;
 
         saveRequired = defaultRedirectURLChanged ||
             currentTzChanged ||
@@ -102,7 +102,7 @@
                 overrideRedirectTo: overrideURL,
                 enableOverrideRedirect: enableOverride,
                 disableURL,
-                overrideExpiresIn: selectedOverrideExpireTime === "never" ? "" : Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate}).toString({ timeZoneName: 'never' }).replace('T', ' ')
+                overrideExpiresIn: selectedOverrideExpireTime === "never" ? "" :  selectedOverrideExpireTime === "set" ? url.overrideExpiresIn : Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate}).toString({ timeZoneName: 'never' }).replace('T', ' ')
             });
             toast.dismiss(loading);
             if (response.error) {
@@ -209,7 +209,11 @@
                         <div class="flex items-center gap-2">
                             <Select.Root type="single" name="favoriteFruit" bind:value={selectedOverrideExpireTime}>
                                 <Select.Trigger class="w-45">
-                                    {overrideExpiresTimes.filter((a) => a["value"] === selectedOverrideExpireTime)[0]?.label}
+                                    {#if selectedOverrideExpireTime === "set"}
+                                        {timeWhen(url.overrideExpiresIn)}
+                                    {:else}
+                                        {overrideExpiresTimes.filter((a) => a["value"] === selectedOverrideExpireTime)[0]?.label}
+                                    {/if}
                                 </Select.Trigger>
                                 <Select.Content>
                                     <Select.Group>
@@ -224,7 +228,7 @@
                                     </Select.Group>
                                 </Select.Content>
                             </Select.Root>
-                            {#if selectedOverrideExpireTime !== "never"}
+                            {#if selectedOverrideExpireTime !== "never" && selectedOverrideExpireTime !== "set"}
                                 {@const estTime = Temporal.Now.zonedDateTimeISO(currentTz).add({minutes: selectedOverrideExpireTimeToDate})}
                                 <p>Est. expire time {estTime.hour.toString().padStart(2, "0")}:{estTime.minute.toString().padStart(2, "0")}</p>
                             {/if}
