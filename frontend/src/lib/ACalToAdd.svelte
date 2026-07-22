@@ -1,28 +1,31 @@
 <script lang="ts">
-    import type { CalendarDBModel } from "./cal.utils";
+	import type { CalendarDBModel } from "./cal.utils";
 
-    let {
-        calendar,
-        addToCalsToAdd
-    }: {
-        calendar: CalendarDBModel,
-        addToCalsToAdd: (event: Event, calId: string) => unknown
-    } = $props();
+	let {
+		calendar,
+		addToCalsToAdd
+	}: {
+		calendar: CalendarDBModel;
+		addToCalsToAdd: (event: Event, calId: string) => unknown;
+	} = $props();
 
-    let checked = $state(false);
+	let checked = $state(false);
 </script>
 
-<div class="w-full border rounded {checked ? "border-green-400" : ""}">
-    <input
-        type="checkbox"
-        name="caltoadd{calendar.id}"
-        id="caltoadd{calendar.id}"
-        class="sr-only"
-        bind:checked={checked}
-        onchange={(event) => addToCalsToAdd(event, calendar.id)}
-    />
-    <label for="caltoadd{calendar.id}" class="w-full h-full p-2 flex items-center gap-2 cursor-pointer">
-        <div class="dot w-3 h-3 {checked ? "bg-green-600" : "bg-accent"} rounded-xl"></div>
-        {calendar.name}
-    </label>
+<div class="w-full border rounded {checked ? 'border-green-400' : ''}">
+	<input
+		type="checkbox"
+		name="caltoadd{calendar.id}"
+		id="caltoadd{calendar.id}"
+		class="sr-only"
+		bind:checked
+		onchange={(event) => addToCalsToAdd(event, calendar.id)}
+	/>
+	<label
+		for="caltoadd{calendar.id}"
+		class="w-full h-full p-2 flex items-center gap-2 cursor-pointer"
+	>
+		<div class="dot w-3 h-3 {checked ? 'bg-green-600' : 'bg-accent'} rounded-xl"></div>
+		{calendar.name}
+	</label>
 </div>

@@ -1,5 +1,11 @@
 //This file can fetch all the needed data from the pocketbase instance. Stuff like calendars, image feeds, etc.
-import type { CustomImageIFeedDBModel, DynamicURLModel, EventListDBModel, ImageFeedDBModel, IntegrationModel } from "@/utils";
+import type {
+	CustomImageIFeedDBModel,
+	DynamicURLModel,
+	EventListDBModel,
+	ImageFeedDBModel,
+	IntegrationModel
+} from "@/utils";
 import { getRequestEvent, query } from "$app/server";
 import type { CalendarDBModel } from "@/cal.utils";
 import { redirect } from "@sveltejs/kit";
@@ -9,203 +15,250 @@ import * as v from "valibot";
 config();
 
 export const getMyIntegrations = query(async () => {
-    const { locals } = getRequestEvent();
-    let myIntegrations: IntegrationModel[] = [];
+	const { locals } = getRequestEvent();
+	let myIntegrations: IntegrationModel[] = [];
 
-    if (!locals.user) return myIntegrations;
+	if (!locals.user) return myIntegrations;
 
-    try {
-        myIntegrations = await locals.pb.collection("integration").getFullList({
-            filter: `owner="${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Error when fetching integrations, ", err);
-    }
+	try {
+		myIntegrations = await locals.pb.collection("integration").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Error when fetching integrations, ", err);
+	}
 
-    return myIntegrations;
+	return myIntegrations;
 });
 
 export const getMyCalendars = query(async () => {
-    const { locals } = getRequestEvent();
-    let calendars: CalendarDBModel[] = [];
+	const { locals } = getRequestEvent();
+	let calendars: CalendarDBModel[] = [];
 
-    if (!locals.user) return calendars;
+	if (!locals.user) return calendars;
 
-    try {
-        calendars = await locals.pb.collection('calendars').getFullList({
-            filter: `owner="${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch calendars.", err);
-    }
+	try {
+		calendars = await locals.pb.collection("calendars").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch calendars.", err);
+	}
 
-    return calendars;
+	return calendars;
 });
 
 /**
  * This gets a calendar by the database id, it also checks if the locals.user is the owner of this calendar. If not, the user gets redirected.
  */
 export const getCalendarById = query(v.string(), async (id) => {
-    const { locals } = getRequestEvent();
-    let calendar: CalendarDBModel | undefined;
+	const { locals } = getRequestEvent();
+	let calendar: CalendarDBModel | undefined;
 
-    if (!locals.user) return redirect(303, "/dashboard/calendars");
+	if (!locals.user) return redirect(303, "/dashboard/calendars");
 
-    try {
-        calendar = await locals.pb.collection('calendars').getOne(id, {
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch calendars.", err);
-        return redirect(303, "/dashboard/calendars");
-    }
+	try {
+		calendar = await locals.pb.collection("calendars").getOne(id, {
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch calendars.", err);
+		return redirect(303, "/dashboard/calendars");
+	}
 
-    if (!calendar) return redirect(303, "/dashboard/calendars");
+	if (!calendar) return redirect(303, "/dashboard/calendars");
 
-    if (calendar.owner !== locals.user.id) return redirect(303, "/dashboard/calendars");
+	if (calendar.owner !== locals.user.id) return redirect(303, "/dashboard/calendars");
 
-    return calendar;
+	return calendar;
 });
 
 export const getMyImageFeeds = query(async () => {
-    const { locals } = getRequestEvent();
-    let imageFeeds: ImageFeedDBModel[] = [];
+	const { locals } = getRequestEvent();
+	let imageFeeds: ImageFeedDBModel[] = [];
 
-    if (!locals.user) return imageFeeds;
+	if (!locals.user) return imageFeeds;
 
-    try {
-        imageFeeds = await locals.pb.collection('imageFeeds').getFullList({
-            filter: `owner="${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch image feeds.", err);
-    }
+	try {
+		imageFeeds = await locals.pb.collection("imageFeeds").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch image feeds.", err);
+	}
 
-    return imageFeeds;
+	return imageFeeds;
 });
 
 /**
  * This gets a image feed by the database id, it also checks if the locals.user is the owner of this feed. If not, the user gets redirected.
  */
 export const getImageFeedById = query(v.string(), async (id) => {
-    const { locals } = getRequestEvent();
-    let imageFeed: ImageFeedDBModel | undefined;
+	const { locals } = getRequestEvent();
+	let imageFeed: ImageFeedDBModel | undefined;
 
-    if (!locals.user) return redirect(303, "/dashboard/image-feeds");
+	if (!locals.user) return redirect(303, "/dashboard/image-feeds");
 
-    try {
-        imageFeed = await locals.pb.collection('imageFeeds').getOne(id, {
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch image feeds.", err);
-        return redirect(303, "/dashboard/image-feeds");
-    }
+	try {
+		imageFeed = await locals.pb.collection("imageFeeds").getOne(id, {
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch image feeds.", err);
+		return redirect(303, "/dashboard/image-feeds");
+	}
 
-    if (!imageFeed) return redirect(303, "/dashboard/image-feeds");
+	if (!imageFeed) return redirect(303, "/dashboard/image-feeds");
 
-    if (imageFeed.owner !== locals.user.id) return redirect(303, "/dashboard/image-feeds");
+	if (imageFeed.owner !== locals.user.id) return redirect(303, "/dashboard/image-feeds");
 
-    return imageFeed;
+	return imageFeed;
 });
 
 export const getCustomImagesForIFeed = query(v.string(), async (id) => {
-    const { locals } = getRequestEvent();
-    let customImages: CustomImageIFeedDBModel[] = [];
+	const { locals } = getRequestEvent();
+	let customImages: CustomImageIFeedDBModel[] = [];
 
-    if (!locals.user) return customImages;
+	if (!locals.user) return customImages;
 
-    try {
-        customImages = await locals.pb.collection('customImageIfeed').getFullList({
-            filter: `imageFeed ~ "${id}" && owner = "${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch image feed custom images.", err);
-        return redirect(303, "/dashboard/image-feeds");
-    }
+	try {
+		customImages = await locals.pb.collection("customImageIfeed").getFullList({
+			filter: `imageFeed ~ "${id}" && owner = "${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch image feed custom images.", err);
+		return redirect(303, "/dashboard/image-feeds");
+	}
 
-    return customImages;
+	return customImages;
 });
 
 export const getMyEventLists = query(async () => {
-    const { locals } = getRequestEvent();
-    let eventLists: EventListDBModel[] = [];
+	const { locals } = getRequestEvent();
+	let eventLists: EventListDBModel[] = [];
 
-    if (!locals.user) return eventLists;
+	if (!locals.user) return eventLists;
 
-    try {
-        eventLists = await locals.pb.collection('eventLists').getFullList({
-            filter: `owner="${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to event lists.", err);
-    }
+	try {
+		eventLists = await locals.pb.collection("eventLists").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to event lists.", err);
+	}
 
-    return eventLists;
+	return eventLists;
 });
 
 /**
  * This gets a event list by the database id, it also checks if the locals.user is the owner of this list. If not, the user gets redirected.
-*/
+ */
 export const getEventListById = query(v.string(), async (id) => {
-    const { locals } = getRequestEvent();
-    let eventList: EventListDBModel | undefined;
-    
-    if (!locals.user) return redirect(303, "/dashboard/event-lists");
-    
-    try {
-        eventList = await locals.pb.collection('eventLists').getOne(id, {
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to fetch event list.", err);
-        return redirect(303, "/dashboard/event-lists");
-    }
-    
-    if (!eventList) return redirect(303, "/dashboard/event-lists");
-    
-    if (eventList.owner !== locals.user.id) return redirect(303, "/dashboard/event-lists");
-    
-    return eventList;
+	const { locals } = getRequestEvent();
+	let eventList: EventListDBModel | undefined;
+
+	if (!locals.user) return redirect(303, "/dashboard/event-lists");
+
+	try {
+		eventList = await locals.pb.collection("eventLists").getOne(id, {
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch event list.", err);
+		return redirect(303, "/dashboard/event-lists");
+	}
+
+	if (!eventList) return redirect(303, "/dashboard/event-lists");
+
+	if (eventList.owner !== locals.user.id) return redirect(303, "/dashboard/event-lists");
+
+	return eventList;
 });
 
 export const getMyDynamicURLS = query(async () => {
-    const { locals } = getRequestEvent();
-    let dynamic_urls: DynamicURLModel[] = [];
+	const { locals } = getRequestEvent();
+	let dynamic_urls: DynamicURLModel[] = [];
 
-    if (!locals.user) return dynamic_urls;
+	if (!locals.user) return dynamic_urls;
 
-    try {
-        dynamic_urls = await locals.pb.collection('dynamic_url').getFullList({
-            filter: `owner="${locals.user.id}"`,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Failed to dynamic urls.", err);
-    }
+	try {
+		dynamic_urls = await locals.pb.collection("dynamic_url").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to dynamic urls.", err);
+	}
 
-    return dynamic_urls;
+	let somethingChanged = false;
+	const batch = locals.pb.createBatch();
+	const now = new Date().getTime();
+	for (let i = 0; i < dynamic_urls.length; i++) {
+		const url = dynamic_urls[i];
+		if (!url) continue;
+		if (url.overrideExpireInStr !== "set") continue;
+		if (new Date(url.overrideExpiresIn).getTime() > now) continue;
+		batch.collection("dynamic_url").update(
+			url.id,
+			{
+				overrideExpiresIn: "",
+				overrideExpireInStr: "never",
+				enableOverrideRedirect: false
+			},
+			{
+				headers: {
+					Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+				}
+			}
+		);
+		somethingChanged = true;
+	}
+
+	if (somethingChanged) {
+		try {
+			const result = await batch.send({
+				headers: {
+					Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+				}
+			});
+			console.log({ bod: result[0]?.body });
+		} catch (err) {
+			console.log("Error updating dynamic url override expire date resets,", err);
+		}
+		try {
+			dynamic_urls = await locals.pb.collection("dynamic_url").getFullList({
+				filter: `owner="${locals.user.id}"`,
+				headers: {
+					Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+				}
+			});
+		} catch (err) {
+			console.log("Failed to dynamic urls.", err);
+		}
+	}
+
+	return dynamic_urls;
 });

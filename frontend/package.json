@@ -10,7 +10,9 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"stripe-dev": "stripe listen --forward-to localhost:5173/api/webhook/stripe"
+		"stripe-dev": "stripe listen --forward-to localhost:5173/api/webhook/stripe",
+		"lint": "prettier --check .",
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"@fontsource-variable/inter": "^5.2.8",
@@ -24,6 +26,9 @@
 		"clsx": "^2.1.1",
 		"embla-carousel-autoplay": "^8.6.0",
 		"embla-carousel-svelte": "^8.6.0",
+		"prettier": "^3.8.3",
+		"prettier-plugin-svelte": "^4.1.0",
+		"prettier-plugin-tailwindcss": "^0.8.0",
 		"runed": "^0.37.1",
 		"shadcn-svelte": "^1.2.7",
 		"svelte": "^5.54.0",

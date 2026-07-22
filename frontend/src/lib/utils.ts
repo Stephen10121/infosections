@@ -19,90 +19,121 @@ export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?:
 
 /**
  * This function get the url that is passed and makes a fetch request to recieve the file. The function then returns the file in a blob format.
- * @param fileLink 
+ * @param fileLink
  * @returns Blob
  */
-export async function fetchFileFromURL(fileLink: string): Promise<{error: false, blob: Blob} | {error: true, msg: unknown}> {
+export async function fetchFileFromURL(
+	fileLink: string
+): Promise<{ error: false; blob: Blob } | { error: true; msg: unknown }> {
 	try {
 		const res = await fetch(fileLink);
 		const blob = await res.blob();
 		return {
 			error: false,
 			blob
-		}
+		};
 	} catch (err) {
 		return {
 			error: true,
 			msg: err
-		}
+		};
 	}
 }
 
 // Don't judge
 export function clearFileInput(ctrl: HTMLElement | null) {
-	if (ctrl === null) return
+	if (ctrl === null) return;
 	try {
 		//@ts-ignore
 		ctrl.value = null;
 		//@ts-ignore
 		if (ctrl.value) {
 			//@ts-ignore
-			ctrl.parentNode.replaceChild(ctrl.cloneNode(true), ctrl); 
-		} 
-		} catch(ex) {
-	}
+			ctrl.parentNode.replaceChild(ctrl.cloneNode(true), ctrl);
+		}
+	} catch (ex) {}
 }
 
-export const LONGDAYTOSTRING = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-export const MONTHTOSTRING = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+export const LONGDAYTOSTRING = [
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+	"Sunday"
+];
+export const MONTHTOSTRING = [
+	"",
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec"
+];
 
 export function dateRangeOverlaps(a_start: number, a_end: number, b_start: number, b_end: number) {
-    if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
-    if (a_start <= b_end   && b_end   <= a_end) return true; // b ends in a
-    if (b_start <  a_start && a_end   <  b_end) return true; // a in b
-    return false;
+	if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
+	if (a_start <= b_end && b_end <= a_end) return true; // b ends in a
+	if (b_start < a_start && a_end < b_end) return true; // a in b
+	return false;
 }
 
 export interface CustomImageIFeedDBModel extends RecordModel {
-	picture: string | File,
-	registrationURL: string,
-	showLink: boolean,
-	linkText: string,
-	imageFeed: string[],
-	owner: string
+	picture: string | File;
+	registrationURL: string;
+	showLink: boolean;
+	linkText: string;
+	imageFeed: string[];
+	owner: string;
 }
 
 export interface ImageFeedDBModel extends RecordModel {
-	name: string,
-	owner: string,
-	logo: string | File,
-	visits: number,
-	description: string,
-	displaySettings: ImageFeedCustomizations,
-	created: string,
-	updated: string,
-	filters: ImageFeedFilters,
-	additionalCalendars: string[]
+	name: string;
+	owner: string;
+	logo: string | File;
+	visits: number;
+	description: string;
+	displaySettings: ImageFeedCustomizations;
+	created: string;
+	updated: string;
+	filters: ImageFeedFilters;
+	additionalCalendars: string[];
 }
 
 export interface EventListDBModel extends RecordModel {
-	name: string,
-	owner: string,
-	logo: string | File,
-	visits: number,
-	description: string,
-	displaySettings: ImageListCustomizations,
-	created: string,
-	updated: string,
-	filters: EventListFilters
+	name: string;
+	owner: string;
+	logo: string | File;
+	visits: number;
+	description: string;
+	displaySettings: ImageListCustomizations;
+	created: string;
+	updated: string;
+	filters: EventListFilters;
 }
 
 // Dont you dare judge
 export function toggleFullScreen() {
-	const elem = document.documentElement
-	// ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-	//@ts-ignore
-	if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+	const elem = document.documentElement;
+	if (
+		//@ts-ignore
+		(document.fullScreenElement !== undefined && document.fullScreenElement === null) ||
+		//@ts-ignore
+		(document.msFullscreenElement !== undefined && document.msFullscreenElement === null) ||
+		//@ts-ignore
+		(document.mozFullScreen !== undefined && !document.mozFullScreen) ||
+		//@ts-ignore
+		(document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)
+	) {
 		//@ts-ignore
 		if (elem.requestFullScreen) {
 			//@ts-ignore
@@ -110,41 +141,48 @@ export function toggleFullScreen() {
 			//@ts-ignore
 		} else if (elem.mozRequestFullScreen) {
 			//@ts-ignore
-			elem.mozRequestFullScreen();//@ts-ignore
-		} else if (elem.webkitRequestFullScreen) {//@ts-ignore
-			elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);//@ts-ignore
-		} else if (elem.msRequestFullscreen) {//@ts-ignore
-			elem.msRequestFullscreen();//@ts-ignore
+			elem.mozRequestFullScreen(); //@ts-ignore
+		} else if (elem.webkitRequestFullScreen) {
+			//@ts-ignore
+			elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT); //@ts-ignore
+		} else if (elem.msRequestFullscreen) {
+			//@ts-ignore
+			elem.msRequestFullscreen(); //@ts-ignore
 		}
-	} else {//@ts-ignore
-		if (document.cancelFullScreen) {//@ts-ignore
-			document.cancelFullScreen();//@ts-ignore
-		} else if (document.mozCancelFullScreen) {//@ts-ignore
-			document.mozCancelFullScreen();//@ts-ignore
-		} else if (document.webkitCancelFullScreen) {//@ts-ignore
-			document.webkitCancelFullScreen();//@ts-ignore
-		} else if (document.msExitFullscreen) {//@ts-ignore
+	} else {
+		//@ts-ignore
+		if (document.cancelFullScreen) {
+			//@ts-ignore
+			document.cancelFullScreen(); //@ts-ignore
+		} else if (document.mozCancelFullScreen) {
+			//@ts-ignore
+			document.mozCancelFullScreen(); //@ts-ignore
+		} else if (document.webkitCancelFullScreen) {
+			//@ts-ignore
+			document.webkitCancelFullScreen(); //@ts-ignore
+		} else if (document.msExitFullscreen) {
+			//@ts-ignore
 			document.msExitFullscreen();
 		}
 	}
 }
 
 export type ImageFeedCustomizations = {
-	showEventExtraInfo: boolean,
-	showEventName: boolean,
-	showEventDescription: boolean,
-	showEventRegistration: boolean,
-	feedDurationMS: number,
-}
+	showEventExtraInfo: boolean;
+	showEventName: boolean;
+	showEventDescription: boolean;
+	showEventRegistration: boolean;
+	feedDurationMS: number;
+};
 
 export type ImageListCustomizations = {
-	displayStyle: "minimal" | "expanded",
-	showEventName: boolean,
-	showEventDescription: boolean,
-	showEventRegistration: boolean,
-	showUpcomingEventsTextAndDesc: boolean,
-	setTransparentBackground: boolean
-}
+	displayStyle: "minimal" | "expanded";
+	showEventName: boolean;
+	showEventDescription: boolean;
+	showEventRegistration: boolean;
+	showUpcomingEventsTextAndDesc: boolean;
+	setTransparentBackground: boolean;
+};
 
 export const defaultImageListCustomizations: ImageListCustomizations = {
 	displayStyle: "minimal",
@@ -153,143 +191,145 @@ export const defaultImageListCustomizations: ImageListCustomizations = {
 	showEventRegistration: true,
 	showUpcomingEventsTextAndDesc: false,
 	setTransparentBackground: false
-}
+};
 
 export const defaultImageFeedCustomizations: ImageFeedCustomizations = {
 	showEventExtraInfo: false,
 	showEventName: true,
 	showEventDescription: true,
 	showEventRegistration: true,
-	feedDurationMS: 7000,
-}
+	feedDurationMS: 7000
+};
 
 export type ImageFeedFilters = {
-	onlyShowFeatured: boolean,
-	hideUnpublished: boolean,
-	hideRecurringEvents: boolean,
-}
+	onlyShowFeatured: boolean;
+	hideUnpublished: boolean;
+	hideRecurringEvents: boolean;
+};
 
 export type EventListFilters = ImageFeedFilters;
 
 export const defaultImageFeedFilters: ImageFeedFilters = {
 	onlyShowFeatured: true,
 	hideUnpublished: true,
-	hideRecurringEvents: false,
-}
+	hideRecurringEvents: false
+};
 
 export const defaultEventListFilters: EventListFilters = {
 	onlyShowFeatured: true,
 	hideUnpublished: true,
-	hideRecurringEvents: false,
-}
+	hideRecurringEvents: false
+};
 
 export interface UserModel extends RecordModel {
-	name: string,
-	email: string,
-	avatar: string,
-	customerId: string,
-	priceId: string,
-	new: boolean,
-	accessLevel: "none" | "standard" | "premium",
-	subscriptionURL: string
-	freeTrialURL: string
+	name: string;
+	email: string;
+	avatar: string;
+	customerId: string;
+	priceId: string;
+	new: boolean;
+	accessLevel: "none" | "standard" | "premium";
+	subscriptionURL: string;
+	freeTrialURL: string;
 }
 
 export interface IntegrationModel extends RecordModel {
-	prettyName: string,
-	owner: string,
-	service: "planningcenter" | "breeze" | "google" | "twitter"
-	refreshToken: string,
-	accessToken: string,
-	refreshTokenExpires: number,
-	accessTokenExpires: number
-	lastEventsFetch: string,
-	status: "connected" | "syncing" | "error" | "disconnected"
+	prettyName: string;
+	owner: string;
+	service: "planningcenter" | "breeze" | "google" | "twitter";
+	refreshToken: string;
+	accessToken: string;
+	refreshTokenExpires: number;
+	accessTokenExpires: number;
+	lastEventsFetch: string;
+	status: "connected" | "syncing" | "error" | "disconnected";
 }
 
 export function capitalizeFirstLetter(str: string) {
-  if (typeof str !== 'string' || str.length === 0) {
-    return str; // Handle non-string inputs or empty strings
-  }
-  return str.charAt(0).toUpperCase() + str.slice(1);
+	if (typeof str !== "string" || str.length === 0) {
+		return str; // Handle non-string inputs or empty strings
+	}
+	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function timeAgo(dateParam: Date | string | number) {
-    if (!dateParam) {
-        return null;
-    }
+	if (!dateParam) {
+		return null;
+	}
 
-    const date = new Date(dateParam); // Ensure it's a Date object
-    const now = new Date();
+	const date = new Date(dateParam); // Ensure it's a Date object
+	const now = new Date();
 	//@ts-ignore
-    const diffInMs = now - date; // Difference in milliseconds
+	const diffInMs = now - date; // Difference in milliseconds
 
-    const seconds = Math.round(diffInMs / 1000);
-    const minutes = Math.round(seconds / 60);
-    const hours = Math.round(minutes / 60);
-    const days = Math.round(hours / 24);
+	const seconds = Math.round(diffInMs / 1000);
+	const minutes = Math.round(seconds / 60);
+	const hours = Math.round(minutes / 60);
+	const days = Math.round(hours / 24);
 
-    // Less than a minute ago
-    if (seconds < 60) {
-        return `${seconds} second${seconds === 1 ? '' : 's'} ago`;
-    }
-    // Less than an hour ago
-    if (minutes < 60) {
-        return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
-    }
-    // Less than 24 hours ago (a day ago)
-    if (hours < 24) {
-        return `${hours} hour${hours === 1 ? '' : 's'} ago`;
-    }
-    // Less than a month ago (e.g., 1 day ago, 5 days ago)
-    if (days < 30) { // Approximating a month as 30 days
-        return `${days} day${days === 1 ? '' : 's'} ago`;
-    }
+	// Less than a minute ago
+	if (seconds < 60) {
+		return `${seconds} second${seconds === 1 ? "" : "s"} ago`;
+	}
+	// Less than an hour ago
+	if (minutes < 60) {
+		return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+	}
+	// Less than 24 hours ago (a day ago)
+	if (hours < 24) {
+		return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+	}
+	// Less than a month ago (e.g., 1 day ago, 5 days ago)
+	if (days < 30) {
+		// Approximating a month as 30 days
+		return `${days} day${days === 1 ? "" : "s"} ago`;
+	}
 
-    // Older than a month, return formatted date
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+	// Older than a month, return formatted date
+	const options = { year: "numeric", month: "long", day: "numeric" };
 
 	//@ts-ignore
-    return date.toLocaleDateString(undefined, options); // Use default locale
+	return date.toLocaleDateString(undefined, options); // Use default locale
 }
 
 export function timeWhen(dateParam: Date | string | number) {
-    if (!dateParam) {
-        return null;
-    }
+	if (!dateParam) {
+		return null;
+	}
 
-    const date = new Date(dateParam); // Ensure it's a Date object
-    const now = new Date();
+	const date = new Date(dateParam); // Ensure it's a Date object
+	const now = new Date();
 	//@ts-ignore
-    const diffInMs = date - now; // Difference in milliseconds
+	const diffInMs = date - now; // Difference in milliseconds
 
-    const seconds = Math.round(diffInMs / 1000);
-    const minutes = Math.round(seconds / 60);
-    const hours = Math.round(minutes / 60);
-    const days = Math.round(hours / 24);
+	const seconds = Math.round(diffInMs / 1000);
+	const minutes = Math.round(seconds / 60);
+	const hours = Math.round(minutes / 60);
+	const days = Math.round(hours / 24);
 
-    // Less than a minute ago
-    if (seconds < 60) {
-        return `${seconds} second${seconds === 1 ? '' : 's'}`;
-    }
-    // Less than an hour ago
-    if (minutes < 60) {
-        return `${minutes} minute${minutes === 1 ? '' : 's'}`;
-    }
-    // Less than 24 hours ago (a day ago)
-    if (hours < 24) {
-        return `${hours} hour${hours === 1 ? '' : 's'}`;
-    }
-    // Less than a month ago (e.g., 1 day ago, 5 days ago)
-    if (days < 30) { // Approximating a month as 30 days
-        return `${days} day${days === 1 ? '' : 's'}`;
-    }
+	// Less than a minute ago
+	if (seconds < 60) {
+		return `${seconds} second${seconds === 1 ? "" : "s"}`;
+	}
+	// Less than an hour ago
+	if (minutes < 60) {
+		return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+	}
+	// Less than 24 hours ago (a day ago)
+	if (hours < 24) {
+		return `${hours} hour${hours === 1 ? "" : "s"}`;
+	}
+	// Less than a month ago (e.g., 1 day ago, 5 days ago)
+	if (days < 30) {
+		// Approximating a month as 30 days
+		return `${days} day${days === 1 ? "" : "s"}`;
+	}
 
-    // Older than a month, return formatted date
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+	// Older than a month, return formatted date
+	const options = { year: "numeric", month: "long", day: "numeric" };
 
 	//@ts-ignore
-    return date.toLocaleDateString(undefined, options); // Use default locale
+	return date.toLocaleDateString(undefined, options); // Use default locale
 }
 
 export async function refreshingEvents() {
@@ -306,17 +346,17 @@ export async function refreshingEvents() {
 export function getDaysInMonth(date: Temporal.ZonedDateTime): Temporal.ZonedDateTime[] {
 	const firstDay = date.with({ day: 1 });
 	const lastDay = date.with({ day: date.daysInMonth });
-	
+
 	const days: Temporal.ZonedDateTime[] = [];
-	
+
 	// Add days from previous month to start on Sunday
 	const startDayOfWeek = firstDay.dayOfWeek !== 7 ? firstDay.dayOfWeek : 0;
 
 	for (let i = startDayOfWeek; i >= 1; i--) {
-		const prevDate = firstDay.subtract({ days: i }).startOfDay() //new Date(year, month, -i)
-		days.push(prevDate)
+		const prevDate = firstDay.subtract({ days: i }).startOfDay(); //new Date(year, month, -i)
+		days.push(prevDate);
 	}
-	
+
 	// Add days of current month
 	for (let i = 0; i <= lastDay.day - 1; i++) {
 		days.push(firstDay.add({ days: i }));
@@ -332,57 +372,68 @@ export function getDaysInMonth(date: Temporal.ZonedDateTime): Temporal.ZonedDate
 	}
 
 	// Add days from next month to complete the grid
-	const remainingDays = (rowsRequired * 7) - days.length;
+	const remainingDays = rowsRequired * 7 - days.length;
 
 	for (let i = 1; i <= remainingDays; i++) {
 		days.push(lastDay.add({ days: i }).startOfDay());
 	}
 
-	return days
+	return days;
 }
 
-export function getDayRange(startDate: Temporal.ZonedDateTime, days: number): Temporal.ZonedDateTime[] {
-	const range: Temporal.ZonedDateTime[] = []
+export function getDayRange(
+	startDate: Temporal.ZonedDateTime,
+	days: number
+): Temporal.ZonedDateTime[] {
+	const range: Temporal.ZonedDateTime[] = [];
 	for (let i = 0; i < days; i++) {
 		range.push(startDate.add({ days: i }));
 	}
-	return range
+	return range;
 }
 
 export function isSameDay(date1: Temporal.ZonedDateTime, date2: Temporal.ZonedDateTime): boolean {
-	return (
-		date1.year === date2.year &&
-		date1.month === date2.month &&
-		date1.day === date2.day
-	)
+	return date1.year === date2.year && date1.month === date2.month && date1.day === date2.day;
 }
 
-export function getEventsForDate(events: EventDBModel[], day: Temporal.ZonedDateTime, nextDay: Temporal.ZonedDateTime): EventDBModel[] {
+export function getEventsForDate(
+	events: EventDBModel[],
+	day: Temporal.ZonedDateTime,
+	nextDay: Temporal.ZonedDateTime
+): EventDBModel[] {
 	return events.filter((event) => {
-		return dateRangeOverlaps(day.toInstant().epochMilliseconds, nextDay.toInstant().epochMilliseconds, (new Date(event.startTime)).valueOf(), (new Date(event.endTime)).valueOf())
-	})
+		return dateRangeOverlaps(
+			day.toInstant().epochMilliseconds,
+			nextDay.toInstant().epochMilliseconds,
+			new Date(event.startTime).valueOf(),
+			new Date(event.endTime).valueOf()
+		);
+	});
 }
 
 export type WeekSheetTimeSlot = {
-    startMinute: number;
-    endMinute: number;
-    link: string;
-}
+	startMinute: number;
+	endMinute: number;
+	link: string;
+};
 
-export type URLRefHits = { name: string, hits: number }
+export type URLRefHits = { name: string; hits: number };
 
 export interface DynamicURLModel extends RecordModel {
-	owner: string,
-	defaultRedirectTo: string
-	timeZone: Temporal.TimeZoneLike
-	weekSheet: WeekSheetTimeSlot[][],
-	enableWeekSheet: boolean,
-	overrideRedirectTo: string
-	enableOverrideRedirect: boolean,
-	disableURL: boolean,
-	refs: URLRefHits[],
-	created: string,
-	updated: string,
+	owner: string;
+	defaultRedirectTo: string;
+	timeZone: Temporal.TimeZoneLike;
+	weekSheet: WeekSheetTimeSlot[][];
+	enableWeekSheet: boolean;
+	overrideRedirectTo: string;
+	enableOverrideRedirect: boolean;
+	disableURL: boolean;
+	refs: URLRefHits[];
+	created: string;
+	updated: string;
+	overrideExpiresIn: string;
+	overrideExpireInStr:
+		"never" | "15min" | "30min" | "1hour" | "2hour" | "4hour" | "8hour" | "16hour" | "set";
 }
 
 export const TIMEZONES = [
@@ -409,13 +460,13 @@ export const TIMEZONES = [
 ];
 
 export interface AvailableIntegration {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  icon: IntegrationModel["service"];
-  docsUrl: string;
-  comingSoon: boolean
+	id: string;
+	name: string;
+	slug: string;
+	description: string;
+	icon: IntegrationModel["service"];
+	docsUrl: string;
+	comingSoon: boolean;
 }
 
 export const availableIntegrations: AvailableIntegration[] = [
@@ -423,10 +474,11 @@ export const availableIntegrations: AvailableIntegration[] = [
 		id: "planningcenter",
 		name: "Planning Center",
 		slug: "planningcenter",
-		description: "Sync events from Planning Center Calendar. Automatically imports services, events, and schedules.",
+		description:
+			"Sync events from Planning Center Calendar. Automatically imports services, events, and schedules.",
 		icon: "planningcenter",
 		docsUrl: "https://www.planningcenter.com/",
-		comingSoon: false,
+		comingSoon: false
 	},
 	{
 		id: "twitter",
@@ -435,7 +487,7 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Integrate X Ai features like speech to text and translation.",
 		icon: "twitter",
 		docsUrl: "https://docs.x.com",
-		comingSoon: false,
+		comingSoon: false
 	},
 	{
 		id: "breeze",
@@ -444,38 +496,45 @@ export const availableIntegrations: AvailableIntegration[] = [
 		description: "Connect with Breeze Church Management to sync your church events and calendar.",
 		icon: "breeze",
 		docsUrl: "https://www.breezechms.com/",
-		comingSoon: true,
+		comingSoon: true
 	},
 	{
 		id: "googlecalendar",
 		name: "Google Calendar",
 		slug: "google-calendar",
-		description: "Import events from Google Calendar. Supports multiple calendars and automatic sync.",
+		description:
+			"Import events from Google Calendar. Supports multiple calendars and automatic sync.",
 		icon: "google",
 		docsUrl: "https://calendar.google.com/",
-		comingSoon: true,
+		comingSoon: true
 	}
 ];
 
 export const errorTypes = {
-	"signup_stripe_error": "Error using the stripe SDK.",
-	"signup_oath_no_state": "Error connecting with Oath provider.",
-	"signup_auth_method_get": "Failed to get Oath Method",
-	"signup_auth_signup_fail": "Failed to signup with Oath",
-	"signup_after_oath": "Failed to signup."
-}
+	signup_stripe_error: "Error using the stripe SDK.",
+	signup_oath_no_state: "Error connecting with Oath provider.",
+	signup_auth_method_get: "Failed to get Oath Method",
+	signup_auth_signup_fail: "Failed to signup with Oath",
+	signup_after_oath: "Failed to signup."
+};
 
 export function hasKey<T extends object>(obj: T, key: PropertyKey): key is keyof T {
-  return key in obj;
+	return key in obj;
 }
 
-export function generateIframeCode(iframeLink: string, iframeTitle: string, id: string, infosectionsLink: string, removeScript?: boolean) {
+export function generateIframeCode(
+	iframeLink: string,
+	iframeTitle: string,
+	id: string,
+	infosectionsLink: string,
+	removeScript?: boolean
+) {
 	let text: string[] = [];
 	if (removeScript) {
 		text = [
-			'<iframe',
+			"<iframe",
 			'  style="background:none transparent;border:none;display:block;"',
-			'  allowtransparency',
+			"  allowtransparency",
 			'  width="100%"',
 			'  height="100%"',
 			`  src="${iframeLink}"`,
@@ -483,15 +542,15 @@ export function generateIframeCode(iframeLink: string, iframeTitle: string, id: 
 			`  title="${iframeTitle}"`,
 			`  id="iframe${id}"`,
 			'  frameborder="0"',
-			'></iframe>'
-		]
+			"></iframe>"
+		];
 	} else {
 		text = [
 			`<script async src="${infosectionsLink}/resizeObserver.js">`,
-			'</script>',
-			'<iframe',
+			"</script>",
+			"<iframe",
 			'  style="background:none transparent;border:none;display:block;"',
-			'  allowtransparency',
+			"  allowtransparency",
 			'  width="100%"',
 			'  height="100%"',
 			`  src="${iframeLink}"`,
@@ -499,8 +558,8 @@ export function generateIframeCode(iframeLink: string, iframeTitle: string, id: 
 			`  title="${iframeTitle}"`,
 			`  id="iframe${id}"`,
 			'  frameborder="0"',
-			'></iframe>'
-		]
+			"></iframe>"
+		];
 	}
 
 	return text.join("\n");

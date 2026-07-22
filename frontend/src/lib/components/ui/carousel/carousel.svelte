@@ -3,7 +3,7 @@
 		type CarouselAPI,
 		type CarouselProps,
 		type EmblaContext,
-		setEmblaContext,
+		setEmblaContext
 	} from "./context.js";
 	import { cn, type WithElementRef } from "$lib/utils.js";
 
@@ -34,7 +34,7 @@
 		onInit,
 		scrollSnaps: [],
 		selectedIndex: 0,
-		scrollTo,
+		scrollTo
 	});
 
 	setEmblaContext(carouselState);
