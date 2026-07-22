@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "mode-watcher": "^1.1.0"
+  },
+  "devDependencies": {
+    "@humanspeak/svelte-motion": "^0.7.20",
+    "svelte-windows": "^0.1.13"
   }
 }
