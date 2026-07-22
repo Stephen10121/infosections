@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { Toaster } from "@/components/ui/sonner";
+	import { ModeWatcher, mode } from "mode-watcher";
 	import favicon from "../lib/assets/logo.png";
 	import "./layout.css";
 
 	let { children } = $props();
+
+	$inspect(mode.current);
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Toaster theme="light" />
+<ModeWatcher />
+<Toaster theme={mode.current} />
 {@render children?.()}
