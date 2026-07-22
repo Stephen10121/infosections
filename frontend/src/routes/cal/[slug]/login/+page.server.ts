@@ -7,7 +7,7 @@ config();
 export async function load({ locals, params }) {
     let calendar: CalendarDBModel;
     try {
-        calendar = await locals.pb.collection('calendars').getFirstListItem(`id="${params.slug}"`, {
+        calendar = await locals.pb.collection('calendars').getFirstListItem(`publicId="${params.slug}"`, {
             headers: {
                 "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }
@@ -35,7 +35,7 @@ export const actions = {
 
         let calendar: CalendarDBModel;
         try {
-            calendar = await locals.pb.collection('calendars').getFirstListItem(`id="${params.slug}"`, {
+            calendar = await locals.pb.collection('calendars').getFirstListItem(`publicId="${params.slug}"`, {
                 headers: {
                     "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
                 }

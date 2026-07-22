@@ -7,7 +7,24 @@ import * as v from "valibot";
 
 config();
 
+async function calPublicIdInUse(locals: App.Locals, pubID: string) {
+    try {
+        await locals.pb.collection('calendars').getFirstListItem(`publicId="${pubID}"`, {
+            headers: {
+                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
+            }
+        });
+        return true;
+    } catch (err) {
+        return false;
+    }
+}
+
 const CreateCalendarSchema = v.object({
+    publicId: v.pipe(
+        v.string(),
+        v.regex(/^[a-zA-Z0-9]+$/, 'No spaces or special characters allowed.')
+    ),
     name: v.pipe(v.string(), v.nonEmpty("A name for the calendar is required.")),
     description: v.pipe(v.string(), v.nonEmpty("A description for the calendar is required.")),
     enablePassword: v.boolean(),
@@ -33,8 +50,16 @@ export const createCalendarCommand = command(CreateCalendarSchema, async (newCal
         }
     }
 
+    if (await calPublicIdInUse(locals, newCalendar.publicId)) {
+        return {
+            error: true,
+            msg: "Calendar URL path already taken."
+        }
+    }
+
     try {
         let data: Partial<CalendarDBModel> = {
+            "publicId": newCalendar.publicId,
             "name": newCalendar.name,
             "description": newCalendar.description,
             "passwordEnabled": newCalendar.enablePassword,
@@ -70,6 +95,10 @@ export const createCalendarCommand = command(CreateCalendarSchema, async (newCal
 
 const UpdateCalendarSchema = v.object({
     id: v.string(),
+    publicId: v.pipe(
+        v.string(),
+        v.regex(/^[a-zA-Z0-9]+$/, 'No spaces or special characters allowed.')
+    ),
     name: v.string(),
     description: v.string(),
     enablePassword: v.optional(v.boolean(), false),
@@ -110,8 +139,13 @@ export const updateCalendarForm = form(UpdateCalendarSchema, async (updatedCalen
 
     const calendar = await getCalendarById(updatedCalendar.id);
 
+    if (calendar.publicId !== updatedCalendar.publicId && await calPublicIdInUse(locals, updatedCalendar.publicId)) {
+        return invalid(issue.publicId("Calendar URL path already taken."));
+    }
+
     try {
         let data: Partial<CalendarDBModel> = {
+            "publicId": updatedCalendar.publicId,
             "name": updatedCalendar.name,
             "description": updatedCalendar.description,
             "passwordEnabled": updatedCalendar.enablePassword,

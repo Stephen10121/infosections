@@ -49,6 +49,7 @@ export const defaultCalendarFilters: CalendarFilters = {
 }
 
 export interface CalendarDBModel extends RecordModel {
+	publicId: string,
 	name: string,
 	password: string,
 	passwordEnabled: boolean,

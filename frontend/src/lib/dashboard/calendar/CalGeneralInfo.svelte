@@ -7,24 +7,26 @@
 
     let {
         changed = $bindable(),
-        calId,
+        calPublicId,
         calendarName,
         calendarDescription
     }: {
         changed: boolean,
-        calId: string,
+        calPublicId: string,
         calendarName: string,
         calendarDescription: string
     } = $props();
 
+    let calPublicIdBindable = $derived(calPublicId);
     let calendarNameBindable = $derived(calendarName);
     let calendarDescriptionBindable = $derived(calendarDescription);
 
     $effect(() => {
+        const calPublicIdChanged = calPublicId !== calPublicIdBindable;
         const calendarNameChanged = calendarName !== calendarNameBindable;
         const calendarDescriptionChanged = calendarDescription !== calendarDescriptionBindable;
 
-        changed = calendarNameChanged || calendarDescriptionChanged;
+        changed = calPublicIdChanged || calendarNameChanged || calendarDescriptionChanged;
     });
 </script>
 
@@ -35,16 +37,18 @@
     </Card.Header>
     <Card.Content class="space-y-4">
         <div class="space-y-2">
-            {#if calId.length > 0}
-                <input {...updateCalendarForm.fields.id.as("hidden", calId)} />
+            {#if calPublicIdBindable.length > 0}
+                <input {...updateCalendarForm.fields.publicId.as("hidden", calPublicIdBindable)} />
             {/if}
-            <Label for="calendar-id">Calendar ID</Label>
+            <Label for="calendar-id">Calendar URL Path</Label>
             <Input
                 id="calendar-id"
-                value={calId}
-                disabled
+                bind:value={calPublicIdBindable}
                 class="font-mono text-sm"
             />
+            {#each updateCalendarForm.fields.publicId.issues() as issue}
+                <p class="text-sm text-red-500">{issue.message}</p>
+            {/each}
         </div>
 
         <div class="space-y-2">

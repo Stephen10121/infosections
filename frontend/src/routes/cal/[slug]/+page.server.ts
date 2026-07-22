@@ -7,7 +7,7 @@ config();
 export async function load({ params, locals, cookies }) {
     let calendar: CalendarDBModel;
     try {
-        calendar = await locals.pb.collection('calendars').getOne(params.slug, {
+        calendar = await locals.pb.collection('calendars').getFirstListItem(`publicId="${params.slug}"`, {
             headers: {
                 "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
             }

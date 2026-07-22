@@ -24,15 +24,17 @@
 
     let newCalendarDialogOpen = $state(false);
     let newCalendarDescription = $state("");
+    let newCalendarPublicId = $state("");
     let newCalendarName = $state("");
     let newCalendarPasswordEnabled = $state(false);
     let newCalendarPassword = $state("");
     let creatingCalendar = $state(false);
 
     async function handleCreateCalendar() {
-        if (newCalendarName && newCalendarDescription) {
+        if (newCalendarPublicId && newCalendarName && newCalendarDescription) {
             creatingCalendar = true;
             const response = await createCalendarCommand({
+                publicId: newCalendarPublicId,
                 name: newCalendarName,
                 description: newCalendarDescription,
                 enablePassword: newCalendarPasswordEnabled,
@@ -45,6 +47,7 @@
                 toast.success(response.msg);
                 newCalendarDialogOpen = false;
                 newCalendarDescription = "";
+                newCalendarPublicId = "";
                 newCalendarName = "";
                 newCalendarPasswordEnabled = false;
                 newCalendarPassword = "";
@@ -110,6 +113,15 @@
                 </Dialog.Header>
 
                 <div class="space-y-4 py-4">
+                    <div class="space-y-2">
+                        <Label for="name">Calendar URL path</Label>
+                        <Input
+                        id="publicId"
+                        placeholder="e.g., publishedevents"
+                        bind:value={newCalendarPublicId}
+                        />
+                    </div>
+
                     <div class="space-y-2">
                         <Label for="name">Calendar Name</Label>
                         <Input
@@ -193,7 +205,7 @@
                                     </div>
                                 {/if}
                             </Card.Title>
-                            <Card.Description class="text-sm mt-1">/cal/{calendar.id}</Card.Description>
+                            <Card.Description class="text-sm mt-1">/cal/{calendar.publicId}</Card.Description>
                         </div>
                     </div>
 

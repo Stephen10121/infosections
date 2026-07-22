@@ -93,19 +93,26 @@
             let savingChanges = toast.loading("Saving Changes.", { duration: Number.POSITIVE_INFINITY });
             try {
                 await submit();
-                form.reset();
-
-                clearFileInput(document.getElementById("imageUploaderCalendar"));
-                uploadNewAvatar = null;
                 toast.dismiss(savingChanges);
 
-                toast.success("Saved Changes");
+                if (!updateCalendarForm.fields.allIssues()) {
+                    form.reset();
+
+                    clearFileInput(document.getElementById("imageUploaderCalendar"));
+                    uploadNewAvatar = null;
+                    toast.success("Saved Changes");
+                } else {
+                    toast.error("Something went wrong!");
+                }
             } catch (err) {
                 console.log(err);
                 toast.dismiss(savingChanges);
                 toast.error("An error occured.");
             }
         })} class="lg:col-span-2 space-y-6" enctype="multipart/form-data">
+            {#if selectedCalendar.id.length > 0}
+                <input {...updateCalendarForm.fields.id.as("hidden", selectedCalendar.id)} />
+            {/if}
             <Button type="submit" id="updateCalendarButton1" class="sr-only">Update Calendar</Button>
             <CalAvatar
                 bind:changed={avatarChanged}
@@ -115,7 +122,7 @@
 
             <CalGeneralInfo
                 bind:changed={generalInfoChanged}
-                calId={selectedCalendar.id}
+                calPublicId={selectedCalendar.publicId}
                 calendarName={selectedCalendar.name}
                 calendarDescription={selectedCalendar.description}
             />
@@ -136,7 +143,7 @@
 
         <!-- This is the sticky side options section. -->
         <div class="space-y-6 stickySidebar h-fit">
-            <CalShare calId={selectedCalendar.id} />
+            <CalShare calId={selectedCalendar.publicId} />
 
             <CalStatistics
                 visits={selectedCalendar.visits}
