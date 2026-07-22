@@ -1,74 +1,110 @@
 <script lang="ts">
-    import { getEventsForCalendar } from "../routes/cal/[slug]/eventFetch.remote";
-    import type { CalendarCustomizations, CalendarFilters } from "./cal.utils";
-    import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
-    import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
-    import type { EventDBModelExpanded } from "./event.utils";
-    import { Temporal } from 'temporal-polyfill';
-    import { onMount } from "svelte";
-    import Day from "./Day.svelte";
+	import { getEventsForCalendar } from "../routes/cal/[slug]/eventFetch.remote";
+	import type { CalendarCustomizations, CalendarFilters } from "./cal.utils";
+	import MonthCalView from "./calendar/monthView/MonthCalView.svelte";
+	import WeekCalView from "./calendar/weekView/WeekCalView.svelte";
+	import type { EventDBModelExpanded } from "./event.utils";
+	import { Temporal } from "temporal-polyfill";
+	import { onMount } from "svelte";
+	import Day from "./Day.svelte";
 
-    let {
-        calId,
-        events,
-        displaySettings,
-        timeZone,
-        filters,
-        autoUpdate = true,
-        fontScale = 1
-    }: {
-        events: EventDBModelExpanded[],
-        displaySettings: CalendarCustomizations,
-        timeZone: Temporal.TimeZoneLike,
-        filters: CalendarFilters,
-        autoUpdate?: boolean,
-        fontScale?: number
-        calId: string
-    } = $props();
+	let {
+		calId,
+		events,
+		displaySettings,
+		timeZone,
+		filters,
+		autoUpdate = true,
+		fontScale = 1
+	}: {
+		events: EventDBModelExpanded[];
+		displaySettings: CalendarCustomizations;
+		timeZone: Temporal.TimeZoneLike;
+		filters: CalendarFilters;
+		autoUpdate?: boolean;
+		fontScale?: number;
+		calId: string;
+	} = $props();
 
-    let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
+	let calendarCustomizations: CalendarCustomizations = $derived(displaySettings);
 
-    let today = $derived(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
+	let today = $derived(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
 
-    let tomorrow = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay());
-    let thirdDay = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay());
-    let currentTimeZone = $derived(timeZone);
+	let tomorrow = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay());
+	let thirdDay = $derived(Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay());
+	let currentTimeZone = $derived(timeZone);
 
-    function updatePage() {
-        console.log("Updating Page.");
-        today = Temporal.Now.zonedDateTimeISO(timeZone).startOfDay();
-        tomorrow = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay();
-        thirdDay = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay();
+	function updatePage() {
+		console.log("Updating Page.");
+		today = Temporal.Now.zonedDateTimeISO(timeZone).startOfDay();
+		tomorrow = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 1 }).startOfDay();
+		thirdDay = Temporal.Now.zonedDateTimeISO(timeZone).add({ days: 2 }).startOfDay();
 
-        getEventsForCalendar(calId).refresh();
-    }
+		getEventsForCalendar(calId).refresh();
+	}
 
-    $effect(() => {
-        if (currentTimeZone !== timeZone) {
-            updatePage();
-            currentTimeZone = timeZone;
-        }
-    });
+	$effect(() => {
+		if (currentTimeZone !== timeZone) {
+			updatePage();
+			currentTimeZone = timeZone;
+		}
+	});
 
-    onMount(() => {
-        const updater = autoUpdate ? setInterval(updatePage, 20000) : undefined;
+	onMount(() => {
+		const updater = autoUpdate ? setInterval(updatePage, 20000) : undefined;
 
-        return () => {
-            clearInterval(updater);
-        }
-    });
+		return () => {
+			clearInterval(updater);
+		};
+	});
 </script>
 
 {#if calendarCustomizations.viewType === "month"}
-    <MonthCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} {fontScale} />
+	<MonthCalView
+		{events}
+		currentDate={today}
+		timeZone={currentTimeZone}
+		{calendarCustomizations}
+		{fontScale}
+	/>
 {:else if calendarCustomizations.viewType === "week"}
-    <WeekCalView {events} currentDate={today} timeZone={currentTimeZone} {calendarCustomizations} {fontScale} />
+	<WeekCalView
+		{events}
+		currentDate={today}
+		timeZone={currentTimeZone}
+		{calendarCustomizations}
+		{fontScale}
+	/>
 {:else}
-    <div class="dark mx-auto p-6">
-        <div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <Day dayNumber={1} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={today} />
-            <Day dayNumber={2} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={tomorrow} />
-            <Day dayNumber={3} events={events} {timeZone} {calendarCustomizations} {filters} {fontScale} day={thirdDay} />
-        </div>
-    </div>
+	<div class="dark mx-auto p-6">
+		<div class="dark grid grid-cols-1 gap-6 lg:grid-cols-3">
+			<Day
+				dayNumber={1}
+				{events}
+				{timeZone}
+				{calendarCustomizations}
+				{filters}
+				{fontScale}
+				day={today}
+			/>
+			<Day
+				dayNumber={2}
+				{events}
+				{timeZone}
+				{calendarCustomizations}
+				{filters}
+				{fontScale}
+				day={tomorrow}
+			/>
+			<Day
+				dayNumber={3}
+				{events}
+				{timeZone}
+				{calendarCustomizations}
+				{filters}
+				{fontScale}
+				day={thirdDay}
+			/>
+		</div>
+	</div>
 {/if}

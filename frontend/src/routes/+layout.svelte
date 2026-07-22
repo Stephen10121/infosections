@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { Toaster } from "@/components/ui/sonner";
+	import { Toaster } from "@/components/ui/sonner";
 	import favicon from "../lib/assets/logo.png";
 	import "./layout.css";
-	
+
 	let { children } = $props();
 </script>
 

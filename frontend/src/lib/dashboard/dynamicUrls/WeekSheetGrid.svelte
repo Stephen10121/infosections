@@ -7,43 +7,56 @@
 	import { Input } from "@/components/ui/input";
 	import WeekSheetDaySlot from "./WeekSheetDaySlot.svelte";
 
-	const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-	const TOTAL_MINUTES = 1440
-	const SNAP_INTERVAL = 15
-	const HOUR_HEIGHT = 48 // px per hour
-	const GRID_HEIGHT = 24 * HOUR_HEIGHT // total grid height
+	const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+	const TOTAL_MINUTES = 1440;
+	const SNAP_INTERVAL = 15;
+	const HOUR_HEIGHT = 48; // px per hour
+	const GRID_HEIGHT = 24 * HOUR_HEIGHT; // total grid height
 
-	let { weekSheet = $bindable(), onchange }: { weekSheet: WeekSheetTimeSlot[][], onchange: (newWeekSheet: WeekSheetTimeSlot[][]) => unknown } = $props();
+	let {
+		weekSheet = $bindable(),
+		onchange
+	}: {
+		weekSheet: WeekSheetTimeSlot[][];
+		onchange: (newWeekSheet: WeekSheetTimeSlot[][]) => unknown;
+	} = $props();
 
 	function minuteToY(minute: number) {
-		return (minute / TOTAL_MINUTES) * GRID_HEIGHT
+		return (minute / TOTAL_MINUTES) * GRID_HEIGHT;
 	}
 
 	function yToMinute(y: number) {
-		const raw = (y / GRID_HEIGHT) * TOTAL_MINUTES
-		return Math.max(0, Math.min(TOTAL_MINUTES, Math.round(raw / SNAP_INTERVAL) * SNAP_INTERVAL))
+		const raw = (y / GRID_HEIGHT) * TOTAL_MINUTES;
+		return Math.max(0, Math.min(TOTAL_MINUTES, Math.round(raw / SNAP_INTERVAL) * SNAP_INTERVAL));
 	}
 
 	function formatTime(minute: number) {
-		const h = Math.floor(minute / 60)
-		const m = minute % 60
-		const period = h >= 12 ? "PM" : "AM"
-		const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h
-		return `${h12}:${m.toString().padStart(2, "0")} ${period}`
+		const h = Math.floor(minute / 60);
+		const m = minute % 60;
+		const period = h >= 12 ? "PM" : "AM";
+		const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+		return `${h12}:${m.toString().padStart(2, "0")} ${period}`;
 	}
 
 	type DragState =
-	| { type: "creating"; dayIndex: number; startMinute: number; currentMinute: number }
-	| { type: "resizing"; dayIndex: number; slotIndex: number; edge: "top" | "bottom"; startMinute: number; currentMinute: number }
-	| null
+		| { type: "creating"; dayIndex: number; startMinute: number; currentMinute: number }
+		| {
+				type: "resizing";
+				dayIndex: number;
+				slotIndex: number;
+				edge: "top" | "bottom";
+				startMinute: number;
+				currentMinute: number;
+		  }
+		| null;
 
 	type EditingSlot = {
-		dayIndex: number
-		slotIndex: number | "new"
-		link: string
-		startMinute: number
-		endMinute: number
-	} | null
+		dayIndex: number;
+		slotIndex: number | "new";
+		link: string;
+		startMinute: number;
+		endMinute: number;
+	} | null;
 
 	let gridRef: HTMLDivElement | null = $state(null);
 	let dragState: DragState | null = $state(null);
@@ -71,9 +84,7 @@
 		const y = getRelativeY(e, dayEl);
 		const minute = yToMinute(y);
 
-		dragState = dragState
-		? { ...dragState, currentMinute: minute }
-		: null;
+		dragState = dragState ? { ...dragState, currentMinute: minute } : null;
 	}
 
 	function handleMouseUp() {
@@ -165,7 +176,7 @@
 		const slot = weekSheet[dayIndex] ? weekSheet[dayIndex][slotIndex] : undefined;
 		if (slot) {
 			const startMinute = edge === "top" ? slot.startMinute : slot.endMinute;
-	
+
 			dragState = {
 				type: "resizing",
 				dayIndex,
@@ -210,11 +221,11 @@
 	}
 
 	let previewBlock: {
-		dayIndex: number,
-		top: number,
-		height: number,
-		startMinute: number,
-		endMinute: number
+		dayIndex: number;
+		top: number;
+		height: number;
+		startMinute: number;
+		endMinute: number;
 	} | null = $state(null);
 
 	$effect(() => {
@@ -225,17 +236,17 @@
 				height: minuteToY(Math.abs(dragState.currentMinute - dragState.startMinute)),
 				startMinute: Math.min(dragState.startMinute, dragState.currentMinute),
 				endMinute: Math.max(dragState.startMinute, dragState.currentMinute)
-			}
+			};
 		} else {
 			previewBlock = null;
 		}
 	});
 
 	let resizePreview: {
-		dayIndex: number,
-		slotIndex: number,
-		startMinute: number,
-		endMinute: number
+		dayIndex: number;
+		slotIndex: number;
+		startMinute: number;
+		endMinute: number;
 	} | null = $state(null);
 
 	$effect(() => {
@@ -245,13 +256,13 @@
 			if (slot) {
 				let start = slot.startMinute;
 				let end = slot.endMinute;
-	
+
 				if (dragState.edge === "top") {
 					start = Math.min(dragState.currentMinute, end - SNAP_INTERVAL);
 				} else {
 					end = Math.max(dragState.currentMinute, start + SNAP_INTERVAL);
 				}
-	
+
 				resizePreview = {
 					dayIndex: dragState.dayIndex,
 					slotIndex: dragState.slotIndex,
@@ -270,20 +281,28 @@
 		Click and drag on the grid to create time blocks. Click a block to edit or delete it.
 	</p>
 
-	<div class="rounded-lg border border-border bg-card max-h-[500px] overflow-y-scroll
-            [&::-webkit-scrollbar]:w-2 
-            [&::-webkit-scrollbar-track]:bg-gray-100 
-            [&::-webkit-scrollbar-thumb]:bg-gray-300 
-            hover:[&::-webkit-scrollbar-thumb]:bg-gray-400">
+	<div
+		class="rounded-lg border border-border bg-card max-h-[500px] overflow-y-scroll
+            [&::-webkit-scrollbar]:w-2
+            [&::-webkit-scrollbar-track]:bg-gray-100
+            [&::-webkit-scrollbar-thumb]:bg-gray-300
+            hover:[&::-webkit-scrollbar-thumb]:bg-gray-400"
+	>
 		<div class="grid border-b border-border" style="grid-template-columns: 56px repeat(7, 1fr);">
 			<div class="p-2"></div>
 			{#each DAY_LABELS as day (`aDay${day}`)}
-				<div class="p-2 text-xs font-semibold text-center text-foreground border-l border-border">{day}</div>
+				<div class="p-2 text-xs font-semibold text-center text-foreground border-l border-border">
+					{day}
+				</div>
 			{/each}
 		</div>
 
 		<div class="overflow-y-auto">
-			<div bind:this={gridRef} class="grid relative" style="grid-template-columns: 56px repeat(7, 1fr)">
+			<div
+				bind:this={gridRef}
+				class="grid relative"
+				style="grid-template-columns: 56px repeat(7, 1fr)"
+			>
 				<div class="relative" style="height: {GRID_HEIGHT}px;">
 					{#each { length: 24 } as _, i (`hourHeight${i}`)}
 						<div
@@ -297,7 +316,7 @@
 
 				{#each DAY_LABELS as _, dayIndex (`adayindex${dayIndex}`)}
 					<WeekSheetDaySlot
-						dayIndex={dayIndex}
+						{dayIndex}
 						{weekSheet}
 						{handleDayMouseDown}
 						{handleBlockClick}
@@ -318,7 +337,8 @@
 	{#if editingSlot && editingSlot.slotIndex === "new"}
 		<div class="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
 			<p class="text-xs font-medium text-foreground">
-				New block: {DAY_LABELS[editingSlot.dayIndex]} {formatTime(editingSlot.startMinute)} - {formatTime(editingSlot.endMinute)}
+				New block: {DAY_LABELS[editingSlot.dayIndex]}
+				{formatTime(editingSlot.startMinute)} - {formatTime(editingSlot.endMinute)}
 			</p>
 
 			<div class="flex items-center gap-2">
@@ -328,15 +348,15 @@
 					class="flex-1 text-sm"
 					autofocus
 					onkeydown={(e) => {
-						if (e.key === "Enter") handleSaveNewSlot()
-						if (e.key === "Escape") editingSlot=null
+						if (e.key === "Enter") handleSaveNewSlot();
+						if (e.key === "Escape") editingSlot = null;
 					}}
 				/>
 				<Button size="sm" onclick={handleSaveNewSlot} class="gap-1 shrink-0">
 					<Check class="h-3.5 w-3.5" />
 					Add
 				</Button>
-				<Button size="sm" variant="ghost" onclick={() => editingSlot = null} class="shrink-0">
+				<Button size="sm" variant="ghost" onclick={() => (editingSlot = null)} class="shrink-0">
 					<X class="h-3.5 w-3.5" />
 				</Button>
 			</div>
@@ -357,8 +377,8 @@
 					<Button
 						size="sm"
 						onclick={() => {
-							if(selectedSlot) {
-								handleDeleteSlot(selectedSlot.dayIndex, selectedSlot.slotIndex)
+							if (selectedSlot) {
+								handleDeleteSlot(selectedSlot.dayIndex, selectedSlot.slotIndex);
 							}
 						}}
 						class="gap-1 text-destructive-foreground hover:text-destructive-foreground hover:bg-destructive/10 h-7"
@@ -371,7 +391,7 @@
 					value={currentSlot.link}
 					oninput={(e) => {
 						if (selectedSlot) {
-							currentSlot.link = e.currentTarget.value;;
+							currentSlot.link = e.currentTarget.value;
 							weekSheet = weekSheet;
 							onchange(weekSheet);
 						}
@@ -379,7 +399,7 @@
 					placeholder="https://example.com/redirect-url"
 					class="text-sm"
 				/>
-				<Button size="sm" variant="outline" onclick={() => selectedSlot = null} class="text-xs">
+				<Button size="sm" variant="outline" onclick={() => (selectedSlot = null)} class="text-xs">
 					Done
 				</Button>
 			</div>

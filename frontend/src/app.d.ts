@@ -2,7 +2,7 @@ import type { UserModel } from "@/utils";
 import type PocketBase from "pocketbase";
 
 type AuthModel = {
-    [key: string]: any;
+	[key: string]: any;
 } | null;
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
@@ -11,8 +11,8 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			pb: PocketBase,
-			user?: UserModel | undefined
+			pb: PocketBase;
+			user?: UserModel | undefined;
 		}
 		// interface PageData {}
 		// interface PageState {}

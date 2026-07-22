@@ -1,4 +1,9 @@
-import { eventFieldRequirementsPublic, resourcesExpandRequirementsPublic, tagsExpandRequirementsPublic, type EventDBModelExpanded } from "@/event.utils";
+import {
+	eventFieldRequirementsPublic,
+	resourcesExpandRequirementsPublic,
+	tagsExpandRequirementsPublic,
+	type EventDBModelExpanded
+} from "@/event.utils";
 import type { CalendarCustomizations, CalendarFilters } from "@/cal.utils";
 import type { CustomImageIFeedDBModel, ImageFeedDBModel } from "@/utils";
 import { Temporal } from "temporal-polyfill";
@@ -8,105 +13,115 @@ import { config } from "dotenv";
 config();
 
 export async function load({ params, locals }) {
-    let imageFeed: ImageFeedDBModel;
-    try {
-        imageFeed = await locals.pb.collection('imageFeeds').getOne(params.slug, {
-            expand: "additionalCalendars",
-            fields: "*,expand.additionalCalendars.displaySettings,expand.additionalCalendars.filters,expand.additionalCalendars.id",
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Image Feed not found.", err);
-        return error(404, "Image Feed Not Found");
-    }
+	let imageFeed: ImageFeedDBModel;
+	try {
+		imageFeed = await locals.pb.collection("imageFeeds").getOne(params.slug, {
+			expand: "additionalCalendars",
+			fields:
+				"*,expand.additionalCalendars.displaySettings,expand.additionalCalendars.filters,expand.additionalCalendars.id",
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Image Feed not found.", err);
+		return error(404, "Image Feed Not Found");
+	}
 
-    const additionalCalendars: {displaySettings: CalendarCustomizations, filters: CalendarFilters, id: string}[] = imageFeed.expand ? imageFeed.expand["additionalCalendars"] : [];
+	const additionalCalendars: {
+		displaySettings: CalendarCustomizations;
+		filters: CalendarFilters;
+		id: string;
+	}[] = imageFeed.expand ? imageFeed.expand["additionalCalendars"] : [];
 
-    // These variables and the for loop checks if any of the cals need to access a private event. If so, we need to change the event fetch filtering.
-    let visibleInChurchCenterEventRequired = false;
-    let featuredEventRequired = false;
+	// These variables and the for loop checks if any of the cals need to access a private event. If so, we need to change the event fetch filtering.
+	let visibleInChurchCenterEventRequired = false;
+	let featuredEventRequired = false;
 
-    if (additionalCalendars) {
-        for (let i=0;i<additionalCalendars.length;i++) {
-            const currentAdditionalCal = additionalCalendars[i];
-            if (currentAdditionalCal && currentAdditionalCal.filters.onlyShowFeatured === false) {
-                featuredEventRequired = true;
-            }
-    
-            if (currentAdditionalCal && currentAdditionalCal.filters.hideUnpublished === false) {
-                visibleInChurchCenterEventRequired = true;
-            }
-        }
-    }
-    
-    const today = Temporal.Now.zonedDateTimeISO().startOfDay();
-    const monthAgo = today.subtract({ days: today.day + 7 });
-    const monthAgoStr = `${monthAgo.year}-${(monthAgo.month).toString().padStart(2, '0')}-${(monthAgo.day).toString().padStart(2, '0')}`;
+	if (additionalCalendars) {
+		for (let i = 0; i < additionalCalendars.length; i++) {
+			const currentAdditionalCal = additionalCalendars[i];
+			if (currentAdditionalCal && currentAdditionalCal.filters.onlyShowFeatured === false) {
+				featuredEventRequired = true;
+			}
 
-    let events: EventDBModelExpanded[] = [];
-    try {
-        let filter = `startTime > "${monthAgoStr}"`;
+			if (currentAdditionalCal && currentAdditionalCal.filters.hideUnpublished === false) {
+				visibleInChurchCenterEventRequired = true;
+			}
+		}
+	}
 
-        // This filter shows all events for the testing dev feed.
-        if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
-            filter += ` && owner = "${imageFeed.owner}"`;
-        }
+	const today = Temporal.Now.zonedDateTimeISO().startOfDay();
+	const monthAgo = today.subtract({ days: today.day + 7 });
+	const monthAgoStr = `${monthAgo.year}-${monthAgo.month.toString().padStart(2, "0")}-${monthAgo.day.toString().padStart(2, "0")}`;
 
-        if (imageFeed.filters.onlyShowFeatured && !featuredEventRequired) {
-            filter += " && featured=true"
-        }
+	let events: EventDBModelExpanded[] = [];
+	try {
+		let filter = `startTime > "${monthAgoStr}"`;
 
-        if (imageFeed.filters.hideUnpublished && !visibleInChurchCenterEventRequired) {
-            filter += " && visibleInChurchCenter=true"
-        }
+		// This filter shows all events for the testing dev feed.
+		if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
+			filter += ` && owner = "${imageFeed.owner}"`;
+		}
 
-        events = await locals.pb.collection('events').getFullList({
-            filter,
-            expand: "tags,resources",
-            sort: 'startTime',
-            fields: eventFieldRequirementsPublic + "," + tagsExpandRequirementsPublic + "," + resourcesExpandRequirementsPublic,
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Events not found.", err);
-        return error(500, "Internal Server error.");
-    }
+		if (imageFeed.filters.onlyShowFeatured && !featuredEventRequired) {
+			filter += " && featured=true";
+		}
 
-    let customEvents: CustomImageIFeedDBModel[] = [];
-    try {
-        let filter = `picture != "" && imageFeed ~ "${imageFeed.id}"`;
+		if (imageFeed.filters.hideUnpublished && !visibleInChurchCenterEventRequired) {
+			filter += " && visibleInChurchCenter=true";
+		}
 
-        // This filter shows all events for the testing dev feed.
-        if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
-            filter += ` && owner = "${imageFeed.owner}"`;
-        }
+		events = await locals.pb.collection("events").getFullList({
+			filter,
+			expand: "tags,resources",
+			sort: "startTime",
+			fields:
+				eventFieldRequirementsPublic +
+				"," +
+				tagsExpandRequirementsPublic +
+				"," +
+				resourcesExpandRequirementsPublic,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Events not found.", err);
+		return error(500, "Internal Server error.");
+	}
 
-        customEvents = await locals.pb.collection('customImageIfeed').getFullList({
-            filter,
-            fields: "id,picture,registrationURL,created,updated,collectionId,showLink,linkText",
-            headers: {
-                "Authorization": "Bearer " + process.env["POCKETBASE_TOKEN"]!
-            }
-        });
-    } catch (err) {
-        console.log("Custom events not found.", err);
-        customEvents = [];
-    }
+	let customEvents: CustomImageIFeedDBModel[] = [];
+	try {
+		let filter = `picture != "" && imageFeed ~ "${imageFeed.id}"`;
 
-    return {
-        events,
-        customEvents,
-        name: imageFeed.name,
-        logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo.toString()),
-        displaySettings: imageFeed.displaySettings,
-        description: imageFeed.description,
-        apiServer: process.env["PB_URL"]!,
-        additionalCalendars,
-        filters: imageFeed.filters,
-        id: params.slug
-    }
+		// This filter shows all events for the testing dev feed.
+		if (imageFeed.id !== "v7t0bmf8o0rqx5b") {
+			filter += ` && owner = "${imageFeed.owner}"`;
+		}
+
+		customEvents = await locals.pb.collection("customImageIfeed").getFullList({
+			filter,
+			fields: "id,picture,registrationURL,created,updated,collectionId,showLink,linkText",
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Custom events not found.", err);
+		customEvents = [];
+	}
+
+	return {
+		events,
+		customEvents,
+		name: imageFeed.name,
+		logoLink: locals.pb.files.getURL(imageFeed, imageFeed.logo.toString()),
+		displaySettings: imageFeed.displaySettings,
+		description: imageFeed.description,
+		apiServer: process.env["PB_URL"]!,
+		additionalCalendars,
+		filters: imageFeed.filters,
+		id: params.slug
+	};
 }

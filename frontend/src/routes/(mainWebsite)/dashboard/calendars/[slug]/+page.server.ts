@@ -1,8 +1,8 @@
 export async function load({ params, parent }) {
-    await parent();
-    let slug = params.slug;
+	await parent();
+	let slug = params.slug;
 
-    return {
-        selectedCalendarId: slug
-    }
+	return {
+		selectedCalendarId: slug
+	};
 }

@@ -15,8 +15,8 @@ export const getEventsForElist = query(v.string(), async (listId) => {
 	try {
 		eventList = await locals.pb.collection("eventLists").getOne(listId, {
 			headers: {
-			Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
-			},
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
 		});
 	} catch (err) {
 		console.log("Event list not found.", err);
@@ -47,8 +47,8 @@ export const getEventsForElist = query(v.string(), async (listId) => {
 			sort: "startTime",
 			fields: eventFieldRequirementsPublic,
 			headers: {
-			Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!,
-			},
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
 		});
 	} catch (err) {
 		console.log("Events not found.", err);

@@ -1,40 +1,76 @@
 <script lang="ts">
-    import { type CalendarCustomizations } from "@/cal.utils";
-    import { CalendarPlus, Clock, } from "@lucide/svelte";
-    import { type EventDBModel } from "@/event.utils";
-    import { Temporal } from "temporal-polyfill";
-    import { MONTHTOSTRING } from "@/utils";
-    import Time from "@/Time.svelte";
+	import { type CalendarCustomizations } from "@/cal.utils";
+	import { CalendarPlus, Clock } from "@lucide/svelte";
+	import { type EventDBModel } from "@/event.utils";
+	import { Temporal } from "temporal-polyfill";
+	import { MONTHTOSTRING } from "@/utils";
+	import Time from "@/Time.svelte";
 
-    let { event, currentDay, calendarCustomizations, timeZone, fontScale }: { event: EventDBModel, currentDay: Temporal.ZonedDateTime, calendarCustomizations: CalendarCustomizations, timeZone: Temporal.TimeZoneLike, fontScale: number } = $props();
+	let {
+		event,
+		currentDay,
+		calendarCustomizations,
+		timeZone,
+		fontScale
+	}: {
+		event: EventDBModel;
+		currentDay: Temporal.ZonedDateTime;
+		calendarCustomizations: CalendarCustomizations;
+		timeZone: Temporal.TimeZoneLike;
+		fontScale: number;
+	} = $props();
 
-    const start = $derived(Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone));
-    const end = $derived(Temporal.Instant.from(event.endTime).toZonedDateTimeISO(timeZone));
+	const start = $derived(Temporal.Instant.from(event.startTime).toZonedDateTimeISO(timeZone));
+	const end = $derived(Temporal.Instant.from(event.endTime).toZonedDateTimeISO(timeZone));
 
-    const hours = $derived(start.until(end, { largestUnit: "hours" }).total({ unit: "hours" }));
+	const hours = $derived(start.until(end, { largestUnit: "hours" }).total({ unit: "hours" }));
 
-    const EVENT_DAY_NUMBER = $derived(Math.ceil(Math.abs((currentDay ? currentDay.toInstant().epochMilliseconds : 0) - start.startOfDay().toInstant().epochMilliseconds) / (1000 * 60 * 60 * 24)+1));
-    const MULTI_DAY_EVENT = $derived(hours === 24 ? start.hour !== 0 : hours > 24);
+	const EVENT_DAY_NUMBER = $derived(
+		Math.ceil(
+			Math.abs(
+				(currentDay ? currentDay.toInstant().epochMilliseconds : 0) -
+					start.startOfDay().toInstant().epochMilliseconds
+			) /
+				(1000 * 60 * 60 * 24) +
+				1
+		)
+	);
+	const MULTI_DAY_EVENT = $derived(hours === 24 ? start.hour !== 0 : hours > 24);
 </script>
 
 <div class="dark rounded bg-foreground p-2 flex flex-col gap-2" style="border: 1px solid #333333">
-    <div class="dark flex items-start justify-between">
-        <h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 16}px;">{event.name}</h3>
-    </div>
-    
-    <div class="flex items-center gap-2 text-sm text-gray-400">
-        <Clock class="h-4 w-4" />
-        {#if MULTI_DAY_EVENT}
-            <span style="font-size: {fontScale * 14}px;" class="text-gray-300">{MONTHTOSTRING[start.month]} {start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[end.month]} {end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
-        {:else}
-            <span style="font-size: {fontScale * 14}px;" class="text-gray-300"><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[end.month]} {end.day}, {/if} <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span>
-        {/if}
-    </div>
+	<div class="dark flex items-start justify-between">
+		<h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 16}px;">
+			{event.name}
+		</h3>
+	</div>
 
-    {#if MULTI_DAY_EVENT}
-        <div class="flex items-center gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
-            <CalendarPlus class="h-4 w-4" />
-            <span class="text-gray-300">Multi-day event - Day {EVENT_DAY_NUMBER}</span>
-        </div>
-    {/if}
+	<div class="flex items-center gap-2 text-sm text-gray-400">
+		<Clock class="h-4 w-4" />
+		{#if MULTI_DAY_EVENT}
+			<span style="font-size: {fontScale * 14}px;" class="text-gray-300"
+				>{MONTHTOSTRING[start.month]}
+				{start.day}, <Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {MONTHTOSTRING[
+					end.month
+				]}
+				{end.day}, <Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span
+			>
+		{:else}
+			<span style="font-size: {fontScale * 14}px;" class="text-gray-300"
+				><Time date={start} useAMPM={calendarCustomizations.useAMPM} /> - {#if hours === 24 && start.hour === 0}{MONTHTOSTRING[
+						end.month
+					]}
+					{end.day},
+				{/if}
+				<Time date={end} useAMPM={calendarCustomizations.useAMPM} /></span
+			>
+		{/if}
+	</div>
+
+	{#if MULTI_DAY_EVENT}
+		<div class="flex items-center gap-2 text-gray-400" style="font-size: {fontScale * 14}px;">
+			<CalendarPlus class="h-4 w-4" />
+			<span class="text-gray-300">Multi-day event - Day {EVENT_DAY_NUMBER}</span>
+		</div>
+	{/if}
 </div>

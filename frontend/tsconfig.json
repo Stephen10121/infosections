@@ -22,7 +22,7 @@
 		"noPropertyAccessFromIndexSignature": true,
 		"erasableSyntaxOnly": true,
 		"noImplicitOverride": true,
-		"noErrorTruncation": true,
+		"noErrorTruncation": true
 		// "exactOptionalPropertyTypes": true
 	}
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias

@@ -1,225 +1,263 @@
 <script lang="ts">
-    import { filterEventsBasedOnTagAndResourceFilters } from "@/event.utils";
-    import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
-    import { SquareArrowOutUpRight } from "@lucide/svelte";
-    import { Temporal } from "temporal-polyfill";
-    import Calendar from '@/Calendar.svelte';
+	import { filterEventsBasedOnTagAndResourceFilters } from "@/event.utils";
+	import { AspectRatio } from "@/components/ui/aspect-ratio/index.js";
+	import { SquareArrowOutUpRight } from "@lucide/svelte";
+	import { Temporal } from "temporal-polyfill";
+	import Calendar from "@/Calendar.svelte";
 
-    let { data } = $props();
+	let { data } = $props();
 
-    let displaySettings = $derived(data.displaySettings);
+	let displaySettings = $derived(data.displaySettings);
 
-    let timeZone = $state(Temporal.Now.timeZoneId());
-    let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
-    let debugToggle = $state(false);
+	let timeZone = $state(Temporal.Now.timeZoneId());
+	let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
+	let debugToggle = $state(false);
 
-    let eventIdUsed: string[] = [];
+	let eventIdUsed: string[] = [];
 
-    $effect(() => {
-        const observer = new ResizeObserver(() => {
-            window.parent.postMessage({ height: document.body.scrollHeight, frameId: "iframe" + data.id }, "*");
-        });
+	$effect(() => {
+		const observer = new ResizeObserver(() => {
+			window.parent.postMessage(
+				{ height: document.body.scrollHeight, frameId: "iframe" + data.id },
+				"*"
+			);
+		});
 
-        observer.observe(document.body);
+		observer.observe(document.body);
 
-        return () => observer.disconnect();
-    });
+		return () => observer.disconnect();
+	});
 
-    let events = $derived(data.events.filter((event, index) => {
-        if (index === 0) {
-            eventIdUsed = [];
-        }
-        if (!(!event.featured && data.filters.onlyShowFeatured) && !(!event.visibleInChurchCenter && data.filters.hideUnpublished) && event.imageURL.length > 0) {
-            if (today.toInstant().epochMilliseconds < (new Date(event.startTime)).valueOf()) {
-                if (data.filters.hideRecurringEvents) {
-                    if (!eventIdUsed.includes(event.recEventId)) {
-                        eventIdUsed.push(event.recEventId);
-                        return true;
-                    }
-                } else {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }));
+	let events = $derived(
+		data.events.filter((event, index) => {
+			if (index === 0) {
+				eventIdUsed = [];
+			}
+			if (
+				!(!event.featured && data.filters.onlyShowFeatured) &&
+				!(!event.visibleInChurchCenter && data.filters.hideUnpublished) &&
+				event.imageURL.length > 0
+			) {
+				if (today.toInstant().epochMilliseconds < new Date(event.startTime).valueOf()) {
+					if (data.filters.hideRecurringEvents) {
+						if (!eventIdUsed.includes(event.recEventId)) {
+							eventIdUsed.push(event.recEventId);
+							return true;
+						}
+					} else {
+						return true;
+					}
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		})
+	);
 
-    function parentSentMessage(event: MessageEvent) {
-        try {
-            if (event.data.call === "displaySettings") {
-                displaySettings = JSON.parse(event.data.value);
-            } else if (event.data.call === "reloadPage") {
-                window.location.reload();
-            } else if (event.data.call === "toggleDebug") {
-                debugToggle = event.data.value === "1"
-            }
-        } catch(err) {
-            console.log("Failed to recieve date from the parent container");
-            console.log(err);
-        }
-    }
+	function parentSentMessage(event: MessageEvent) {
+		try {
+			if (event.data.call === "displaySettings") {
+				displaySettings = JSON.parse(event.data.value);
+			} else if (event.data.call === "reloadPage") {
+				window.location.reload();
+			} else if (event.data.call === "toggleDebug") {
+				debugToggle = event.data.value === "1";
+			}
+		} catch (err) {
+			console.log("Failed to recieve date from the parent container");
+			console.log(err);
+		}
+	}
 </script>
 
 <svelte:head>
-    <title>{data.name}</title>
-    <link rel="shortcut icon" href={data.logoLink} type="image/x-icon">
-    <meta name="description" content={data.description}>
+	<title>{data.name}</title>
+	<link rel="shortcut icon" href={data.logoLink} type="image/x-icon" />
+	<meta name="description" content={data.description} />
 </svelte:head>
 
 <svelte:window onmessage={parentSentMessage} />
 
 <div class="h-screen w-screen grid grid-cols-1 bigger-grid">
-    {#each events as event (`anEvent${event.id}`)}
-        <div class="w-full">
-            <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
-                <img src={event.imageURL} alt={event.name} class="w-full h-full">
-                {#if displaySettings.showEventExtraInfo && (displaySettings.showEventName || (displaySettings.showEventDescription && event.description.length > 0) || (displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
-                    <div class="extrastuff overflow-hidden">
-                        <div class="info">
-                            {#if displaySettings.showEventName}
-                                <h2 class="text-2xl">{event.name}</h2>
-                            {/if}
+	{#each events as event (`anEvent${event.id}`)}
+		<div class="w-full">
+			<AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
+				<img src={event.imageURL} alt={event.name} class="w-full h-full" />
+				{#if displaySettings.showEventExtraInfo && (displaySettings.showEventName || (displaySettings.showEventDescription && event.description.length > 0) || (displaySettings.showEventRegistration && event.registrationURL.length !== 0))}
+					<div class="extrastuff overflow-hidden">
+						<div class="info">
+							{#if displaySettings.showEventName}
+								<h2 class="text-2xl">{event.name}</h2>
+							{/if}
 
-                            {#if displaySettings.showEventDescription && event.description.length > 0}
-                                <p class="text-sm">{event.description}</p>
-                            {/if}
+							{#if displaySettings.showEventDescription && event.description.length > 0}
+								<p class="text-sm">{event.description}</p>
+							{/if}
 
-                            {#if displaySettings.showEventRegistration && event.registrationURL.length !== 0}
-                                <a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
-                                    Register Now
-                                    <SquareArrowOutUpRight class="h-4 w-4" />
-                                </a>
-                            {/if}
-                        </div>
-                    </div>
-                {/if}
-                {#if debugToggle}
-                    <div class="debugger">
-                        <p>Type: Event</p>
-                        <p>Id: {event.id}</p>
-                        <p>Recurring Id: {event.recEventId}</p>
-                        <p>Name: {event.name}</p>
-                        <p>Link href: <a href="{event.registrationURL}" class="underline" target="_blank">here</a></p>
-                        <p>Image href: <a href="{event.imageURL}" class="underline" target="_blank">here</a></p>
-                    </div>
-                {/if}
-            </AspectRatio>
-        </div>
-    {/each}
-    {#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
-        <div class="w-full">
-            <AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
-                <img src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}" alt={customImage.linkText} class="w-full h-full">
-                {#if displaySettings.showEventExtraInfo && (displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0)}
-                    <div class="extrastuff overflow-hidden">
-                        <div class="info">
-                            <a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
-                                {customImage.linkText}
-                                <SquareArrowOutUpRight class="h-4 w-4" />
-                            </a>
-                        </div>
-                    </div>
-                {/if}
-                {#if debugToggle}
-                    <div class="debugger">
-                        <p>Type: Custom Image</p>
-                        <p>Id: {customImage.id}</p>
-                        <p>Show Link: {customImage.showLink}</p>
-                        <p>Link href: <a href="{customImage.registrationURL}" class="underline" target="_blank">here</a></p>
-                    </div>
-                {/if}
-            </AspectRatio>
-        </div>
-    {/each}
-    {#if data.additionalCalendars}
-        {#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
-            <div class="w-full">
-                <AspectRatio ratio={16 / 9} class="relative w-full aspect-video overflow-hidden">
-                    <p class="absolute bottom-0 left-1/2 -translate-x-1/2 text-red-500 z-200 bg-white/70 text-xs">*Looks better on bigger screens</p>
-                    <div class="dark bg-background relative overflow-hidden w-full h-full">
-                        <Calendar calId={additionalCalendar.id} autoUpdate={false} events={filterEventsBasedOnTagAndResourceFilters(data.events, additionalCalendar.filters)} displaySettings={additionalCalendar.displaySettings} timeZone={timeZone} filters={additionalCalendar.filters} />
-                    </div>
-                    {#if debugToggle}
-                        <div class="debugger">
-                            <p>Type: Calendar</p>
-                            <p>Id: {additionalCalendar.id}</p>
-                        </div>
-                    {/if}
-                </AspectRatio>
-            </div>
-        {/each}
-    {/if}
+							{#if displaySettings.showEventRegistration && event.registrationURL.length !== 0}
+								<a href={event.registrationURL} class="flex items-center gap-1" target="_blank">
+									Register Now
+									<SquareArrowOutUpRight class="h-4 w-4" />
+								</a>
+							{/if}
+						</div>
+					</div>
+				{/if}
+				{#if debugToggle}
+					<div class="debugger">
+						<p>Type: Event</p>
+						<p>Id: {event.id}</p>
+						<p>Recurring Id: {event.recEventId}</p>
+						<p>Name: {event.name}</p>
+						<p>
+							Link href: <a href={event.registrationURL} class="underline" target="_blank">here</a>
+						</p>
+						<p>Image href: <a href={event.imageURL} class="underline" target="_blank">here</a></p>
+					</div>
+				{/if}
+			</AspectRatio>
+		</div>
+	{/each}
+	{#each data.customEvents as customImage (`anCustomImage${customImage.id}`)}
+		<div class="w-full">
+			<AspectRatio ratio={16 / 9} class="relative w-full aspect-video">
+				<img
+					src="{data.apiServer}api/files/{customImage.collectionId}/{customImage.id}/{customImage.picture}"
+					alt={customImage.linkText}
+					class="w-full h-full"
+				/>
+				{#if displaySettings.showEventExtraInfo && displaySettings.showEventRegistration && customImage.showLink && customImage.registrationURL.length !== 0}
+					<div class="extrastuff overflow-hidden">
+						<div class="info">
+							<a href={customImage.registrationURL} class="flex items-center gap-1" target="_blank">
+								{customImage.linkText}
+								<SquareArrowOutUpRight class="h-4 w-4" />
+							</a>
+						</div>
+					</div>
+				{/if}
+				{#if debugToggle}
+					<div class="debugger">
+						<p>Type: Custom Image</p>
+						<p>Id: {customImage.id}</p>
+						<p>Show Link: {customImage.showLink}</p>
+						<p>
+							Link href: <a href={customImage.registrationURL} class="underline" target="_blank"
+								>here</a
+							>
+						</p>
+					</div>
+				{/if}
+			</AspectRatio>
+		</div>
+	{/each}
+	{#if data.additionalCalendars}
+		{#each data.additionalCalendars as additionalCalendar (`anAdditionalCalendar${additionalCalendar.id}`)}
+			<div class="w-full">
+				<AspectRatio ratio={16 / 9} class="relative w-full aspect-video overflow-hidden">
+					<p
+						class="absolute bottom-0 left-1/2 -translate-x-1/2 text-red-500 z-200 bg-white/70 text-xs"
+					>
+						*Looks better on bigger screens
+					</p>
+					<div class="dark bg-background relative overflow-hidden w-full h-full">
+						<Calendar
+							calId={additionalCalendar.id}
+							autoUpdate={false}
+							events={filterEventsBasedOnTagAndResourceFilters(
+								data.events,
+								additionalCalendar.filters
+							)}
+							displaySettings={additionalCalendar.displaySettings}
+							{timeZone}
+							filters={additionalCalendar.filters}
+						/>
+					</div>
+					{#if debugToggle}
+						<div class="debugger">
+							<p>Type: Calendar</p>
+							<p>Id: {additionalCalendar.id}</p>
+						</div>
+					{/if}
+				</AspectRatio>
+			</div>
+		{/each}
+	{/if}
 </div>
 
 <style>
-    :global(*) {
-        box-sizing: border-box;
-        /* Standard property */
-        /* user-drag: none; */
-        /* WebKit (Chrome, Safari, newer Opera) */
-        -webkit-user-drag: none;
-        /* Firefox (older versions) */
-        -moz-user-drag: none;
-        /* Internet Explorer (older versions) */
-        -ms-user-drag: none;
-        -webkit-user-select: none; /* Safari */
-        user-select: none; /* Standard syntax */
-    }
+	:global(*) {
+		box-sizing: border-box;
+		/* Standard property */
+		/* user-drag: none; */
+		/* WebKit (Chrome, Safari, newer Opera) */
+		-webkit-user-drag: none;
+		/* Firefox (older versions) */
+		-moz-user-drag: none;
+		/* Internet Explorer (older versions) */
+		-ms-user-drag: none;
+		-webkit-user-select: none; /* Safari */
+		user-select: none; /* Standard syntax */
+	}
 
-    :global(body) {
-        margin: 0;
-        padding: 0;
-        background:none transparent;
-    }
+	:global(body) {
+		margin: 0;
+		padding: 0;
+		background: none transparent;
+	}
 
-    .extrastuff {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        background: linear-gradient(180deg,rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 82%, rgba(0, 0, 0, 1) 100%) !important;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        padding: 10px;
-    }
+	.extrastuff {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0) 0%,
+			rgba(255, 255, 255, 0) 82%,
+			rgba(0, 0, 0, 1) 100%
+		) !important;
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		padding: 10px;
+	}
 
-    .debugger {
-        padding: 10px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: #000000b6;
-        color: white;
-    }
+	.debugger {
+		padding: 10px;
+		position: absolute;
+		top: 0;
+		right: 0;
+		background-color: #000000b6;
+		color: white;
+	}
 
-    .info {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
+	.info {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+	}
 
-    .extrastuff h2,
-    .extrastuff p,
-    .extrastuff a {
-        color: #ffffff;
-        font-family: "Geist", sans-serif;
-    }
+	.extrastuff h2,
+	.extrastuff p,
+	.extrastuff a {
+		color: #ffffff;
+		font-family: "Geist", sans-serif;
+	}
 
-    .extrastuff a {
-        margin-top: 5px;
-        border: 1px solid #ffffff;
-        width: fit-content;
-        padding: 5px;
-    }
+	.extrastuff a {
+		margin-top: 5px;
+		border: 1px solid #ffffff;
+		width: fit-content;
+		padding: 5px;
+	}
 
-    @media (width >= 350px) {
-        .bigger-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-    }
+	@media (width >= 350px) {
+		.bigger-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
 </style>
