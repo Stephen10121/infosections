@@ -77,8 +77,13 @@ export const resourcesExpandRequirementsPublic =
 export function eventResourceAllowListToFilterString(allowedResources: string[]) {
 	let filterString = "";
 	for (let i = 0; i < allowedResources.length; i++) {
-		filterString += ` && resources ~ "${allowedResources[i]}"`;
+		if (i == 0) {
+			filterString += ` && ( resources ~ "${allowedResources[i]}"`;
+		} else {
+			filterString += ` || resources ~ "${allowedResources[i]}"`;
+		}
 	}
+	filterString += " )";
 	return filterString;
 }
 
@@ -93,8 +98,13 @@ export function eventResourceBlockListToFilterString(blockedResources: string[])
 export function eventTagAllowListToFilterString(allowedTags: string[]) {
 	let filterString = "";
 	for (let i = 0; i < allowedTags.length; i++) {
-		filterString += ` && tags ~ "${allowedTags[i]}"`;
+		if (i == 0) {
+			filterString += ` && ( tags ~ "${allowedTags[i]}"`;
+		} else {
+			filterString += ` || tags ~ "${allowedTags[i]}"`;
+		}
 	}
+	filterString += " )";
 	return filterString;
 }
 
