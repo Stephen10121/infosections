@@ -124,12 +124,14 @@ export interface EventListDBModel extends RecordModel {
 // Dont you dare judge
 export function toggleFullScreen() {
 	const elem = document.documentElement;
-	// ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-	//@ts-ignore
 	if (
+		//@ts-ignore
 		(document.fullScreenElement !== undefined && document.fullScreenElement === null) ||
+		//@ts-ignore
 		(document.msFullscreenElement !== undefined && document.msFullscreenElement === null) ||
+		//@ts-ignore
 		(document.mozFullScreen !== undefined && !document.mozFullScreen) ||
+		//@ts-ignore
 		(document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)
 	) {
 		//@ts-ignore
