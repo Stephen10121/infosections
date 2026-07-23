@@ -204,7 +204,7 @@ export const updateDynamicURLCommand = command(UpdateDynamicURLSchema, async (up
 			data["overrideRedirectTo"] = updatedURLData.overrideRedirectTo;
 		}
 
-		if (updatedURLData.enableOverrideRedirect) {
+		if (updatedURLData.enableOverrideRedirect && updatedURLData.overrideExpiresIn !== "") {
 			data["overrideExpiresIn"] = updatedURLData.overrideExpiresIn;
 			data["overrideExpireInStr"] = "set";
 		}

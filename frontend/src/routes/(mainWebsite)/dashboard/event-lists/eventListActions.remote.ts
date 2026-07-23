@@ -117,7 +117,7 @@ export const updateEventListForm = form(UpdateEventListSchema, async (updatedELi
 			const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, {
 				type: newAvatar.type
 			});
-			data["logo"] = file;
+			data["logo"] = file as any as string;
 		}
 
 		if (!updatedEList.avatarLink && !updatedEList.newAvatar) {

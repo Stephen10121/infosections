@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { Toaster } from "@/components/ui/sonner";
-	import favicon from "../lib/assets/logo.png";
+	import { ModeWatcher, mode } from "mode-watcher";
+	import logo from "../lib/assets/logo.png";
 	import "./layout.css";
 
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={logo} />
 </svelte:head>
 
-<Toaster theme="light" />
+<ModeWatcher />
+<Toaster theme={mode.current} />
 {@render children?.()}

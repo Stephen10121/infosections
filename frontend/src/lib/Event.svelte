@@ -58,10 +58,7 @@
 	}
 </script>
 
-<div
-	class="dark rounded-lg bg-foreground p-4 flex flex-col gap-2"
-	style="border: 1px solid #333333"
->
+<div class="dark rounded-xl bg-[#1f1f1f] p-4 flex flex-col gap-2" style="border: 1px solid #333333">
 	<div class="dark flex items-start justify-between">
 		<h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 18}px;">
 			{event.name}

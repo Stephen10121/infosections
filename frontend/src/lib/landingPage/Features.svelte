@@ -1,55 +1,75 @@
 <script lang="ts">
-	import { Calendar, Layers, Smartphone } from "@lucide/svelte";
+	import { Calendar, ExternalLink, Filter } from "@lucide/svelte";
+	import SheetHeader from "@/components/SheetHeader.svelte";
+	import { motion } from "@humanspeak/svelte-motion";
+	import Mono from "@/components/Mono.svelte";
 
-	let features = $state([
+	const features = [
 		{
-			icon: Calendar,
+			num: "01",
+			title: "Event Aggregation",
+			desc: "Connect Planning Center and other sources. Every event flows into one normalized interface. No duplication, no manual entry, no drift.",
+			tags: ["Planning Center", "Auto-sync", "Deduplication"],
+			icon: Calendar
+		},
+		{
+			num: "02",
 			title: "Smart Filtering",
-			description:
-				"You can filter events based on if they're public, have certain tags, all resources are approved."
+			desc: "Build sections with tag-based, location-based, and resource-based rules. Each audience sees exactly what belongs to them.",
+			tags: ["Tag filters", "Location-aware", "Audience targeting"],
+			icon: Filter
 		},
 		{
-			icon: Smartphone,
-			title: "Customizable Views",
-			description: "Create a custom look for a front page website, or a kiosk at church."
-		},
-		{
-			icon: Layers,
-			title: "All-in-One Platform",
-			description:
-				"Manage multiple calendars, time zones, and availability preferences from a single dashboard."
+			num: "03",
+			title: "Embeddable Calendars",
+			desc: "Publish shareable, embeddable calendar views, event lists, image feeds. Embed on your site or share a direct link. Every update propagates in real time.",
+			tags: ["Embed code", "Shareable links", "Real-time sync"],
+			icon: ExternalLink
 		}
-	]);
+	];
 </script>
 
-<section class="py-20 sm:py-32 bg-secondary/30">
-	<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="text-center space-y-4 mb-16">
-			<h2 class="text-3xl sm:text-4xl font-bold text-foreground text-balance">
-				Everything you need to show only what you need
-			</h2>
-			<p class="text-lg text-muted-foreground max-w-2xl mx-auto">
-				Powerful features designed to filter and select the events that you want displayed in your
-				custom calendar.
-			</p>
-		</div>
-
-		<div class="grid md:grid-cols-3 gap-8">
-			{#each features as feature, index (`feature${index}`)}
-				<div class="group relative">
-					<div
-						class="rounded-2xl border border-border bg-card p-8 transition-all hover:shadow-lg hover:border-accent/50"
+<section id="features" class="border-b border-border">
+	<SheetHeader fig="FIG-003" label="FEATURES" sheet="SHEET 03 / 06" />
+	<div class="grid lg:grid-cols-3">
+		{#each features as { num, title, desc, tags, icon: Icon }, i (i)}
+			<motion.div
+				key={i}
+				initial={{ opacity: 0, y: 16 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{ delay: i * 0.1 }}
+				class="px-8 md:px-10 py-14 border-r border-b lg:border-b-0 border-border last:border-r-0 group relative overflow-hidden"
+			>
+				<div class="flex items-start justify-between mb-8">
+					<Mono
+						class="text-6xl font-bold text-border/50 group-hover:text-primary/20 transition-colors duration-300 leading-none"
+						>{num}</Mono
 					>
-						<div
-							class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ring/10"
-						>
-							<feature.icon class="h-6 w-6 text-ring" />
-						</div>
-						<h3 class="text-xl font-semibold text-card-foreground mb-3">{feature.title}</h3>
-						<p class="text-muted-foreground leading-relaxed">{feature.description}</p>
+					<div
+						class="w-9 h-9 border border-border flex items-center justify-center text-muted-foreground group-hover:border-primary group-hover:text-primary transition-colors duration-300 shrink-0"
+					>
+						<Icon size={15} />
 					</div>
 				</div>
-			{/each}
-		</div>
+				<h3 class="text-xl font-bold mb-4 tracking-tight" style="font-family: Inter, sans-serif">
+					{title}
+				</h3>
+				<p
+					class="text-sm text-muted-foreground leading-relaxed mb-8"
+					style="font-family: Inter, sans-serif"
+				>
+					{desc}
+				</p>
+				<div class="flex flex-wrap gap-1.5">
+					{#each tags as tag (tag)}
+						<Mono class="text-[9px] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</Mono>
+					{/each}
+				</div>
+				<div
+					class="absolute bottom-0 left-0 h-px w-0 bg-primary group-hover:w-full transition-all duration-500"
+				></div>
+			</motion.div>
+		{/each}
 	</div>
 </section>

@@ -9,6 +9,8 @@
 	import { browser } from "$app/environment";
 	import { toast } from "svelte-sonner";
 	import { page } from "$app/stores";
+	import Process from "@/landingPage/Process.svelte";
+	import Footer from "@/landingPage/Footer.svelte";
 
 	let { data } = $props();
 
@@ -32,6 +34,8 @@
 
 <Header loggedIn={data.user !== undefined} />
 <Hero />
-<Features />
 <Stats />
+<Features />
+<Process />
 <CTA />
+<Footer />

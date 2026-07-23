@@ -65,13 +65,13 @@
 
 <form
 	id="updateEventForm"
-	{...updateCustomImageForm.enhance(async ({ submit, form }) => {
+	{...updateCustomImageForm.enhance(async (form) => {
 		const savingChangesToast = toast.loading("Saving changes!");
 		try {
-			await submit();
+			await form.submit();
 			toast.dismiss(savingChangesToast);
 			if (!updateCustomImageForm.fields.allIssues()) {
-				form.reset();
+				form.element.reset();
 				clearFileInput(document.getElementById("imageUploaderIFeed"));
 				uploadNewEventPicture = null;
 				close();

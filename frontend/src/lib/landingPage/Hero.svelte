@@ -1,108 +1,144 @@
-<script>
-	import { Button } from "@/components/ui/button";
+<script lang="ts">
+	import MiniDashboardPreview from "@/components/MiniDashboardPreview.svelte";
+	import SheetHeader from "@/components/SheetHeader.svelte";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import { WindowManager, Window } from "svelte-windows";
+	import { motion } from "@humanspeak/svelte-motion";
 	import { ArrowRight } from "@lucide/svelte";
+	import Mono from "@/components/Mono.svelte";
 
-	let mostPopular = $state([
-		{ name: "Church Website Front Page", visits: "47 visits" },
-		{ name: "Only Approved Events", visits: "32 visits" },
-		{ name: "Church Location Events", visits: "28 visits" }
-	]);
+	let win1Active = $state(false);
+	let win2Active = $state(false);
 </script>
 
-<section class="relative overflow-hidden py-20 sm:py-32">
-	<div class="container mx-auto px-4 sm:px-6 lg:px-8">
-		<div class="grid lg:grid-cols-2 gap-12 items-center">
-			<div class="space-y-8">
-				<div
-					class="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1.5 text-sm font-medium text-secondary-foreground"
-				>
-					<span class="h-1.5 w-1.5 rounded-full bg-ring animate-pulse"></span>
-					Customization made simple
+<section class="min-h-screen pt-12 flex flex-col border-b border-border">
+	<SheetHeader fig="FIG-001" label="HERO" sheet="SHEET 01 / 06" />
+	<div class="flex-1 grid lg:grid-cols-2">
+		<div
+			class="flex flex-col justify-between p-8 md:p-14 lg:p-20 border-b lg:border-b-0 lg:border-r border-border"
+		>
+			<div>
+				<div class="flex items-center gap-2 mb-10">
+					<div class="h-px w-8 bg-primary shrink-0"></div>
+					<FieldLabel>PRODUCT OVERVIEW · {new Date().getFullYear()}</FieldLabel>
 				</div>
-
-				<h1
-					class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground text-balance"
+				<motion.h1
+					initial={{ opacity: 0, y: 24 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+					class="text-[3.5rem] md:text-[5rem] font-extrabold leading-none tracking-tight mb-8"
+					style={{ fontFamily: "Inter, sans-serif" }}
 				>
-					View events. A better way.
-				</h1>
-
-				<p class="text-lg text-muted-foreground leading-relaxed max-w-xl">
+					View events<br /><span class="text-primary">the better way!</span>
+				</motion.h1>
+				<motion.p
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6, delay: 0.15 }}
+					class="text-base text-muted-foreground leading-relaxed max-w-sm mb-10"
+					style={{ fontFamily: "Inter, sans-serif" }}
+				>
 					We offer a unified view of every event, sortable by location, tags, and custom filters so
 					you can focus on what's happening, where it matters.
-				</p>
-
-				<div class="flex flex-col sm:flex-row gap-4">
-					<div class="sm:w-fit w-full">
-						<Button
-							size="lg"
-							href="/signup?free_trial=1"
-							class="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-						>
-							Start Free Trial
-							<ArrowRight class="ml-2 h-4 w-4" />
-						</Button>
-					</div>
-					<Button size="lg" variant="outline">Watch Demo</Button>
-				</div>
-
-				<div class="flex items-center gap-8 pt-4">
-					<div>
-						<div class="text-2xl font-bold text-foreground">Unlimited</div>
-						<div class="text-sm text-muted-foreground">Custom Calendars</div>
-					</div>
-					<div class="h-12 w-px bg-border"></div>
-					<div>
-						<div class="text-2xl font-bold text-foreground">50k+</div>
-						<div class="text-sm text-muted-foreground">Calendar Views</div>
-					</div>
-				</div>
+				</motion.p>
+				<motion.div
+					initial={{ opacity: 0, y: 16 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.3 }}
+					class="flex flex-wrap items-center gap-3"
+				>
+					<a
+						href="/signup?free_trial=1"
+						class="font-mono text-[11px] tracking-widest bg-primary text-primary-foreground px-6 py-3 hover:opacity-90 transition-opacity flex items-center gap-2 cursor-pointer"
+						style="font-family: 'JetBrains Mono', monospace"
+					>
+						START FREE TRIAL <ArrowRight size={12} />
+					</a>
+				</motion.div>
 			</div>
-
-			<div class="relative">
-				<div class="relative rounded-2xl border border-border bg-card p-6 shadow-2xl">
-					<div class="space-y-4">
-						<div class="flex items-center justify-between">
-							<h3 class="text-lg font-semibold text-card-foreground">Calendar Insights</h3>
-							<div class="flex gap-2">
-								<div class="h-2 w-2 rounded-full bg-ring"></div>
-								<div class="h-2 w-2 rounded-full bg-muted"></div>
-								<div class="h-2 w-2 rounded-full bg-muted"></div>
-							</div>
-						</div>
+			<div class="mt-16 pt-6 border-t border-border grid grid-cols-3 gap-6">
+				{#each [{ label: "pkg ·", value: "infosections" }, { label: "version ·", value: "2.1.0" }, { label: "status ·", value: "stable" }] as { label, value } (label)}
+					<div>
+						<Mono class="text-[9px] text-muted-foreground block">{label}</Mono>
+						<Mono class="text-[11px] text-foreground mt-0.5 block">{value}</Mono>
 					</div>
-
-					<div class="grid grid-cols-2 gap-4">
-						<div class="rounded-lg bg-secondary p-4 space-y-2">
-							<div class="text-sm font-medium text-secondary-foreground">Total Visits</div>
-							<div class="text-3xl font-bold text-foreground">107</div>
-							<div class="text-xs text-muted-foreground">Visits for your calendars</div>
-						</div>
-						<div class="rounded-lg bg-secondary p-4 space-y-2">
-							<div class="text-sm font-medium text-secondary-foreground">Custom Calendars</div>
-							<div class="text-3xl font-bold text-foreground">3</div>
-							<div class="text-xs text-muted-foreground">Customized calendars</div>
-						</div>
-					</div>
-
-					<div class="space-y-3 pt-2">
-						<div class="text-sm font-medium text-card-foreground">Most Popular</div>
-						{#each mostPopular as pop, index (`mostPopular${index}`)}
-							<div class="flex items-center justify-between rounded-lg bg-muted/50 p-3">
-								<div class="flex items-center gap-3">
-									<div class="h-8 w-8 rounded-full bg-ring/10 flex items-center justify-center">
-										<div class="h-4 w-4 rounded-full bg-ring"></div>
-									</div>
-									<div>
-										<div class="text-sm font-medium text-foreground">{pop.name}</div>
-										<div class="text-xs text-muted-foreground">{pop.visits}</div>
-									</div>
-								</div>
-								<Button variant="ghost" size="sm" class="text-xs">View</Button>
-							</div>
-						{/each}
-					</div>
-				</div>
+				{/each}
 			</div>
+		</div>
+		<div class="relative flex items-center justify-center p-8 md:p-12 overflow-hidden bg-card/20">
+			<div
+				class="absolute inset-0 pointer-events-none opacity-[0.035]"
+				style="background-image: linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px);background-size: 40px 40px"
+			></div>
+			<Mono class="absolute top-4 left-5 text-[9px] text-muted-foreground/35 select-none"
+				>-200, -120</Mono
+			>
+			<Mono class="absolute top-4 right-5 text-[9px] text-muted-foreground/35 select-none"
+				>+200, -120</Mono
+			>
+			<Mono class="absolute bottom-4 left-5 text-[9px] text-muted-foreground/35 select-none"
+				>-200, +120</Mono
+			>
+			<Mono class="absolute bottom-4 right-5 text-[9px] text-muted-foreground/35 select-none"
+				>+200, +120</Mono
+			>
+			<motion.div
+				initial={{ opacity: 0, y: 20, scale: 0.97 }}
+				animate={{ opacity: 1, y: 0, scale: 1 }}
+				transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+				class="absolute top-0 left-0 w-full h-full"
+			>
+				<div style="width: 100%;height:100%">
+					<WindowManager>
+						{#snippet children(context)}
+							<Window
+								onActiveStateChanged={(active) => {
+									win1Active = active;
+								}}
+								top="50px"
+								left="50px"
+								outerClassName="border border-border bg-background"
+								outerStyle="box-shadow: 0 32px 64px rgba(0,0,0,0.12)"
+								id="window1"
+								resizeWhenInactive
+								height="407px"
+								width="400px"
+								{context}
+								windowDragRegions={[{ width: "100%", height: "36px", top: "0px", left: "0px" }]}
+							>
+								<MiniDashboardPreview />
+								{#if !win1Active}
+									<div
+										class="absolute top-0 left-0 w-full h-full pointer-events-none bg-gray-100/30 dark:bg-black/30"
+									></div>
+								{/if}
+							</Window>
+
+							<Window
+								onActiveStateChanged={(active) => {
+									win2Active = active;
+								}}
+								outerClassName="border border-border bg-background"
+								outerStyle="box-shadow: 0 32px 64px rgba(0,0,0,0.12)"
+								id="window2"
+								top="125px"
+								left="100px"
+								resizeWhenInactive
+								height="407px"
+								{context}
+								windowDragRegions={[{ width: "100%", height: "36px", top: "0px", left: "0px" }]}
+							>
+								<MiniDashboardPreview />
+								{#if !win2Active}
+									<div
+										class="absolute top-0 left-0 w-full h-full pointer-events-none bg-gray-100/30 dark:bg-black/30"
+									></div>
+								{/if}
+							</Window>
+						{/snippet}
+					</WindowManager>
+				</div>
+			</motion.div>
 		</div>
 	</div>
 </section>

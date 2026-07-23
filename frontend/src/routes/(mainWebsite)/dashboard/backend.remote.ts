@@ -239,12 +239,11 @@ export const getMyDynamicURLS = query(async () => {
 
 	if (somethingChanged) {
 		try {
-			const result = await batch.send({
+			await batch.send({
 				headers: {
 					Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
 				}
 			});
-			console.log({ bod: result[0]?.body });
 		} catch (err) {
 			console.log("Error updating dynamic url override expire date resets,", err);
 		}

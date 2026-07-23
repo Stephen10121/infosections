@@ -46,13 +46,13 @@
 		<Popover.Trigger
 			class="absolute bottom-1 right-1 z-50 {invisibleTooltip
 				? 'opacity-0'
-				: 'text-muted-foreground bg-foreground'} rounded p-2"
+				: 'text-muted-foreground bg-background'} rounded p-2"
 			style={invisibleTooltip ? "border:none;" : "border: 1px solid #333333"}
 		>
 			<CircleQuestionMark />
 		</Popover.Trigger>
 		<Popover.Content
-			class="text-muted-foreground bg-foreground rounded p-2 flex flex-col gap-3"
+			class="text-muted-foreground bg-background rounded p-2 flex flex-col gap-3"
 			style="border: 1px solid #333333"
 		>
 			<TimeZoneSelector bind:timeZone />

@@ -99,7 +99,7 @@ export interface CustomImageIFeedDBModel extends RecordModel {
 export interface ImageFeedDBModel extends RecordModel {
 	name: string;
 	owner: string;
-	logo: string | File;
+	logo: string;
 	visits: number;
 	description: string;
 	displaySettings: ImageFeedCustomizations;
@@ -112,7 +112,7 @@ export interface ImageFeedDBModel extends RecordModel {
 export interface EventListDBModel extends RecordModel {
 	name: string;
 	owner: string;
-	logo: string | File;
+	logo: string;
 	visits: number;
 	description: string;
 	displaySettings: ImageListCustomizations;
@@ -563,4 +563,19 @@ export function generateIframeCode(
 	}
 
 	return text.join("\n");
+}
+
+export function getGreeting() {
+	const h = new Date().getHours();
+	if (h < 12) return "Good morning";
+	if (h < 17) return "Good afternoon";
+	return "Good evening";
+}
+
+export function timeRemaining(iso: string): string {
+	const diff = new Date(iso).getTime() - Date.now();
+	if (diff <= 0) return "expired";
+	const h = Math.floor(diff / 3600000);
+	const m = Math.floor((diff % 3600000) / 60000);
+	return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }

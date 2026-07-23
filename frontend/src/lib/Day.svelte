@@ -37,7 +37,7 @@
 				Day after Tomorrow
 			{/if}
 		</div>
-		<div class="dark font-semibold text-accent" style="font-size: {fontScale * 20}px;">
+		<div class="dark font-semibold text-white" style="font-size: {fontScale * 20}px;">
 			{LONGDAYTOSTRING[day.dayOfWeek]}, {MONTHTOSTRING[day.month]}
 			{day.day}
 		</div>

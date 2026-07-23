@@ -38,7 +38,7 @@
 	const MULTI_DAY_EVENT = $derived(hours === 24 ? start.hour !== 0 : hours > 24);
 </script>
 
-<div class="dark rounded bg-foreground p-2 flex flex-col gap-2" style="border: 1px solid #333333">
+<div class="dark rounded bg-[#1f1f1f] p-2 flex flex-col gap-2" style="border: 1px solid #333333">
 	<div class="dark flex items-start justify-between">
 		<h3 class="dark font-semibold text-white pr-2" style="font-size: {fontScale * 16}px;">
 			{event.name}

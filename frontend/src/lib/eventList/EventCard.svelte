@@ -31,7 +31,7 @@
 
 	<div class="content-parent">
 		{#if displaySettings.displayStyle === "expanded" && event.featured}
-			<Badge class="mb-4">FEATURED EVENT</Badge>
+			<Badge class="mb-4 bg-black">FEATURED EVENT</Badge>
 		{/if}
 
 		{#if displaySettings.showEventName}

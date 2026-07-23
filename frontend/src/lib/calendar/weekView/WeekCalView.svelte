@@ -24,10 +24,10 @@
 
 <div class="dark h-full">
 	<div class="overflow-hidden h-screen">
-		<div class="grid grid-cols-7 dark bg-foreground">
+		<div class="grid grid-cols-7 dark bg-background">
 			{#each days as day (`aweekday${day.dayOfWeek}`)}
 				<div
-					class="text-center py-2 text-muted-foreground dark font-semibold border-b border-[#333333]"
+					class="text-center py-2 text-white dark font-semibold border-b border-[#333333]"
 					style="font-size: {fontScale * 12}px;"
 				>
 					{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][day.dayOfWeek]}
