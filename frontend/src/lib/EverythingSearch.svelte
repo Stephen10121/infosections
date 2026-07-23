@@ -2,8 +2,8 @@
 	import type { EventListDBModel, ImageFeedDBModel } from "./utils";
 	import Badge from "./components/ui/badge/badge.svelte";
 	import * as Kbd from "$lib/components/ui/kbd/index.js";
+	import FormInput from "./components/FormInput.svelte";
 	import type { CalendarDBModel } from "./cal.utils";
-	import { Input } from "@/components/ui/input";
 	import { Search } from "@lucide/svelte";
 	import { goto } from "$app/navigation";
 
@@ -138,13 +138,14 @@
 			<Kbd.Root>/</Kbd.Root>
 		</Kbd.Group>
 	</div>
-	<Input
-		bind:ref={everythingInput}
+	<FormInput
+		type="text"
 		onfocusin={() => (everythingInputFocused = true)}
 		onfocusout={() => setTimeout(() => (everythingInputFocused = false), 200)}
 		oninput={searchInputChanged}
 		placeholder="Search calendars, image feeds..."
-		class="pl-9 pr-9 bg-background"
+		class="pl-9 pr-9"
+		bind:ref={everythingInput}
 	/>
 
 	{#if everythingInputFocused && filteredTerms.length > 0}
