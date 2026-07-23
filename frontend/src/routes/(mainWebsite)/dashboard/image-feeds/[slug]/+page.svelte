@@ -92,13 +92,13 @@
 	<div class="grid gap-6 lg:grid-cols-3">
 		<div class="lg:col-span-2 space-y-6">
 			<form
-				{...updateImageFeedForm.enhance(async ({ submit, form }) => {
+				{...updateImageFeedForm.enhance(async ({ submit, element }) => {
 					let savingChanges = toast.loading("Saving Changes.", {
 						duration: Number.POSITIVE_INFINITY
 					});
 					try {
 						await submit();
-						form.reset();
+						element.reset();
 						clearFileInput(document.getElementById("imageUploaderImageFeed"));
 						uploadNewAvatar = null;
 						toast.dismiss(savingChanges);

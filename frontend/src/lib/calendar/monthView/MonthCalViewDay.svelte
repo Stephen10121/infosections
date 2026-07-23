@@ -34,14 +34,14 @@
 <div
 	class={cn(
 		"min-h-20 p-1 border-b border-r relative border-[#333333]",
-		!isCurrentMonth && "bg-muted/30 opacity-[.40]",
+		!isCurrentMonth && "bg-muted-foreground/30 opacity-[.40]",
 		index % 7 === 6 && "border-r-0"
 	)}
 >
 	<div
 		class={cn(
-			"text-xs font-medium mb-1 size-6 flex items-center justify-center rounded-full text-primary-foreground",
-			isToday && "bg-secondary text-black",
+			"text-xs font-medium mb-1 size-6 flex items-center justify-center rounded-full text-white/50",
+			isToday && "bg-white text-black",
 			!isCurrentMonth && "text-muted-foreground"
 		)}
 	>

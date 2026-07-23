@@ -33,7 +33,7 @@
 </script>
 
 <div
-	class="px-1 py-0.5 truncate border border-[#333333] dark rounded-md bg-foreground text-white flex justify-between gap-1"
+	class="px-1 py-0.5 truncate border border-[#333333] dark rounded-xl bg-[#1f1f1f] text-white flex justify-between gap-1"
 	style="font-size: {fontScale * 12}px;"
 	title={event.name}
 >

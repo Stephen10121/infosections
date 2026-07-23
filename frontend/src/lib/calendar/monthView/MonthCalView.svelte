@@ -24,7 +24,7 @@
 
 <div class="dark h-full">
 	<div class="overflow-hidden h-screen">
-		<div class="grid grid-cols-7 dark bg-foreground">
+		<div class="grid grid-cols-7 dark bg-background">
 			{#each ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as day (`aweekday${day}`)}
 				<div
 					class="text-center py-2 dark font-semibold text-white border-b border-[#333333]"

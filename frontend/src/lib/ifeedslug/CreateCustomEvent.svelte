@@ -49,13 +49,13 @@
 			<Dialog.Description>Add an image to this feed.</Dialog.Description>
 		</Dialog.Header>
 		<form
-			{...createCustomImageForm.enhance(async ({ submit, form }) => {
+			{...createCustomImageForm.enhance(async ({ submit, element }) => {
 				creatingForm = true;
 				try {
 					await submit();
 					creatingForm = false;
 					if (!createCustomImageForm.fields.allIssues()) {
-						form.reset();
+						element.reset();
 						clearFileInput(document.getElementById("newCustomEventImageInput"));
 						uploadNewEventPicture = null;
 						linkText = "";

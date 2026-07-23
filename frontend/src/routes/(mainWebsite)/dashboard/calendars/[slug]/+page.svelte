@@ -96,16 +96,16 @@
 
 	<div class="grid gap-6 lg:grid-cols-3">
 		<form
-			{...updateCalendarForm.enhance(async ({ submit, form }) => {
+			{...updateCalendarForm.enhance(async (form) => {
 				let savingChanges = toast.loading("Saving Changes.", {
 					duration: Number.POSITIVE_INFINITY
 				});
 				try {
-					await submit();
+					await form.submit();
 					toast.dismiss(savingChanges);
 
 					if (!updateCalendarForm.fields.allIssues()) {
-						form.reset();
+						form.element.reset();
 
 						clearFileInput(document.getElementById("imageUploaderCalendar"));
 						uploadNewAvatar = null;
