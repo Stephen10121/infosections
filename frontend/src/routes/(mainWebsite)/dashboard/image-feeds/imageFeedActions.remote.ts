@@ -116,7 +116,7 @@ export const updateImageFeedForm = form(UpdateImageFeedSchema, async (updatedIFe
 			const file = new File([await newAvatar.arrayBuffer()], newAvatar.name, {
 				type: newAvatar.type
 			});
-			data["logo"] = file;
+			data["logo"] = file as any as string;
 		}
 
 		if (!updatedIFeed.avatarLink && !updatedIFeed.newAvatar) {

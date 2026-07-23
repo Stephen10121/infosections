@@ -6,12 +6,20 @@
 		getMyDynamicURLS,
 		getMyIntegrations
 	} from "./backend.remote.js";
-	import IntegrationStatus from "@/dashboard/homePage/IntegrationStatus.svelte";
-	import UpcomingEvents from "@/dashboard/homePage/UpcomingEvents.svelte";
-	import RecentActivity from "@/dashboard/homePage/RecentActivity.svelte";
-	import QuickActions from "@/dashboard/homePage/QuickActions.svelte";
-	import MetricCards from "@/dashboard/homePage/MetricCards.svelte";
+	// import IntegrationStatus from "@/dashboard/homePage/IntegrationStatus.svelte";
+	// import UpcomingEvents from "@/dashboard/homePage/UpcomingEvents.svelte";
+	// import RecentActivity from "@/dashboard/homePage/RecentActivity.svelte";
+	// import QuickActions from "@/dashboard/homePage/QuickActions.svelte";
+	// import MetricCards from "@/dashboard/homePage/MetricCards.svelte";
+	// import DynamicFeedAvatar from "@/DynamicFeedAvatar.svelte";
 	import { getAllUserEvents } from "./events.remote.js";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import MetricCards from "@/dashboard/homePage/MetricCards.svelte";
+	import WelcomeBanner from "@/dashboard/homePage/WelcomeBanner.svelte";
+	import ActiveOverrides from "@/dashboard/homePage/ActiveOverrides.svelte";
+	import RecentActivity from "@/dashboard/homePage/RecentActivity.svelte";
+	import DynamicURLSummary from "@/dashboard/homePage/DynamicURLSummary.svelte";
+	import RefSummary from "@/dashboard/homePage/RefSummary.svelte";
 
 	let { data } = $props();
 
@@ -28,13 +36,21 @@
 	let myDynamicURLs = $derived(await myDynamicURLsPromise);
 	let allUserEvents = $derived(await allUserEventsPromise);
 	let myIntegrations = $derived(await myIntegrationsPromise);
+
+	const now = new Date();
+	const dateStr = now.toLocaleDateString("en-US", {
+		weekday: "long",
+		month: "long",
+		day: "numeric",
+		year: "numeric"
+	});
 </script>
 
 <svelte:head>
 	<title>Dashboard | InfoSections</title>
 </svelte:head>
 
-<div class="w-full h-full">
+<!-- <div class="w-full h-full">
 	<div class="space-y-8">
 		<section>
 			<h2 class="text-2xl font-bold tracking-tight text-foreground">
@@ -65,5 +81,29 @@
 				</div>
 			</div>
 		</div>
+	</div>
+</div> -->
+
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+	<div class="flex items-center gap-4 px-6 py-2.5 border-b border-border bg-background shrink-0">
+		<FieldLabel>HOME</FieldLabel>
+		<div class="flex-1"></div>
+		<FieldLabel>{dateStr}</FieldLabel>
+	</div>
+
+	<div class="flex-1 overflow-y-auto">
+		<WelcomeBanner {myIntegrations} user={data.user} />
+
+		<MetricCards {myCalendars} {myDynamicURLs} {myEventLists} {myImageFeeds} {allUserEvents} />
+
+		<ActiveOverrides {myDynamicURLs} />
+
+		<div class="grid lg:grid-cols-2 border-b border-border">
+			<RecentActivity {myCalendars} {myEventLists} {myImageFeeds} pb_url={data.pb_url} />
+
+			<DynamicURLSummary {myDynamicURLs} />
+		</div>
+
+		<RefSummary {myDynamicURLs} />
 	</div>
 </div>

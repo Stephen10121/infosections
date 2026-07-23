@@ -43,7 +43,7 @@
 			eventLists={await getMyEventLists()}
 		/>
 
-		<main class="flex-1 p-1 sm:p-6 space-y-6 mainPage relative h-full" id="ascrollableelement">
+		<main class="flex-1 mainPage relative h-full" id="ascrollableelement">
 			{#if navigating.complete !== null}
 				<DashboardIsNavigating />
 			{/if}
@@ -54,7 +54,8 @@
 
 <style>
 	.mainPage {
-		max-height: calc(100vh - 64px);
+		max-height: calc(100vh - 49px);
+		max-height: calc(100dvh - 49px);
 		overflow-y: auto;
 	}
 </style>
