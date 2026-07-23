@@ -15,17 +15,19 @@
 
 	let { data } = $props();
 
-	const [myCalendars, myImageFeeds, myEventLists, myDynamicURLs, allUserEvents, myIntegrations] =
-		$derived(
-			await Promise.all([
-				getMyCalendars(),
-				getMyImageFeeds(),
-				getMyEventLists(),
-				getMyDynamicURLS(),
-				getAllUserEvents(),
-				getMyIntegrations()
-			])
-		);
+	let myCalendarsPromise = $derived(getMyCalendars());
+	let myImageFeedsPromise = $derived(getMyImageFeeds());
+	let myEventListsPromise = $derived(getMyEventLists());
+	let myDynamicURLsPromise = $derived(getMyDynamicURLS());
+	let allUserEventsPromise = $derived(getAllUserEvents());
+	let myIntegrationsPromise = $derived(getMyIntegrations());
+
+	let myCalendars = $derived(await myCalendarsPromise);
+	let myImageFeeds = $derived(await myImageFeedsPromise);
+	let myEventLists = $derived(await myEventListsPromise);
+	let myDynamicURLs = $derived(await myDynamicURLsPromise);
+	let allUserEvents = $derived(await allUserEventsPromise);
+	let myIntegrations = $derived(await myIntegrationsPromise);
 </script>
 
 <svelte:head>
