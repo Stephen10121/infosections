@@ -1,6 +1,15 @@
 <script lang="ts">
 	import { createCalendarCommand, deleteCalendarCommand } from "./calendarActions.remote.js";
-	import { Copy, MoreVertical, Plus, Shield, Trash2, Users } from "@lucide/svelte";
+	import {
+		CalendarDays,
+		Copy,
+		MoreVertical,
+		Plus,
+		Search,
+		Shield,
+		Trash2,
+		Users
+	} from "@lucide/svelte";
 	import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
 	import { Button, buttonVariants } from "@/components/ui/button";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
@@ -19,6 +28,11 @@
 	import { toast } from "svelte-sonner";
 	import { page } from "$app/stores";
 	import { cn } from "@/utils";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import Mono from "@/components/Mono.svelte";
+	import { AnimatePresence } from "@humanspeak/svelte-motion";
+	import CalItemCard from "@/dashboard/calendar/CalItemCard.svelte";
+	import { onMount } from "svelte";
 
 	let { data } = $props();
 
@@ -88,13 +102,30 @@
 			newCalendarDialogOpen = $page.url.searchParams.get("new") === "1";
 		}
 	});
+
+	function createNewCalendar() {
+		console.log("New Calendar");
+	}
+
+	let calendarSearch = $state("");
+	let filtered = $derived(
+		(await getMyCalendars()).filter(
+			(item) =>
+				item.name.toLowerCase().includes(calendarSearch.toLowerCase()) ||
+				item.description.toLowerCase().includes(calendarSearch.toLowerCase())
+		)
+	);
+
+	onMount(() => {
+		getMyCalendars().refresh();
+	});
 </script>
 
 <svelte:head>
 	<title>My Calendars | InfoSections</title>
 </svelte:head>
 
-<div class="w-full h-full space-y-6">
+<!-- <div class="w-full h-full space-y-6">
 	<div class="flex items-center justify-between">
 		<div>
 			<h1 class="text-2xl font-bold text-foreground">My Calendars</h1>
@@ -257,7 +288,7 @@
 			</Card.Root>
 		{/each}
 	</div>
-</div>
+</div> -->
 
 <!-- Delete Calendar Dialog -->
 <Dialog.Root open={deleteCalendarId !== null} onOpenChange={() => (deleteCalendarId = null)}>
@@ -265,8 +296,10 @@
 		<Dialog.Header>
 			<Dialog.Title>Are you sure absolutely sure?</Dialog.Title>
 			<Dialog.Description>
-				This action cannot be undone. This will permanently delete this calendar from our servers.
-				All links or image feeds relying on this calendar will not work.
+				<Mono class="text-xs text-muted-foreground">
+					This action cannot be undone. This will permanently delete this calendar from our servers.
+					All links or image feeds relying on this calendar will not work.
+				</Mono>
 			</Dialog.Description>
 			<Dialog.Footer>
 				<Button variant="destructive" onclick={deleteCal}>Confirm Delete</Button>
@@ -274,3 +307,100 @@
 		</Dialog.Header>
 	</Dialog.Content>
 </Dialog.Root>
+
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+	<div class="flex items-center gap-4 px-6 py-2.5 border-b border-border bg-background shrink-0">
+		<div class="flex items-center gap-2">
+			<CalendarDays size={14} class="text-muted-foreground" />
+			<FieldLabel>CALENDARS</FieldLabel>
+		</div>
+		<div class="flex-1"></div>
+		<div
+			class="flex items-center gap-1.5 border border-border px-3 py-1.5 w-48 focus-within:border-primary transition-colors"
+		>
+			<Search size={11} class="text-muted-foreground shrink-0" />
+			<input
+				bind:value={calendarSearch}
+				placeholder="Search calendars..."
+				class="bg-transparent font-mono text-xs outline-none flex-1 text-foreground placeholder:text-muted-foreground"
+				style="font-family: 'JetBrains Mono', monospace"
+			/>
+		</div>
+		<button
+			onclick={createNewCalendar}
+			class="font-mono text-[10px] tracking-widest bg-primary text-primary-foreground px-3 py-1.5 hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
+		>
+			<Plus size={11} /> NEW CALENDAR
+		</button>
+	</div>
+
+	<div
+		class="px-6 py-3 border-b border-border bg-card/30 flex items-center justify-between shrink-0"
+	>
+		<div>
+			<p class="text-xs text-muted-foreground" style="font-family: Inter, sans-serif">
+				Full-featured embeddable calendars with custom views, filters, and sharing. Events are
+				automatically synced from Planning Center.
+			</p>
+		</div>
+		<div class="flex items-center gap-4">
+			<Mono class="text-[10px] text-muted-foreground"
+				>{(await getMyCalendars()).length}
+				{(await getMyCalendars()).length === 1 ? "item" : "items"}</Mono
+			>
+		</div>
+	</div>
+
+	<div class="flex-1 overflow-y-auto p-6 h-full">
+		{#if filtered.length === 0 && calendarSearch === ""}
+			<div
+				class="flex flex-col items-center justify-center h-64 gap-4 border border-dashed border-border"
+			>
+				<CalendarDays size={32} class="text-border" />
+				<div class="text-center">
+					<div
+						class="text-sm font-medium text-muted-foreground"
+						style="font-family: Inter, sans-serif"
+					>
+						No calendars yet
+					</div>
+					<Mono class="text-[10px] text-muted-foreground mt-1"
+						>Click + NEW CALENDAR to create one</Mono
+					>
+				</div>
+				<button
+					onclick={createNewCalendar}
+					class="font-mono text-[10px] tracking-widest border border-primary text-primary px-4 py-2 hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"
+				>
+					+ CREATE YOUR FIRST
+				</button>
+			</div>
+		{:else if filtered.length === 0}
+			<div class="flex items-center justify-center h-32">
+				<Mono class="text-xs text-muted-foreground">No results for "{calendarSearch}"</Mono>
+			</div>
+		{:else}
+			<AnimatePresence>
+				<div class="space-y-3">
+					{#each filtered as item (item.id)}
+						<CalItemCard
+							{item}
+							key={item.id}
+							onDelete={(item) => {
+								deleteCalendarId = item.id;
+							}}
+						/>
+					{/each}
+				</div>
+			</AnimatePresence>
+		{/if}
+	</div>
+
+	<!-- <CalendarPanel
+		open={panelOpen}
+		onClose={onClosePanel}
+		type={type}
+		item={panelItem}
+		onSave={onSave}
+	/> -->
+</div>
