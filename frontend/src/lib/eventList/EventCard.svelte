@@ -31,11 +31,11 @@
 
 	<div class="content-parent">
 		{#if displaySettings.displayStyle === "expanded" && event.featured}
-			<Badge class="mb-4 bg-black">FEATURED EVENT</Badge>
+			<Badge class="mb-4 bg-black text-white">FEATURED EVENT</Badge>
 		{/if}
 
 		{#if displaySettings.showEventName}
-			<h2 class="text-balance text-2xl text-center font-light tracking-tight text-card-foreground">
+			<h2 class="text-balance text-black text-2xl text-center font-light tracking-tight">
 				{event.name}
 			</h2>
 		{/if}
