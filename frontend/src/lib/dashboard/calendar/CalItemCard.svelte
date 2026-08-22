@@ -10,9 +10,14 @@
 	let {
 		item,
 		key,
-		onDelete
-	}: { item: CalendarDBModel; key: string; onDelete: (item: CalendarDBModel) => unknown } =
-		$props();
+		onDelete,
+		onEdit
+	}: {
+		item: CalendarDBModel;
+		key: string;
+		onDelete: (item: CalendarDBModel) => unknown;
+		onEdit: () => unknown;
+	} = $props();
 
 	const viewLabels: Record<CalendarDBModel["displaySettings"]["viewType"], string> = {
 		"3day": "3-DAY",
@@ -87,7 +92,7 @@
 		<CopyButton text="https://infosections.com/cal/{item.publicId}" label="SHARE URL" />
 		<div class="flex-1"></div>
 		<button
-			onclick={() => console.log("edit")}
+			onclick={() => onEdit()}
 			class="flex items-center gap-1.5 px-4 py-2.5 font-mono text-[10px] text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors border-l border-border/50 cursor-pointer"
 		>
 			<Settings size={11} /> SETTINGS

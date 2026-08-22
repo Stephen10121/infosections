@@ -33,6 +33,8 @@
 	import { AnimatePresence } from "@humanspeak/svelte-motion";
 	import CalItemCard from "@/dashboard/calendar/CalItemCard.svelte";
 	import { onMount } from "svelte";
+	import CalendarPanel from "@/dashboard/calendar/CalendarPanel.svelte";
+	import type { CalendarDBModel } from "@/cal.utils.js";
 
 	let { data } = $props();
 
@@ -119,6 +121,9 @@
 	onMount(() => {
 		getMyCalendars().refresh();
 	});
+
+	let panelOpen = $state(false);
+	let selectedCalendar: CalendarDBModel = $state();
 </script>
 
 <svelte:head>
@@ -389,6 +394,10 @@
 							onDelete={(item) => {
 								deleteCalendarId = item.id;
 							}}
+							onEdit={() => {
+								selectedCalendar = item;
+								panelOpen = true;
+							}}
 						/>
 					{/each}
 				</div>
@@ -396,11 +405,6 @@
 		{/if}
 	</div>
 
-	<!-- <CalendarPanel
-		open={panelOpen}
-		onClose={onClosePanel}
-		type={type}
-		item={panelItem}
-		onSave={onSave}
-	/> -->
+	{$inspect(panelOpen)}
+	<CalendarPanel bind:open={panelOpen} calendar={selectedCalendar} />
 </div>
