@@ -60,9 +60,11 @@
 				initial={{ opacity: 0, y: 8 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: i * 0.03 }}
-				href="/dashboard/{activity.type}{meta.naming !== 'id'
-					? `/${activity.id}`
-					: `?expanded=${activity.id}`}"
+				href="/dashboard/{activity.type}{meta.naming === 'id'
+					? `?expanded=${activity.id}`
+					: activity.type === 'calendars'
+						? `?expanded=${activity.id}`
+						: `/${activity.id}`}"
 				class={cn(
 					"flex items-center gap-3 px-6 py-3 border-b border-border/50 last:border-b-0 hover:bg-muted/20 transition-colors alinkrecent",
 					i % 2 === 0 ? "bg-card/70" : ""

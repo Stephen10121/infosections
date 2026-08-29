@@ -129,7 +129,7 @@
 
 <svelte:window onkeydown={keyDown} />
 
-<div class="relative w-full max-w-md">
+<div class="relative w-full max-w-md hidden sm:block">
 	<Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 	<div class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
 		<Kbd.Group>

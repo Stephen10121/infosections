@@ -1,15 +1,13 @@
 <script lang="ts">
-	import {
-		getMyEventResourcesPrivate,
-		getMyEventTagsPrivate
-	} from "../../../routes/(mainWebsite)/dashboard/events.remote";
 	import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
-	import * as Tabs from "$lib/components/ui/tabs/index.js";
-	import * as Item from "$lib/components/ui/item/index.js";
-	import * as Card from "@/components/ui/card/index";
+	import BlockAllowRadio from "@/components/BlockAllowRadio.svelte";
+	import ResourceSelect from "@/components/ResourceSelect.svelte";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import SettingRow from "@/components/SettingRow.svelte";
+	import TagSelect from "@/components/TagSelect.svelte";
 	import type { CalendarFilters } from "@/cal.utils";
-	import { Switch } from "@/components/ui/switch";
-	import { Label } from "@/components/ui/label";
+	import Toggle from "@/components/Toggle.svelte";
+	import Mono from "@/components/Mono.svelte";
 
 	let {
 		filters,
@@ -18,9 +16,6 @@
 		filters: CalendarFilters;
 		changed: boolean;
 	} = $props();
-
-	let myResources = $derived(await getMyEventResourcesPrivate());
-	let myTags = $derived(await getMyEventTagsPrivate());
 
 	// svelte-ignore state_referenced_locally
 	let filtersBindable = $state(filters);
@@ -33,299 +28,108 @@
 	});
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Filter Settings</Card.Title>
-		<Card.Description>Choose what kind of events you want to show in the feed.</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		<div class="grid grid-cols-1 gap-6">
-			<div class="flex items-center justify-between space-x-2">
-				<Label for="onlyShowFeatured" class="flex flex-col items-start space-y-1 cursor-pointer">
-					<span class="font-medium">Only Featured Events</span>
-					<span class="text-sm text-muted-foreground"
-						>Show only the events that are set to featured.</span
-					>
-				</Label>
-
-				<input
-					{...updateCalendarForm.fields.filters.onlyShowFeatured.as("checkbox")}
-					class="sr-only"
-					bind:checked={filtersBindable.onlyShowFeatured}
-					type="checkbox"
-				/>
-				<Switch id="onlyShowFeatured" bind:checked={filtersBindable.onlyShowFeatured} />
-			</div>
-
-			<div class="flex items-center justify-between space-x-2">
-				<Label for="hideUnpublished" class="flex flex-col items-start space-y-1 cursor-pointer">
-					<span class="font-medium">Hide Unpublished Events</span>
-					<span class="text-sm text-muted-foreground"
-						>Hide the events that are not visible in the church center.</span
-					>
-				</Label>
-
-				<input
-					{...updateCalendarForm.fields.filters.hideUnpublished.as("checkbox")}
-					class="sr-only"
-					bind:checked={filtersBindable.hideUnpublished}
-					type="checkbox"
-				/>
-				<Switch id="hideUnpublished" bind:checked={filtersBindable.hideUnpublished} />
-			</div>
-
-			<div>
-				<div class="flex items-center justify-between">
-					<Label
-						class="flex flex-col items-start space-y-1 cursor-pointer"
-						for="enableResourceFiltering"
-					>
-						<span class="font-medium">Enable Resource Filtering</span>
-						<span class="text-sm text-muted-foreground"
-							>Most events contain information regarding the resources that are required. You can
-							allow or block events based on its resource requirements.</span
-						>
-					</Label>
-
-					<input
-						{...updateCalendarForm.fields.filters.enableResourceFiltering.as("checkbox")}
-						class="sr-only"
-						bind:checked={filtersBindable.enableResourceFiltering}
-						type="checkbox"
-					/>
-					<Switch
-						id="enableResourceFiltering"
-						bind:checked={filtersBindable.enableResourceFiltering}
-					/>
-				</div>
-
-				<div>
-					<input
-						{...updateCalendarForm.fields.filters.resourceFilterType.as(
-							"hidden",
-							filtersBindable.resourceFilterType
-						)}
-					/>
-					<Tabs.Root bind:value={filtersBindable.resourceFilterType} class="w-full mt-2">
-						<Tabs.List class="w-full rounded-b-none">
-							<Tabs.Trigger value="allow" disabled={!filtersBindable.enableResourceFiltering}
-								>Allow Events</Tabs.Trigger
-							>
-							<Tabs.Trigger value="block" disabled={!filtersBindable.enableResourceFiltering}
-								>Block Events</Tabs.Trigger
-							>
-						</Tabs.List>
-					</Tabs.Root>
-					<div
-						class="w-full bg-muted rounded-b-md p-2 {filtersBindable.resourceFilterType === 'block'
-							? 'hidden'
-							: 'mt-0.5'}"
-					>
-						<Label class="flex flex-col items-start space-y-0.5">
-							<span class="text-sm text-muted-foreground"
-								>Allow events that contain this resource.{#if filtersBindable.allowResources.length === 0}<br
-									/><span class="text-red-500"
-										>*If no resource is selected, then all events will go through and no filtering
-										will happen.</span
-									>{/if}</span
-							>
-						</Label>
-						<div class="space-y-2 mt-2">
-							{#each myResources as resource (`allowAResource${resource.id}`)}
-								<div class="flex items-center gap-3">
-									<Label
-										for="allowResource{resource.id}"
-										class="w-full {!filtersBindable.enableResourceFiltering ? 'opacity-50' : ''}"
-									>
-										<Item.Root variant="outline">
-											<Item.Content>
-												<Item.Title
-													>{resource.name}{#if resource.path_name}<span class="-ml-1"
-															>({resource.path_name.trimEnd()})</span
-														>{/if}</Item.Title
-												>
-												{#if resource.description}
-													<Item.Description>{resource.description}</Item.Description>
-												{/if}
-											</Item.Content>
-											<Item.Actions>
-												<input
-													disabled={!filtersBindable.enableResourceFiltering}
-													id="allowResource{resource.id}"
-													{...updateCalendarForm.fields.filters.allowResources.as(
-														"checkbox",
-														resource.id
-													)}
-													bind:group={filtersBindable.allowResources}
-												/>
-											</Item.Actions>
-										</Item.Root>
-									</Label>
-								</div>
-							{/each}
-						</div>
-					</div>
-					<div
-						class="w-full bg-muted rounded-b-md p-2 {filtersBindable.resourceFilterType === 'allow'
-							? 'hidden'
-							: 'mt-0.5'}"
-					>
-						<Label class="flex flex-col items-start space-y-0.5">
-							<span class="text-sm text-muted-foreground"
-								>Block events that contain this resource.</span
-							>
-						</Label>
-						<div class="space-y-2 mt-2">
-							{#each myResources as resource (`blockAResource${resource.id}`)}
-								<div class="flex items-center gap-3">
-									<Label
-										for="blockResource{resource.id}"
-										class="w-full {!filtersBindable.enableResourceFiltering ? 'opacity-50' : ''}"
-									>
-										<Item.Root variant="outline">
-											<Item.Content>
-												<Item.Title
-													>{resource.name}{#if resource.path_name}<span class="-ml-1"
-															>({resource.path_name.trimEnd()})</span
-														>{/if}</Item.Title
-												>
-												{#if resource.description}
-													<Item.Description>{resource.description}</Item.Description>
-												{/if}
-											</Item.Content>
-											<Item.Actions>
-												<input
-													disabled={!filtersBindable.enableResourceFiltering}
-													id="blockResource{resource.id}"
-													{...updateCalendarForm.fields.filters.blockResources.as(
-														"checkbox",
-														resource.id
-													)}
-													bind:group={filtersBindable.blockResources}
-												/>
-											</Item.Actions>
-										</Item.Root>
-									</Label>
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div>
-				<div class="flex items-center justify-between">
-					<Label
-						class="flex flex-col items-start space-y-1 cursor-pointer"
-						for="enableTagFiltering"
-					>
-						<span class="font-medium">Enable Tag Filtering</span>
-						<span class="text-sm text-muted-foreground"
-							>Most events contain information regarding the tags that are required. You can allow
-							or block events based on its tag requirements.</span
-						>
-					</Label>
-
-					<input
-						{...updateCalendarForm.fields.filters.enableTagFiltering.as("checkbox")}
-						class="sr-only"
-						bind:checked={filtersBindable.enableTagFiltering}
-						type="checkbox"
-					/>
-					<Switch id="enableTagFiltering" bind:checked={filtersBindable.enableTagFiltering} />
-				</div>
-
-				<div>
-					<input
-						{...updateCalendarForm.fields.filters.tagFilterType.as(
-							"hidden",
-							filtersBindable.tagFilterType
-						)}
-					/>
-					<Tabs.Root bind:value={filtersBindable.tagFilterType} class="w-full mt-2">
-						<Tabs.List class="w-full rounded-b-none">
-							<Tabs.Trigger value="allow" disabled={!filtersBindable.enableTagFiltering}
-								>Allow Events</Tabs.Trigger
-							>
-							<Tabs.Trigger value="block" disabled={!filtersBindable.enableTagFiltering}
-								>Block Events</Tabs.Trigger
-							>
-						</Tabs.List>
-					</Tabs.Root>
-					<div
-						class="w-full bg-muted rounded-b-md p-2 {filtersBindable.tagFilterType === 'block'
-							? 'hidden'
-							: 'mt-0.5'}"
-					>
-						<Label class="flex flex-col items-start space-y-0.5">
-							<span class="text-sm text-muted-foreground"
-								>Allow events that contain this tag.{#if filtersBindable.allowTags.length === 0}<br
-									/><span class="text-red-500"
-										>*If no tag is selected, then all events will go through and no filtering will
-										happen.</span
-									>{/if}</span
-							>
-						</Label>
-						<div class="space-y-2 mt-2">
-							{#each myTags as tag (`allowATag${tag.id}`)}
-								<div class="flex items-center gap-3">
-									<Label
-										for="allowTag{tag.id}"
-										class="w-full {!filtersBindable.enableTagFiltering ? 'opacity-50' : ''}"
-									>
-										<Item.Root variant="outline">
-											<Item.Content>
-												<Item.Title>{tag.name}</Item.Title>
-											</Item.Content>
-											<Item.Actions>
-												<input
-													disabled={!filtersBindable.enableTagFiltering}
-													id="allowTag{tag.id}"
-													{...updateCalendarForm.fields.filters.allowTags.as("checkbox", tag.id)}
-													bind:group={filtersBindable.allowTags}
-												/>
-											</Item.Actions>
-										</Item.Root>
-									</Label>
-								</div>
-							{/each}
-						</div>
-					</div>
-					<div
-						class="w-full bg-muted rounded-b-md p-2 {filtersBindable.tagFilterType === 'allow'
-							? 'hidden'
-							: 'mt-0.5'}"
-					>
-						<Label class="flex flex-col items-start space-y-0.5">
-							<span class="text-sm text-muted-foreground">Block events that contain this tag.</span>
-						</Label>
-						<div class="space-y-2 mt-2">
-							{#each myTags as tag (`blockATag${tag.id}`)}
-								<div class="flex items-center gap-3">
-									<Label
-										for="blockTag{tag.id}"
-										class="w-full {!filtersBindable.enableTagFiltering ? 'opacity-50' : ''}"
-									>
-										<Item.Root variant="outline">
-											<Item.Content>
-												<Item.Title>{tag.name}</Item.Title>
-											</Item.Content>
-											<Item.Actions>
-												<input
-													disabled={!filtersBindable.enableTagFiltering}
-													id="blockTag{tag.id}"
-													{...updateCalendarForm.fields.filters.blockTags.as("checkbox", tag.id)}
-													bind:group={filtersBindable.blockTags}
-												/>
-											</Item.Actions>
-										</Item.Root>
-									</Label>
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
-			</div>
+<div class="grid grid-cols-1 gap-6">
+	<div>
+		<FieldLabel>Visibility</FieldLabel>
+		<div class="mt-2">
+			<input
+				{...updateCalendarForm.fields.filters.onlyShowFeatured.as("checkbox")}
+				class="sr-only"
+				bind:checked={filtersBindable.onlyShowFeatured}
+				type="checkbox"
+			/>
+			<SettingRow
+				label="Featured events only"
+				sub="Only show events marked as featured in Planning Center"
+			>
+				<Toggle bind:on={filtersBindable.onlyShowFeatured} />
+			</SettingRow>
+			<input
+				{...updateCalendarForm.fields.filters.hideUnpublished.as("checkbox")}
+				class="sr-only"
+				bind:checked={filtersBindable.hideUnpublished}
+				type="checkbox"
+			/>
+			<SettingRow
+				label="Hide unpublished events"
+				sub="Hide the events that are not visible in the church center."
+			>
+				<Toggle bind:on={filtersBindable.hideUnpublished} />
+			</SettingRow>
+			<input
+				{...updateCalendarForm.fields.filters.enableTagFiltering.as("checkbox")}
+				class="sr-only"
+				bind:checked={filtersBindable.enableTagFiltering}
+				type="checkbox"
+			/>
+			<SettingRow
+				label="Enable Tag Filtering"
+				sub="Most events contain information regarding the tags that are required. You can allow or
+					block events based on its tag requirements."
+			>
+				<Toggle bind:on={filtersBindable.enableTagFiltering} />
+			</SettingRow>
+			<input
+				{...updateCalendarForm.fields.filters.enableResourceFiltering.as("checkbox")}
+				class="sr-only"
+				bind:checked={filtersBindable.enableResourceFiltering}
+				type="checkbox"
+			/>
+			<SettingRow
+				label="Enable Resource Filtering"
+				sub="Most events contain information regarding the resources that are required. You can allow
+					or block events based on its resource requirements."
+			>
+				<Toggle bind:on={filtersBindable.enableResourceFiltering} />
+			</SettingRow>
 		</div>
-	</Card.Content>
-</Card.Root>
+	</div>
+
+	<div>
+		<FieldLabel>Tag Filter</FieldLabel>
+		<Mono
+			class="text-[10px] text-muted-foreground mt-1 mb-3 block {filtersBindable.enableTagFiltering
+				? ''
+				: 'opacity-25'}"
+		>
+			Only events matching at least one of these tags will appear.
+		</Mono>
+		<input
+			{...updateCalendarForm.fields.filters.tagFilterType.as(
+				"hidden",
+				filtersBindable.tagFilterType
+			)}
+		/>
+		<div class="mt-3">
+			<BlockAllowRadio
+				bind:value={filtersBindable.tagFilterType}
+				disabled={!filtersBindable.enableTagFiltering}
+			/>
+		</div>
+		<TagSelect bind:filtersBindable />
+	</div>
+
+	<div>
+		<FieldLabel>Resource Filter</FieldLabel>
+		<Mono
+			class="text-[10px] text-muted-foreground mt-1 mb-3 block {filtersBindable.enableResourceFiltering
+				? ''
+				: 'opacity-25'}"
+		>
+			Restrict to events assigned to specific resources or rooms.
+		</Mono>
+		<input
+			{...updateCalendarForm.fields.filters.resourceFilterType.as(
+				"hidden",
+				filtersBindable.resourceFilterType
+			)}
+		/>
+		<div class="mt-3">
+			<BlockAllowRadio
+				bind:value={filtersBindable.resourceFilterType}
+				disabled={!filtersBindable.enableResourceFiltering}
+			/>
+		</div>
+		<ResourceSelect bind:filtersBindable />
+	</div>
+</div>
