@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
-	import { Textarea } from "@/components/ui/textarea";
-	import * as Card from "@/components/ui/card/index";
-	import { Switch } from "@/components/ui/switch";
-	import { Label } from "@/components/ui/label";
-	import { Input } from "@/components/ui/input";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import SettingRow from "@/components/SettingRow.svelte";
+	import Toggle from "@/components/Toggle.svelte";
+	import { motion } from "@humanspeak/svelte-motion";
+	import FormInput from "@/components/FormInput.svelte";
+	import { Lock, Unlock } from "@lucide/svelte";
+	import Mono from "@/components/Mono.svelte";
+	import FormTextarea from "@/components/FormTextarea.svelte";
 
 	let {
 		changed = $bindable(),
@@ -34,41 +37,45 @@
 	});
 </script>
 
-<Card.Root>
-	<Card.Header>
-		<Card.Title>Security Settings</Card.Title>
-		<Card.Description>Control access to your calendar</Card.Description>
-	</Card.Header>
+<input
+	{...updateCalendarForm.fields.enablePassword.as("checkbox")}
+	class="sr-only"
+	bind:checked={enablePasswordBindable}
+	type="checkbox"
+/>
+<FieldLabel>Access Control</FieldLabel>
+<div class="mt-2">
+	<SettingRow label="Password protection" sub="Require a password to view this calendar">
+		<Toggle bind:on={enablePasswordBindable} />
+	</SettingRow>
+</div>
 
-	<Card.Content class="space-y-4">
-		<div class="flex items-center justify-between">
-			<div class="space-y-0.5">
-				<Label for="password-protection" class="text-base">Password Protection</Label>
-				<p class="text-sm text-muted-foreground">Require a password to access this calendar</p>
-			</div>
-			<input
-				{...updateCalendarForm.fields.enablePassword.as("checkbox")}
-				class="sr-only"
-				bind:checked={enablePasswordBindable}
-				type="checkbox"
-			/>
-			<Switch id="password-protection" bind:checked={enablePasswordBindable} />
-		</div>
-
-		{#if enablePasswordBindable}
-			<div class="space-y-2 pt-2">
+{#if enablePasswordBindable}
+	<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} class="space-y-3">
+		<FieldLabel>Password</FieldLabel>
+		<div class="flex gap-2 items-center">
+			<div class="flex-1">
 				{#if newPasswordBindable.length > 0}
 					<input {...updateCalendarForm.fields.newPassword.as("hidden", newPasswordBindable)} />
 				{/if}
-				<Label for="password">Calendar Password</Label>
-				<Input
-					id="password"
-					bind:value={newPasswordBindable}
+				<FormInput
 					type="password"
-					placeholder="Enter password"
+					bind:value={newPasswordBindable}
+					placeholder="Set a password..."
 				/>
 			</div>
-			<div class="space-y-2">
+			<div class="text-primary">
+				<Lock size={16} />
+			</div>
+		</div>
+		<Mono class="text-[10px] text-muted-foreground block">
+			Visitors will be prompted to enter this password before viewing.
+		</Mono>
+	</motion.div>
+	<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} class="space-y-3">
+		<FieldLabel>Password Screen Message</FieldLabel>
+		<div class="flex gap-2 items-center">
+			<div class="flex-1">
 				{#if passwordScreenMessageBindable.length > 0}
 					<input
 						{...updateCalendarForm.fields.passwordScreenMessage.as(
@@ -77,20 +84,18 @@
 						)}
 					/>
 				{/if}
-				<Label for="passwordScreenMessage">Password Screen Message</Label>
-				<Textarea
-					id="passwordScreenMessage"
+				<FormTextarea
 					bind:value={passwordScreenMessageBindable}
-					placeholder="Enter Password Screen Message"
-					rows={3}
+					placeholder="Set a password screen message..."
 				/>
 			</div>
-		{/if}
-	</Card.Content>
-</Card.Root>
-
-<style>
-	input[type="checkbox"] {
-		accent-color: #000000;
-	}
-</style>
+		</div>
+	</motion.div>
+{:else}
+	<div class="flex items-center gap-3 p-3 bg-muted/30 border border-border/40">
+		<Unlock size={14} class="text-muted-foreground shrink-0" />
+		<Mono class="text-[10px] text-muted-foreground"
+			>This calendar is publicly accessible — no password required.</Mono
+		>
+	</div>
+{/if}

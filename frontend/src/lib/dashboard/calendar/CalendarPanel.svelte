@@ -1,54 +1,149 @@
 <script lang="ts">
-	import type { CalendarDBModel } from "@/cal.utils";
-	import FieldLabel from "@/components/FieldLabel.svelte";
-	import FormInput from "@/components/FormInput.svelte";
-	import FormTextarea from "@/components/FormTextarea.svelte";
-	import Mono from "@/components/Mono.svelte";
-	import SettingRow from "@/components/SettingRow.svelte";
-	import TagSelect from "@/components/TagSelect.svelte";
-	import Toggle from "@/components/Toggle.svelte";
-	import ViewModeRadio from "@/components/ViewModeRadio.svelte";
-	import { cn } from "@/utils";
+	import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
+	import { getMyCalendars } from "../../../routes/(mainWebsite)/dashboard/backend.remote";
 	import { AnimatePresence, motion } from "@humanspeak/svelte-motion";
-	import { Unlock, X, Lock } from "@lucide/svelte";
-	import {
-		getMyEventResourcesPrivate,
-		getMyEventTagsPrivate
-	} from "../../../routes/(mainWebsite)/dashboard/events.remote";
-	import type { EventResourcesDBModelPrivate, EventTagsDBModelPrivate } from "@/event.utils";
-	import ResourceSelect from "@/components/ResourceSelect.svelte";
+	import CalSecuritySettings from "./CalSecuritySettings.svelte";
+	import CalDisplaySettings from "./CalDisplaySettings.svelte";
+	import CalFilterSettings from "./CalFilterSettings.svelte";
+	import FieldLabel from "@/components/FieldLabel.svelte";
+	import * as Dialog from "@/components/ui/dialog/index";
+	import CalGeneralInfo from "./CalGeneralInfo.svelte";
+	import { Button } from "@/components/ui/button";
 	import CopyButton from "@/CopyButton.svelte";
+	import { clearFileInput, cn } from "@/utils";
+	import Mono from "@/components/Mono.svelte";
+	import CalAvatar from "./CalAvatar.svelte";
+	import { toast } from "svelte-sonner";
+	import { X } from "@lucide/svelte";
 
 	type Tabs = "basic" | "display" | "filters" | "security" | "share";
 
-	let { calendar, open = $bindable() }: { calendar: CalendarDBModel; open: boolean } = $props();
+	let {
+		calendarID,
+		open = $bindable(),
+		pb_url
+	}: {
+		calendarID: string | undefined;
+		open: boolean;
+		pb_url: string;
+	} = $props();
 
 	const tabs: Tabs[] = ["basic", "display", "filters", "security", "share"];
 
 	let tab: Tabs = $state("basic");
 
-	let myTags = $derived(await getMyEventTagsPrivate());
-	let selectedTags: EventTagsDBModelPrivate[] = $state([]);
+	let calendar = $derived((await getMyCalendars()).filter((cal) => cal.id === calendarID)[0]!);
 
-	let myResources = $derived(await getMyEventResourcesPrivate());
-	let selectedResources: EventResourcesDBModelPrivate[] = $state([]);
-
-	let shareLink = $derived(`https://infosections.com/cal/${calendar.publicId}`);
-
+	let unsavedChangesDialogShow = $state(false);
 	function close() {
+		const saveRequired =
+			avatarChanged ||
+			generalInfoChanged ||
+			displaySettingsChanged ||
+			filterSettingsChanged ||
+			securitySettingsChanged;
+
+		if (saveRequired) {
+			unsavedChangesDialogShow = true;
+			return;
+		}
+
+		actualClose();
+	}
+
+	function actualClose() {
+		tab = "basic";
+
+		if (uploadNewAvatar) {
+			clearFileInput(document.getElementById("imageUploaderCalendar"));
+			uploadNewAvatar = null;
+			avatarChanged = false;
+		}
+		avatarChanged = false;
+		generalInfoChanged = false;
+		displaySettingsChanged = false;
+		filterSettingsChanged = false;
+		securitySettingsChanged = false;
+
+		saveChangesToast = false;
 		open = false;
+		unsavedChangesDialogShow = false;
+	}
+
+	let uploadNewAvatar: File | null = $state(null);
+	let saveChangesToast: boolean = $state(false);
+
+	let previewURLPath = $derived(calendar.publicId);
+
+	let avatarChanged = $state(false);
+	let generalInfoChanged = $state(false);
+	let filterSettingsChanged = $state(false);
+	let displaySettingsChanged = $state(false);
+	let securitySettingsChanged = $state(false);
+
+	// This effect checks if any configurations have changed. If so, the saveRequired state will be set to true.
+	$effect(() => {
+		const saveRequired =
+			avatarChanged ||
+			generalInfoChanged ||
+			displaySettingsChanged ||
+			filterSettingsChanged ||
+			securitySettingsChanged;
+
+		if (saveRequired) {
+			saveChangesToast = true;
+			// if (saveChangesToast === null) {
+			// 	saveChangesToast = toast("Save?", {
+			// 		description: "You have some unsaved changes.",
+			// 		dismissable: false,
+			// 		duration: Number.POSITIVE_INFINITY,
+			// 		action: {
+			// 			label: "Save Changes",
+			// 			onClick: () => {
+			// 				const formSubmitButton = document.getElementById(
+			// 					"updateCalendarButton1"
+			// 				) as HTMLButtonElement | null;
+			// 				if (formSubmitButton) {
+			// 					formSubmitButton.click();
+			// 				}
+			// 			}
+			// 		}
+			// 	});
+			// }
+		} else {
+			saveChangesToast = false;
+			// if (saveChangesToast !== null) {
+			// 	toast.dismiss(saveChangesToast);
+			// }
+			// saveChangesToast = null;
+		}
+	});
+
+	$effect(() => {
+		if (open) {
+			getMyCalendars().refresh();
+		}
+	});
+
+	function saveChanges() {
+		const formSubmitButton = document.getElementById(
+			"updateCalendarButton1"
+		) as HTMLButtonElement | null;
+		if (formSubmitButton) {
+			formSubmitButton.click();
+		}
 	}
 </script>
 
 <AnimatePresence>
-	{#if open}
+	{#if open && calendar}
 		<motion.div
 			key="backdrop"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			transition={{ duration: 0.2 }}
-			class="fixed inset-0 top-12 z-30 bg-foreground/10 backdrop-blur-[2px]"
+			class="absolute inset-0 top-0 left-0 w-full h-full z-30 bg-foreground/10 backdrop-blur-[2px]"
 			onclick={close}
 		/>
 		<motion.div
@@ -99,181 +194,99 @@
 								: "border-transparent text-muted-foreground hover:text-foreground"
 						)}
 					>
-						{t}
+						{t.toUpperCase()}
 					</button>
 				{/each}
 			</div>
 
-			<div class="flex-1 overflow-y-auto">
-				{#if tab === "basic"}
-					<div class="p-5 space-y-5">
-						<div>
-							<FieldLabel>Name</FieldLabel>
-							<div class="mt-2">
-								<FormInput value={calendar.name} type="text" placeholder="e.g. Sunday Services" />
-							</div>
-						</div>
-						<div>
-							<FieldLabel>Description</FieldLabel>
-							<div class="mt-2">
-								<FormTextarea
-									value={calendar.description}
-									placeholder="What events does this show?"
-									rows={4}
-								/>
-							</div>
-						</div>
-						{#if calendar.name}
-							<div class="p-3 bg-muted/40 border border-border/40">
-								<FieldLabel>Preview URL</FieldLabel>
-								<Mono class="text-[10px] text-primary mt-1 block break-all">{shareLink}</Mono>
-							</div>
-						{/if}
-					</div>
-				{:else if tab === "display"}
-					<div class="p-5 space-y-6">
-						<div>
-							<FieldLabel>Default View</FieldLabel>
-							<div class="mt-3">
-								<ViewModeRadio bind:value={calendar.displaySettings.viewType} />
-							</div>
-							<Mono class="text-[10px] text-muted-foreground mt-2 block">
-								Controls how events are laid out by default. Users can switch views.
-							</Mono>
-						</div>
+			<form
+				{...updateCalendarForm.enhance(async (form) => {
+					let savingChanges = toast.loading("Saving Changes.", {
+						duration: Number.POSITIVE_INFINITY
+					});
+					try {
+						await form.submit();
+						toast.dismiss(savingChanges);
 
-						<div>
-							<FieldLabel>Display Options</FieldLabel>
-							<div class="mt-2">
-								<SettingRow
-									label="Show event descriptions"
-									sub="Display full description below event title"
-								>
-									<Toggle bind:on={calendar.displaySettings.showDescription} />
-								</SettingRow>
-								<SettingRow
-									label="12-hour (AM/PM) format"
-									sub="Use 12-hour clock instead of 24-hour"
-								>
-									<Toggle bind:on={calendar.displaySettings.useAMPM} />
-								</SettingRow>
-								<SettingRow label="Show resources" sub="Display assigned resources on each event">
-									<Toggle bind:on={calendar.displaySettings.showResources} />
-								</SettingRow>
-								<SettingRow label="Show rooms" sub="Display room assignments when available">
-									<Toggle bind:on={calendar.displaySettings.showRooms} />
-								</SettingRow>
-								<SettingRow label="Show location" sub="Display event location / venue name">
-									<Toggle bind:on={calendar.displaySettings.showLocation} />
-								</SettingRow>
-							</div>
-						</div>
-					</div>
-				{:else if tab === "filters"}
-					<div class="p-5 space-y-6">
-						<div>
-							<FieldLabel>Visibility</FieldLabel>
-							<div class="mt-2">
-								<SettingRow
-									label="Featured events only"
-									sub="Only show events marked as featured in Planning Center"
-								>
-									<Toggle bind:on={calendar.filters.onlyShowFeatured} />
-								</SettingRow>
-								<SettingRow label="Hide unpublished events" sub="Suppress draft and private events">
-									<Toggle on={calendar.filters.hideUnpublished} />
-								</SettingRow>
-							</div>
-						</div>
+						if (!updateCalendarForm.fields.allIssues()) {
+							form.element.reset();
 
-						<div>
-							<FieldLabel>Tag Filter</FieldLabel>
-							<Mono class="text-[10px] text-muted-foreground mt-1 mb-3 block">
-								Only events matching at least one of these tags will appear.
-							</Mono>
-							<TagSelect
-								selected={selectedTags}
-								options={myTags}
-								onAdd={(t) => (selectedTags = [...selectedTags, t])}
-								onRemove={(t) => (selectedTags = selectedTags.filter((tag) => tag !== t))}
-								placeholder="Add tag filter..."
-							/>
-							{#if selectedTags.length === 0}
-								<Mono class="text-[10px] text-muted-foreground mt-2 block"
-									>No tag filter — all tags shown.</Mono
-								>
-							{/if}
-						</div>
+							clearFileInput(document.getElementById("imageUploaderCalendar"));
+							uploadNewAvatar = null;
+							toast.success("Saved Changes");
+						} else {
+							toast.error("Something went wrong!");
+						}
+					} catch (err) {
+						console.log(err);
+						toast.dismiss(savingChanges);
+						toast.error("An error occured.");
+					}
+				})}
+				class="flex-1 overflow-y-auto"
+				enctype="multipart/form-data"
+			>
+				{#if calendar.id.length > 0}
+					<input {...updateCalendarForm.fields.id.as("hidden", calendar.id)} />
+				{/if}
 
-						<div>
-							<FieldLabel>Resource Filter</FieldLabel>
-							<Mono class="text-[10px] text-muted-foreground mt-1 mb-3 block">
-								Restrict to events assigned to specific resources or rooms.
-							</Mono>
-							<ResourceSelect
-								selected={selectedResources}
-								options={myResources}
-								onAdd={(t) => (selectedResources = [...selectedResources, t])}
-								onRemove={(t) =>
-									(selectedResources = selectedResources.filter((resource) => resource !== t))}
-								placeholder="Add resource..."
-							/>
-							{#if selectedResources.length === 0}
-								<Mono class="text-[10px] text-muted-foreground mt-2 block"
-									>No resource filter — all resources shown.</Mono
-								>
-							{/if}
-						</div>
-					</div>
-				{:else if tab === "security"}
-					<div class="p-5 space-y-6">
-						<div>
-							<FieldLabel>Access Control</FieldLabel>
-							<div class="mt-2">
-								<SettingRow
-									label="Password protection"
-									sub="Require a password to view this calendar"
-								>
-									<Toggle bind:on={calendar.passwordEnabled} />
-								</SettingRow>
-							</div>
-						</div>
+				<!-- Basic -->
+				<div class="p-5 space-y-5 {tab === 'basic' ? 'block' : 'hidden'}">
+					<CalAvatar
+						bind:changed={avatarChanged}
+						bind:uploadNewAvatar
+						avatarLink={calendar.logo
+							? `${pb_url}/api/files/${calendar.collectionId}/${calendar.id}/${calendar.logo}`
+							: ""}
+					/>
 
-						{#if calendar.passwordEnabled}
-							<motion.div
-								initial={{ opacity: 0, y: -8 }}
-								animate={{ opacity: 1, y: 0 }}
-								class="space-y-3"
+					<CalGeneralInfo
+						bind:changed={generalInfoChanged}
+						calPublicId={calendar.publicId}
+						calendarName={calendar.name}
+						calendarDescription={calendar.description}
+						bind:newUrlPath={previewURLPath}
+					/>
+
+					{#if previewURLPath}
+						<div class="p-3 bg-muted/40 border border-border/40">
+							<FieldLabel>Preview URL</FieldLabel>
+							<Mono class="text-[10px] text-primary mt-1 block break-all"
+								>https://infosections.com/cal/{previewURLPath}</Mono
 							>
-								<FieldLabel>Password</FieldLabel>
-								<div class="flex gap-2 items-center">
-									<div class="flex-1">
-										<FormInput
-											type="password"
-											bind:value={calendar.password}
-											placeholder="Set a password..."
-										/>
-									</div>
-									<div class="text-primary">
-										<Lock size={16} />
-									</div>
-								</div>
-								<Mono class="text-[10px] text-muted-foreground block">
-									Visitors will be prompted to enter this password before viewing.
-								</Mono>
-							</motion.div>
-						{:else}
-							<div class="flex items-center gap-3 p-3 bg-muted/30 border border-border/40">
-								<Unlock size={14} class="text-muted-foreground shrink-0" />
-								<Mono class="text-[10px] text-muted-foreground"
-									>This calendar is publicly accessible — no password required.</Mono
-								>
-							</div>
-						{/if}
-					</div>
-				{:else if tab === "share"}
-					<div class="p-5 space-y-5">
-						<!-- <div>
+						</div>
+					{/if}
+				</div>
+
+				<!-- Display -->
+				<div class="p-5 space-y-6 {tab === 'display' ? 'block' : 'hidden'}">
+					<CalDisplaySettings
+						displaySettings={$state.snapshot(calendar.displaySettings)}
+						bind:changed={displaySettingsChanged}
+					/>
+				</div>
+
+				<!-- Filters -->
+				<div class="p-5 space-y-6 {tab === 'filters' ? 'block' : 'hidden'}">
+					<CalFilterSettings
+						filters={$state.snapshot(calendar.filters)}
+						bind:changed={filterSettingsChanged}
+					/>
+				</div>
+
+				<!-- Security -->
+				<div class="p-5 space-y-6 {tab === 'security' ? 'block' : 'hidden'}">
+					<CalSecuritySettings
+						bind:changed={securitySettingsChanged}
+						enablePassword={calendar.passwordEnabled}
+						newPassword=""
+						passwordScreenMessage={calendar.passwordScreenMessage}
+					/>
+				</div>
+
+				<!-- Share -->
+				<div class="p-5 space-y-5 {tab === 'share' ? 'block' : 'hidden'}">
+					<!-- <div>
                     <FieldLabel>Statistics</FieldLabel>
                     <div class="flex mt-3 gap-0">
                     <StatChip label="TOTAL VIEWS" value={item!.stats.views.toLocaleString()} icon={Eye} />
@@ -282,23 +295,29 @@
                     </div>
                 </div> -->
 
-						<div>
-							<FieldLabel>Share URL</FieldLabel>
-							<div class="flex gap-2 mt-2">
-								<div class="flex-1 border border-border px-3 py-2 bg-muted/20 overflow-hidden">
-									<Mono class="text-[10px] text-foreground break-all">{shareLink}</Mono>
-								</div>
-								<CopyButton text={shareLink} />
+					<div>
+						<FieldLabel>Share URL</FieldLabel>
+						<div class="flex gap-2 mt-2">
+							<div class="flex-1 border border-border px-3 py-2 bg-muted/20 overflow-hidden">
+								<Mono class="text-[10px] text-foreground break-all"
+									>https://infosections.com/cal/{previewURLPath}</Mono
+								>
 							</div>
+							<CopyButton text="https://infosections.com/cal/{previewURLPath}" />
 						</div>
 					</div>
-				{/if}
-			</div>
+				</div>
+				<Button type="submit" id="updateCalendarButton1" class="sr-only">Update Calendar</Button>
+			</form>
 
 			<div class="flex items-center gap-2 px-5 py-3.5 border-t border-border shrink-0 bg-card/40">
 				<button
+					disabled={!saveChangesToast}
+					onclick={saveChanges}
 					type="button"
-					class="font-mono text-[10px] tracking-widest px-5 py-2.5 transition-colors cursor-pointer bg-primary text-primary-foreground hover:opacity-90"
+					class="font-mono text-[10px] tracking-widest px-5 py-2.5 transition-colors cursor-pointer bg-primary text-primary-foreground hover:opacity-90 {!saveChangesToast
+						? 'opacity-25'
+						: ''}"
 				>
 					SAVE CHANGES
 				</button>
@@ -315,3 +334,30 @@
 		</motion.div>
 	{/if}
 </AnimatePresence>
+
+<Dialog.Root bind:open={unsavedChangesDialogShow}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>You have unsaved changes!</Dialog.Title>
+			<Dialog.Description>
+				<Mono class="text-xs text-muted-foreground">
+					This action cannot be undone. This will permanently delete any changes you made to the
+					calendar.
+				</Mono>
+			</Dialog.Description>
+			<Dialog.Footer>
+				<Button variant="destructive" onclick={actualClose}>I'm sure</Button>
+				<Button
+					variant="default"
+					onclick={() => {
+						unsavedChangesDialogShow = false;
+						saveChanges();
+						setTimeout(() => {
+							close();
+						}, 500);
+					}}>Save Changes</Button
+				>
+			</Dialog.Footer>
+		</Dialog.Header>
+	</Dialog.Content>
+</Dialog.Root>

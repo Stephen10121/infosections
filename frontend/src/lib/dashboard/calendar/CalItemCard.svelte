@@ -6,17 +6,20 @@
 	import { motion } from "@humanspeak/svelte-motion";
 	import CopyButton from "@/CopyButton.svelte";
 	import PrettyDate from "@/PrettyDate.svelte";
+	import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
 
 	let {
 		item,
 		key,
 		onDelete,
-		onEdit
+		onEdit,
+		pb_url
 	}: {
 		item: CalendarDBModel;
 		key: string;
 		onDelete: (item: CalendarDBModel) => unknown;
 		onEdit: () => unknown;
+		pb_url: string;
 	} = $props();
 
 	const viewLabels: Record<CalendarDBModel["displaySettings"]["viewType"], string> = {
@@ -35,6 +38,19 @@
 	class="border border-border bg-background hover:bg-card/40 transition-colors group"
 >
 	<div class="flex items-start gap-4 p-4">
+		<div
+			class="w-10 h-10 shrink-0 border border-border overflow-hidden bg-muted flex items-center justify-center"
+		>
+			{#if item.logo !== null && item.logo !== undefined && item.logo.length > 0}
+				<img
+					src="{pb_url}/api/files/{item.collectionId}/{item.id}/{item.logo}"
+					alt={item.name}
+					class="w-full h-full object-cover"
+				/>
+			{:else}
+				<NoCalendarAvatar small />
+			{/if}
+		</div>
 		<div class="flex-1 min-w-0">
 			<div class="flex items-center gap-2 flex-wrap mb-1">
 				<Mono class="text-[9px] px-1.5 py-0.5 font-semibold shrink-0 bg-primary/15 text-primary">

@@ -1,79 +1,67 @@
 <script lang="ts">
-	import { Plus } from "@lucide/svelte";
-	import Pill from "./Pill.svelte";
-	import type { EventTagsDBModelPrivate } from "@/event.utils";
+	import { updateCalendarForm } from "../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
+	import { getMyEventTagsPrivate } from "../../routes/(mainWebsite)/dashboard/events.remote";
+	import type { CalendarFilters } from "@/cal.utils";
+	import SettingRow from "./SettingRow.svelte";
+	import Mono from "./Mono.svelte";
 
 	let {
-		selected,
-		options,
-		onAdd,
-		onRemove,
-		placeholder
+		filtersBindable = $bindable()
 	}: {
-		selected: EventTagsDBModelPrivate[];
-		options: EventTagsDBModelPrivate[];
-		onAdd: (v: EventTagsDBModelPrivate) => void;
-		onRemove: (v: EventTagsDBModelPrivate) => void;
-		placeholder?: string;
+		filtersBindable: CalendarFilters;
 	} = $props();
 
-	let input = $state("");
-	let open = $state(false);
-	const filtered = $derived(
-		options.filter((o) => !selected.includes(o) && o.name.includes(input.toLowerCase()))
-	);
+	let myTags = $derived(await getMyEventTagsPrivate());
 </script>
 
 <div class="relative">
-	<div class="flex flex-wrap gap-1 mb-2">
-		{#each selected as t (t)}
-			<Pill label={t.name} onRemove={() => onRemove(t)} />
-		{/each}
-	</div>
-	<div class="flex gap-1.5">
-		<input
-			value={input}
-			onchange={(e) => {
-				//@ts-ignore
-				input = e.target!.value;
-				open = true;
-			}}
-			onfocus={() => (open = true)}
-			onblur={() => setTimeout(() => (open = false), 150)}
-			placeholder={placeholder || "Add tag..."}
-			class="flex-1 border border-border bg-transparent px-2 py-1.5 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
-			style="font-family: 'JetBrains Mono', monospace"
-		/>
-		<button
-			type="button"
-			onclick={() => {
-				if (input.trim() && selected.filter((s) => s.name.includes(input.trim())).length === 0) {
-					onAdd(selected.filter((s) => s.name.includes(input.trim()))[0]!);
-					input = "";
-				}
-			}}
-			class="border border-border px-2 py-1.5 text-muted-foreground hover:text-foreground hover:border-primary transition-colors cursor-pointer"
-		>
-			<Plus size={12} />
-		</button>
-	</div>
-	{#if open && filtered.length > 0}
-		<div
-			class="absolute top-full left-0 right-0 z-10 border border-border bg-background shadow-lg mt-0.5 max-h-36 overflow-y-auto"
-		>
-			{#each filtered as o (o)}
-				<button
-					type="button"
-					onmousedown={() => {
-						onAdd(o);
-						input = "";
-						open = false;
-					}}
-					class="w-full text-left px-3 py-1.5 font-mono text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+	<div class="w-full {filtersBindable.tagFilterType === 'block' ? 'hidden' : 'mt-0.5'}">
+		<div class="space-y-2 mt-2">
+			{#each myTags as tag (`allowATag${tag.id}`)}
+				<div
+					class="flex items-center gap-3 {!filtersBindable.enableTagFiltering ? 'opacity-55' : ''}"
 				>
-					#{o}
-				</button>
+					<SettingRow label={tag.name} sub="Allow Tag">
+						<input
+							class="checkboxInput sr-only"
+							disabled={!filtersBindable.enableTagFiltering}
+							id="allowTag{tag.id}"
+							{...updateCalendarForm.fields.filters.allowTags.as("checkbox", tag.id)}
+							bind:group={filtersBindable.allowTags}
+						/>
+						<div class="checkbox">
+							<div class="checkbox-switch"></div>
+						</div>
+					</SettingRow>
+				</div>
 			{/each}
 		</div>
+	</div>
+	<div class="w-full {filtersBindable.tagFilterType === 'allow' ? 'hidden' : 'mt-0.5'}">
+		<div class="space-y-2 mt-2">
+			{#each myTags as tag (`blockATag${tag.id}`)}
+				<div
+					class="flex items-center gap-3 {!filtersBindable.enableTagFiltering ? 'opacity-55' : ''}"
+				>
+					<SettingRow label={tag.name} sub="Block Tag">
+						<input
+							class="checkboxInput sr-only"
+							disabled={!filtersBindable.enableTagFiltering}
+							id="blockTag{tag.id}"
+							{...updateCalendarForm.fields.filters.blockTags.as("checkbox", tag.id)}
+							bind:group={filtersBindable.blockTags}
+						/>
+						<div class="checkbox">
+							<div class="checkbox-switch"></div>
+						</div>
+					</SettingRow>
+				</div>
+			{/each}
+		</div>
+	</div>
+	{#if myTags.length === 0 && filtersBindable.enableTagFiltering}
+		<Mono class="text-[10px] text-red-500 mt-1 mb-3 block">
+			You currently have no tags imported from your integrations.
+		</Mono>
 	{/if}
 </div>

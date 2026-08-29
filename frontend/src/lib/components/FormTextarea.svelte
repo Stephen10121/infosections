@@ -11,6 +11,7 @@
 
 <textarea
 	bind:this={ref}
+	bind:value
 	{...restProps}
 	class={cn(
 		"w-full border border-border bg-transparent px-3 py-2 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors",

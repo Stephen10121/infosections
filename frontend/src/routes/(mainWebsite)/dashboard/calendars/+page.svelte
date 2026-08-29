@@ -1,44 +1,36 @@
 <script lang="ts">
 	import { createCalendarCommand, deleteCalendarCommand } from "./calendarActions.remote.js";
-	import {
-		CalendarDays,
-		Copy,
-		MoreVertical,
-		Plus,
-		Search,
-		Shield,
-		Trash2,
-		Users
-	} from "@lucide/svelte";
-	import * as DropdownMenu from "@/components/ui/dropdown-menu/index";
-	import { Button, buttonVariants } from "@/components/ui/button";
-	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
-	import * as Avatar from "$lib/components/ui/avatar/index.js";
-	import { Spinner } from "@/components/ui/spinner/index.js";
-	import NoCalendarAvatar from "@/NoCalendarAvatar.svelte";
-	import { Switch } from "@/components/ui/switch/index.js";
+	import { CalendarDays, Plus, Search } from "@lucide/svelte";
+	import { Button } from "@/components/ui/button";
 	import * as Dialog from "@/components/ui/dialog/index";
 	import { getMyCalendars } from "../backend.remote.js";
-	import { Textarea } from "@/components/ui/textarea";
-	import * as Card from "@/components/ui/card/index";
 	import { afterNavigate } from "$app/navigation";
-	import { Label } from "@/components/ui/label";
-	import { Input } from "@/components/ui/input";
 	import { browser } from "$app/environment";
 	import { toast } from "svelte-sonner";
-	import { page } from "$app/stores";
-	import { cn } from "@/utils";
+	// import { page } from "$app/stores";
 	import FieldLabel from "@/components/FieldLabel.svelte";
 	import Mono from "@/components/Mono.svelte";
 	import { AnimatePresence } from "@humanspeak/svelte-motion";
 	import CalItemCard from "@/dashboard/calendar/CalItemCard.svelte";
 	import { onMount } from "svelte";
 	import CalendarPanel from "@/dashboard/calendar/CalendarPanel.svelte";
-	import type { CalendarDBModel } from "@/cal.utils.js";
+	import { Label } from "@/components/ui/label/index.js";
+	import { Input } from "@/components/ui/input/index.js";
+	import { Textarea } from "@/components/ui/textarea/index.js";
+	import { Switch } from "@/components/ui/switch/index.js";
+	import { Spinner } from "@/components/ui/spinner/index.js";
+	// import { getMyEventResourcesPrivate, getMyEventTagsPrivate } from "../events.remote.js";
 
 	let { data } = $props();
 
 	let newCalendarDialogOpen = $state(false);
+
+	// let myTagsPromise = $derived(getMyEventTagsPrivate());
+	// let myResourcesPromise = $derived(getMyEventResourcesPrivate());
+
+	// let myTags = $derived(await myTagsPromise);
+	// let myResources = $derived(await myResourcesPromise);
+
 	let newCalendarDescription = $state("");
 	let newCalendarPublicId = $state("");
 	let newCalendarName = $state("");
@@ -73,16 +65,16 @@
 		}
 	}
 
-	function copyCalLinkToClipboard(id: string) {
-		const link = `${window.location.origin}/cal/${id}`;
+	// function copyCalLinkToClipboard(id: string) {
+	// 	const link = `${window.location.origin}/cal/${id}`;
 
-		navigator.clipboard.writeText(link);
+	// 	navigator.clipboard.writeText(link);
 
-		toast.info("Copied", {
-			description: link,
-			descriptionClass: "underline"
-		});
-	}
+	// 	toast.info("Copied", {
+	// 		description: link,
+	// 		descriptionClass: "underline"
+	// 	});
+	// }
 
 	let deleteCalendarId: string | null = $state(null);
 
@@ -101,12 +93,13 @@
 
 	afterNavigate(() => {
 		if (browser) {
-			newCalendarDialogOpen = $page.url.searchParams.get("new") === "1";
+			// newCalendarDialogOpen = $page.url.searchParams.get("new") === "1";
 		}
 	});
 
 	function createNewCalendar() {
 		console.log("New Calendar");
+		newCalendarDialogOpen = true;
 	}
 
 	let calendarSearch = $state("");
@@ -123,7 +116,7 @@
 	});
 
 	let panelOpen = $state(false);
-	let selectedCalendar: CalendarDBModel = $state();
+	let selectedCalendarID: string | undefined = $state();
 </script>
 
 <svelte:head>
@@ -313,7 +306,11 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+<div
+	class="flex-1 flex flex-col min-w-0 overflow-hidden relative"
+	style="height: calc(100vh - 49px);
+		height: calc(100dvh - 49px);"
+>
 	<div class="flex items-center gap-4 px-6 py-2.5 border-b border-border bg-background shrink-0">
 		<div class="flex items-center gap-2">
 			<CalendarDays size={14} class="text-muted-foreground" />
@@ -389,13 +386,14 @@
 				<div class="space-y-3">
 					{#each filtered as item (item.id)}
 						<CalItemCard
+							pb_url={data.pb_url}
 							{item}
 							key={item.id}
 							onDelete={(item) => {
 								deleteCalendarId = item.id;
 							}}
 							onEdit={() => {
-								selectedCalendar = item;
+								selectedCalendarID = item.id;
 								panelOpen = true;
 							}}
 						/>
@@ -405,6 +403,69 @@
 		{/if}
 	</div>
 
-	{$inspect(panelOpen)}
-	<CalendarPanel bind:open={panelOpen} calendar={selectedCalendar} />
+	<CalendarPanel bind:open={panelOpen} calendarID={selectedCalendarID} pb_url={data.pb_url} />
 </div>
+
+<Dialog.Root bind:open={newCalendarDialogOpen}>
+	<Dialog.Content class="sm:max-w-125">
+		<Dialog.Header>
+			<Dialog.Title>Create New Calendar</Dialog.Title>
+			<Dialog.Description
+				>You can change more settings after creating the calendar.</Dialog.Description
+			>
+		</Dialog.Header>
+
+		<div class="space-y-4 py-4">
+			<div class="space-y-2">
+				<Label for="name">Calendar URL path</Label>
+				<Input id="publicId" placeholder="e.g., publishedevents" bind:value={newCalendarPublicId} />
+			</div>
+
+			<div class="space-y-2">
+				<Label for="name">Calendar Name</Label>
+				<Input id="name" placeholder="e.g., Published Events" bind:value={newCalendarName} />
+			</div>
+
+			<div class="space-y-2">
+				<Label for="description">Description</Label>
+				<Textarea
+					id="description"
+					placeholder="Brief description of this calendar type"
+					bind:value={newCalendarDescription}
+					rows={3}
+				/>
+			</div>
+			<div class="flex items-center justify-between">
+				<div class="space-y-0.5">
+					<Label for="password-protection" class="text-base">Password Protection</Label>
+					<p class="text-sm text-muted-foreground">Require a password to access this calendar</p>
+				</div>
+				<Switch id="password-protection" bind:checked={newCalendarPasswordEnabled} />
+			</div>
+
+			{#if newCalendarPasswordEnabled}
+				<div class="space-y-2 pt-2">
+					<Label for="password">Calendar Password</Label>
+					<Input
+						id="password"
+						bind:value={newCalendarPassword}
+						type="password"
+						placeholder="Enter password"
+					/>
+				</div>
+			{/if}
+		</div>
+
+		<Dialog.Footer>
+			<Button variant="outline" onclick={() => (newCalendarDialogOpen = false)}>Cancel</Button>
+			<Button onclick={handleCreateCalendar}>
+				{#if creatingCalendar}
+					<Spinner />
+					Creating Calendar...
+				{:else}
+					Create Calendar
+				{/if}
+			</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>

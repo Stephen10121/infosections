@@ -5,7 +5,9 @@
 	let { label, sub, children }: { label: string; sub?: string; children?: Snippet } = $props();
 </script>
 
-<div class="flex items-center justify-between py-3 border-b border-border/40 last:border-b-0">
+<label
+	class="flex items-center justify-between py-3 border-b border-border/40 last:border-b-0 w-full"
+>
 	<div class="min-w-0 mr-4">
 		<div class="text-xs text-foreground" style="font-family: Inter, sans-serif">{label}</div>
 		{#if sub}
@@ -13,4 +15,4 @@
 		{/if}
 	</div>
 	{@render children?.()}
-</div>
+</label>
