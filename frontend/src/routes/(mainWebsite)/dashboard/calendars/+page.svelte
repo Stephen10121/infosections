@@ -19,6 +19,7 @@
 	import { Textarea } from "@/components/ui/textarea/index.js";
 	import { Switch } from "@/components/ui/switch/index.js";
 	import { Spinner } from "@/components/ui/spinner/index.js";
+	import { page } from "$app/stores";
 	// import { getMyEventResourcesPrivate, getMyEventTagsPrivate } from "../events.remote.js";
 
 	let { data } = $props();
@@ -93,7 +94,17 @@
 
 	afterNavigate(() => {
 		if (browser) {
-			// newCalendarDialogOpen = $page.url.searchParams.get("new") === "1";
+			if ($page.url.searchParams.get("new") === "1") {
+				console.log("bob");
+				setTimeout(() => {
+					createNewCalendar();
+				}, 500);
+			}
+			const expanded = $page.url.searchParams.get("expanded");
+			if (expanded !== null || expanded != "") {
+				selectedCalendarID = expanded!;
+				panelOpen = true;
+			}
 		}
 	});
 
