@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getMyCalendars, getMyEventLists, getMyImageFeeds } from "./backend.remote.js";
 	import DashboardIsNavigating from "@/dashboard/DashboardIsNavigating.svelte";
 	import DashboardSidebar from "@/dashboard/DashboardSidebar.svelte";
 	import DashboardHeader from "@/dashboard/DashboardHeader.svelte";
@@ -37,11 +36,7 @@
 	/>
 
 	<div class="flex-1 flex flex-col h-full">
-		<DashboardHeader
-			calendars={await getMyCalendars()}
-			imageFeeds={await getMyImageFeeds()}
-			eventLists={await getMyEventLists()}
-		/>
+		<DashboardHeader />
 
 		<main class="flex-1 mainPage relative h-full" id="ascrollableelement">
 			{#if navigating.complete !== null}

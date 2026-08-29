@@ -1,20 +1,7 @@
 <script lang="ts">
-	import { type EventListDBModel, type ImageFeedDBModel } from "@/utils";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import EverythingSearch from "@/EverythingSearch.svelte";
-	import { type CalendarDBModel } from "@/cal.utils";
 	import { MoonIcon, SunIcon } from "@lucide/svelte";
 	import { toggleMode } from "mode-watcher";
-
-	let {
-		calendars,
-		imageFeeds,
-		eventLists
-	}: {
-		calendars: CalendarDBModel[];
-		imageFeeds: ImageFeedDBModel[];
-		eventLists: EventListDBModel[];
-	} = $props();
 </script>
 
 <nav class="bg-background/95 backdrop-blur-sm border-b border-border isolate z-50">
@@ -23,7 +10,6 @@
 			<Sidebar.Trigger
 				class="w-8.5 h-8.5 flex items-center justify-center border border-border text-muted-foreground hover:text-foreground hover:border-foreground/25 transition-colors cursor-pointer"
 			/>
-			<EverythingSearch {calendars} {imageFeeds} {eventLists} />
 		</div>
 
 		<div class="flex items-center gap-2">
