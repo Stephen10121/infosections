@@ -1,9 +1,7 @@
 <script lang="ts">
 	import { updateCalendarForm } from "../../../routes/(mainWebsite)/dashboard/calendars/calendarActions.remote";
-	import { Textarea } from "@/components/ui/textarea";
-	import { Label } from "@/components/ui/label";
-	import { Input } from "@/components/ui/input";
 	import FieldLabel from "@/components/FieldLabel.svelte";
+	import { Label } from "@/components/ui/label";
 	import Mono from "@/components/Mono.svelte";
 
 	let {
