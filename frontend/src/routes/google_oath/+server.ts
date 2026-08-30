@@ -102,86 +102,66 @@ export async function GET({ locals, url, cookies }) {
 			file = new File([fileFetchResp.blob], "logo.png", { type: fileFetchResp.blob.type });
 		}
 
-		if (newUserRecord["new"]) {
-			let stripeTrialSubscriptionUrl = "";
-			let stripeSubscriptionUrl = "";
-			let stripeCustomerID = "";
+		let stripeTrialSubscriptionUrl = "";
+		let stripeSubscriptionUrl = "";
+		let stripeCustomerID = "";
 
-			try {
-				const stripe = new Stripe(process.env["STRIPE_PRIVATE_KEY"]!);
-				const customer = await stripe.customers.create({
-					metadata: {
-						internal_id: newUserRecord.id
+		try {
+			const stripe = new Stripe(process.env["STRIPE_PRIVATE_KEY"]!);
+			const customer = await stripe.customers.create({
+				metadata: {
+					internal_id: newUserRecord.id
+				}
+			});
+
+			const session = await stripe.checkout.sessions.create({
+				line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
+				mode: "subscription",
+				success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+				cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+				customer: customer.id
+			});
+
+			const freeTrialSession = await stripe.checkout.sessions.create({
+				line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
+				mode: "subscription",
+				success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+				cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
+				customer: customer.id,
+				subscription_data: {
+					trial_period_days: 14
+				}
+			});
+
+			stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
+			stripeSubscriptionUrl = session.url ? session.url : "";
+			stripeCustomerID = customer.id;
+		} catch (err) {
+			console.log("Failed to do stripe stuff", err);
+			return redirect(303, "/?error=signup_stripe_error");
+		}
+
+		try {
+			await locals.pb.collection("users").update(
+				newUserRecord.id,
+				{
+					new: false,
+					avatar: file,
+					name: res.meta["name"] ? res.meta["name"] : "New User",
+					accessLevel: "none",
+					customerId: stripeCustomerID,
+					subscriptionURL: stripeSubscriptionUrl,
+					freeTrialURL: stripeTrialSubscriptionUrl
+				},
+				{
+					headers: {
+						Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
 					}
-				});
-
-				const session = await stripe.checkout.sessions.create({
-					line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
-					mode: "subscription",
-					success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
-					cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
-					customer: customer.id
-				});
-
-				const freeTrialSession = await stripe.checkout.sessions.create({
-					line_items: [{ price: process.env["STRIPE_PRICE_ID"]!, quantity: 1 }],
-					mode: "subscription",
-					success_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
-					cancel_url: process.env["VITE_WEBSITE_URL"]! + "/dashboard",
-					customer: customer.id,
-					subscription_data: {
-						trial_period_days: 14
-					}
-				});
-
-				stripeTrialSubscriptionUrl = freeTrialSession.url ? freeTrialSession.url : "";
-				stripeSubscriptionUrl = session.url ? session.url : "";
-				stripeCustomerID = customer.id;
-			} catch (err) {
-				console.log("Failed to do stripe stuff", err);
-				return redirect(303, "/?error=signup_stripe_error");
-			}
-
-			try {
-				await locals.pb.collection("users").update(
-					newUserRecord.id,
-					{
-						new: false,
-						avatar: file,
-						name: res.meta["name"] ? res.meta["name"] : "New User",
-						accessLevel: "none",
-						customerId: stripeCustomerID,
-						subscriptionURL: stripeSubscriptionUrl,
-						freeTrialURL: stripeTrialSubscriptionUrl
-					},
-					{
-						headers: {
-							Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
-						}
-					}
-				);
-			} catch (err) {
-				console.log("Failed to update user data after signup:", err);
-				return redirect(303, "/?error=signup_after_oath");
-			}
-		} else {
-			try {
-				await locals.pb.collection("users").update(
-					newUserRecord.id,
-					{
-						avatar: file,
-						name: res.meta["name"] ? res.meta["name"] : "New User"
-					},
-					{
-						headers: {
-							Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
-						}
-					}
-				);
-			} catch (err) {
-				console.log("Failed to update user data after signup:", err);
-				return redirect(303, "/?error=signup_after_oath");
-			}
+				}
+			);
+		} catch (err) {
+			console.log("Failed to update user data after signup:", err);
+			return redirect(303, "/?error=signup_after_oath");
 		}
 	}
 

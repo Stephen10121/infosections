@@ -82,13 +82,13 @@
 
 	<div class="flex-1 flex flex-col items-center justify-center p-8 min-h-screen">
 		<div class="w-full max-w-95">
-			<div class="flex items-center gap-2 mb-8 lg:hidden">
+			<a href="/" class="flex items-center gap-2 mb-8 lg:hidden">
 				<Mono
 					class="text-[10px] font-semibold bg-primary text-primary-foreground px-1.5 py-0.5 leading-none"
 					>IS</Mono
 				>
 				<Mono class="text-xs font-medium text-foreground">infosections</Mono>
-			</div>
+			</a>
 
 			<div class="mb-7">
 				<h1
