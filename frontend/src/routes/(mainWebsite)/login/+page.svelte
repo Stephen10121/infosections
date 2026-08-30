@@ -1,22 +1,83 @@
 <script lang="ts">
-	import LoginForm from "@/landingPage/authComponents/LoginForm.svelte";
-	import { Calendar } from "@lucide/svelte";
+	import AuthDivider from "@/landingPage/authComponents/AuthDivider.svelte";
+	import AuthInput from "@/landingPage/authComponents/AuthInput.svelte";
+	import AuthShell from "@/landingPage/authComponents/AuthShell.svelte";
+	import GoogleButton from "@/landingPage/authComponents/GoogleButton.svelte";
+	import ToSNotice from "@/landingPage/authComponents/ToSNotice.svelte";
+	import { LogIn } from "@lucide/svelte";
+	import { emailPasswordLogin } from "./login.remote";
+	import { googleLoginSignup } from "../signup/signup.remote";
+	import Mono from "@/components/Mono.svelte";
+
+	let loading = $state(false);
 </script>
 
 <svelte:head>
 	<title>Login | InfoSections</title>
 </svelte:head>
 
-<div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-	<div class="flex w-full max-w-sm flex-col gap-6">
-		<a href="/" class="flex items-center gap-2 self-center font-medium">
-			<div
-				class="bg-ring text-primary-foreground flex size-6 items-center justify-center rounded-md"
+<AuthShell title="Welcome back" sub="Sign in to your InfoSections account">
+	<form {...googleLoginSignup}>
+		<input {...googleLoginSignup.fields.id.as("hidden", "google_login")} />
+		<GoogleButton label="Continue with Google" />
+		{#each googleLoginSignup.fields.id.issues() as issue (`anIssueforoathGoogleLoginconfirm${issue.message}`)}
+			<Mono class="text-[10px] text-destructive mt-1 block">{issue.message}</Mono>
+		{/each}
+	</form>
+	<AuthDivider />
+	<form class="space-y-4" {...emailPasswordLogin}>
+		<AuthInput
+			label="EMAIL"
+			placeholder="you@organization.com"
+			error={emailPasswordLogin.fields.email.issues()}
+			{...emailPasswordLogin.fields.email.as("email")}
+		/>
+		<AuthInput
+			label="PASSWORD"
+			placeholder="••••••••"
+			error={emailPasswordLogin.fields.password.issues()}
+			{...emailPasswordLogin.fields.password.as("password")}
+		/>
+
+		<div class="flex items-center justify-end">
+			<a
+				href="/"
+				class="font-mono text-[10px] text-primary hover:opacity-80 transition-opacity"
+				style="font-family: 'JetBrains Mono', monospace"
 			>
-				<Calendar class="size-4" />
-			</div>
-			InfoSections
-		</a>
-		<LoginForm />
+				Forgot password?
+			</a>
+		</div>
+
+		<button
+			type="submit"
+			disabled={loading}
+			class="w-full py-2.5 bg-primary text-primary-foreground font-mono text-[11px] tracking-widest hover:opacity-90 transition-opacity disabled:opacity-60 cursor-pointer flex items-center justify-center gap-2"
+			style="font-family: 'JetBrains Mono', monospace"
+		>
+			{#if loading}
+				<span
+					class="inline-block w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin"
+				></span>
+			{:else}
+				<LogIn size={13} /> SIGN IN
+			{/if}
+		</button>
+	</form>
+
+	<div class="mt-6 pt-5 border-t border-border text-center">
+		<p class="text-xs text-muted-foreground" style="font-family: Inter, sans-serif">
+			No account?{" "}
+			<a
+				href="signup"
+				class="text-primary font-medium hover:opacity-80 transition-opacity cursor-pointer"
+			>
+				Create one free
+			</a>
+		</p>
 	</div>
-</div>
+
+	<div class="mt-5">
+		<ToSNotice />
+	</div>
+</AuthShell>
