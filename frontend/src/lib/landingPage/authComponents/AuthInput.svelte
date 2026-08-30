@@ -18,7 +18,7 @@
 </script>
 
 <div>
-	<label class="block mb-1.5">
+	<label class="block mb-1.5" for={restProps.id}>
 		<Mono class="text-[10px] text-muted-foreground">{label}</Mono>
 	</label>
 	<div class="relative">

@@ -1,13 +1,14 @@
 <script lang="ts">
+	import GoogleButton from "@/landingPage/authComponents/GoogleButton.svelte";
 	import AuthDivider from "@/landingPage/authComponents/AuthDivider.svelte";
 	import AuthInput from "@/landingPage/authComponents/AuthInput.svelte";
 	import AuthShell from "@/landingPage/authComponents/AuthShell.svelte";
-	import GoogleButton from "@/landingPage/authComponents/GoogleButton.svelte";
 	import ToSNotice from "@/landingPage/authComponents/ToSNotice.svelte";
-	import { LogIn } from "@lucide/svelte";
-	import { emailPasswordLogin } from "./login.remote";
 	import { googleLoginSignup } from "../signup/signup.remote";
+	import { emailPasswordLogin } from "./login.remote";
 	import Mono from "@/components/Mono.svelte";
+	import { LogIn } from "@lucide/svelte";
+	import { toast } from "svelte-sonner";
 
 	let loading = $state(false);
 </script>
@@ -25,15 +26,34 @@
 		{/each}
 	</form>
 	<AuthDivider />
-	<form class="space-y-4" {...emailPasswordLogin}>
+	<form
+		class="space-y-4"
+		{...emailPasswordLogin.enhance(async (form) => {
+			loading = true;
+			try {
+				if (await form.submit()) {
+					form.element.reset();
+
+					loading = false;
+				} else {
+					loading = false;
+				}
+			} catch (error) {
+				loading = false;
+				toast.error("Oh no! Something went wrong");
+			}
+		})}
+	>
 		<AuthInput
 			label="EMAIL"
+			id="email"
 			placeholder="you@organization.com"
 			error={emailPasswordLogin.fields.email.issues()}
 			{...emailPasswordLogin.fields.email.as("email")}
 		/>
 		<AuthInput
 			label="PASSWORD"
+			id="password"
 			placeholder="••••••••"
 			error={emailPasswordLogin.fields.password.issues()}
 			{...emailPasswordLogin.fields.password.as("password")}
