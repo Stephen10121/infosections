@@ -46,7 +46,7 @@
 					class="text-sm text-muted-foreground leading-relaxed mb-8"
 					style="font-family: Inter, sans-serif"
 				>
-					Connect Planning Center, create embeddable calendars, image feeds, and event lists —
+					Connect Planning Center, create embeddable calendars, image feeds, and event lists,
 					filtered exactly for your audience.
 				</p>
 

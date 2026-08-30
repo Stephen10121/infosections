@@ -61,7 +61,7 @@
 
 		<div class="flex items-center justify-end">
 			<a
-				href="/"
+				href="/forgot-password"
 				class="font-mono text-[10px] text-primary hover:opacity-80 transition-opacity"
 				style="font-family: 'JetBrains Mono', monospace"
 			>
