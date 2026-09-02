@@ -6,6 +6,7 @@
 	import { motion } from "@humanspeak/svelte-motion";
 	import { ArrowRight } from "@lucide/svelte";
 	import Mono from "@/components/Mono.svelte";
+	import MiniDashboardPreviewSecond from "@/components/MiniDashboardPreviewSecond.svelte";
 
 	let win1Active = $state(false);
 	let win2Active = $state(false);
@@ -128,7 +129,7 @@
 								{context}
 								windowDragRegions={[{ width: "100%", height: "36px", top: "0px", left: "0px" }]}
 							>
-								<MiniDashboardPreview />
+								<MiniDashboardPreviewSecond />
 								{#if !win2Active}
 									<div
 										class="absolute top-0 left-0 w-full h-full pointer-events-none bg-gray-100/30 dark:bg-black/30"

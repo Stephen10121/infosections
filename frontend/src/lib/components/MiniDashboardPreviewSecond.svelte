@@ -5,7 +5,7 @@
 
 <div>
 	<div class="flex items-center justify-between px-4 py-2.5 border-b border-border bg-card/80">
-		<Mono class="text-[10px] text-primary font-semibold">Public Lobby · dashboard</Mono>
+		<Mono class="text-[10px] text-primary font-semibold">Media Team · calendar</Mono>
 		<div class="flex gap-1.5">
 			<div class="w-2.5 h-2.5 rounded-full bg-destructive/50"></div>
 			<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
@@ -13,7 +13,7 @@
 		</div>
 	</div>
 	<div class="grid grid-cols-3 border-b border-border">
-		{#each [["EVENTS", "2,847"], ["VIEWS", "54.2k"], ["ACTIVE", "38"]] as [label, val] (label)}
+		{#each [["EVENTS", "128"], ["VIEWS", "256"], ["ACTIVE", "2"]] as [label, val] (label)}
 			<div class="px-4 py-3 border-r border-border last:border-r-0">
 				<Mono class="text-[9px] text-muted-foreground block">{label}</Mono>
 				<span
@@ -24,7 +24,7 @@
 		{/each}
 	</div>
 	<div>
-		{#each [{ name: "Sunday Service", tag: "worship", status: "ACTIVE" }, { name: "Youth Group Meeting", tag: "youth", status: "ACTIVE" }, { name: "Community Food Drive", tag: "community", status: "UPCOMING" }, { name: "Annual Gala", tag: "fundraiser", status: "UPCOMING" }, { name: "Bible Study", tag: "study", status: "ACTIVE" }] as evt, i (i)}
+		{#each [{ name: "Sound Check", tag: "foh", status: "ACTIVE" }, { name: "Video Check", tag: "video-room", status: "ACTIVE" }, { name: "Orchestra Rehearsal", tag: "foh", status: "UPCOMING" }, { name: "Choir Rehearsal", tag: "foh", status: "UPCOMING" }, { name: "Media Class", tag: "study", status: "UPCOMING" }] as evt, i (i)}
 			<div
 				class={cn(
 					"flex items-center justify-between px-4 py-2.5 border-b border-border/60 last:border-b-0",
