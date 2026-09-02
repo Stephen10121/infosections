@@ -24,6 +24,7 @@
 	import StatusBadge from "./integrations/StatusBadge.svelte";
 	import BreezeIcon from "./integrations/BreezeIcon.svelte";
 	import XIcon from "./integrations/XIcon.svelte";
+	import Mono from "@/components/Mono.svelte";
 
 	let {
 		user,
@@ -83,19 +84,28 @@
 	</Sidebar.Header>
 
 	<Sidebar.Content>
-		<Sidebar.Group>
-			<Sidebar.GroupLabel>Dashboard</Sidebar.GroupLabel>
-			<Sidebar.Menu>
+		<Sidebar.Group
+			data-state={sidebar.open ? "expanded" : "closed"}
+			class="data-[state=expanded]:p-0"
+		>
+			<Sidebar.GroupLabel><Mono class="text-muted-foreground">Dashboard</Mono></Sidebar.GroupLabel>
+			<Sidebar.Menu
+				data-state={sidebar.open ? "expanded" : "closed"}
+				class="data-[state=expanded]:gap-0"
+			>
 				{#each navigation as item (item.title)}
 					<Sidebar.MenuButton
+						data-state={sidebar.open ? "expanded" : "closed"}
 						tooltipContent={item.title}
 						class={pathname === item.url ||
 						(pathname.includes("/dashboard/calendars") && item.url === "/dashboard/calendars") ||
 						(pathname.includes("/dashboard/image-feeds") &&
 							item.url === "/dashboard/image-feeds") ||
 						(pathname.includes("/dashboard/event-lists") && item.url === "/dashboard/event-lists")
-							? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10"
-							: "text-muted-foreground hover:bg-ring/10 hover:text-foreground"}
+							? sidebar.open
+								? "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10 h-10 border-r-2 border-ring"
+								: "bg-ring/10 text-ring hover:text-ring hover:bg-ring/10 h-10"
+							: "text-muted-foreground hover:bg-secondary hover:text-foreground h-10"}
 						onclick={() => {
 							if (sidebar.openMobile) {
 								sidebar.setOpenMobile(false);
@@ -107,7 +117,7 @@
 								{#if item.icon}
 									<item.icon />
 								{/if}
-								<span>{item.title}</span>
+								<Mono class="ml-1">{item.title}</Mono>
 							</a>
 						{/snippet}
 					</Sidebar.MenuButton>
@@ -116,8 +126,13 @@
 		</Sidebar.Group>
 
 		{#if sidebar.open || sidebar.isMobile}
-			<Sidebar.Group>
-				<Sidebar.GroupLabel>Integrations</Sidebar.GroupLabel>
+			<Sidebar.Group
+				data-state={sidebar.open ? "expanded" : "closed"}
+				class="data-[state=expanded]:p-0"
+			>
+				<Sidebar.GroupLabel>
+					<Mono class="text-muted-foreground">Integrations</Mono>
+				</Sidebar.GroupLabel>
 				<Sidebar.GroupAction
 					title="Add Integration"
 					onclick={() => {
@@ -130,11 +145,14 @@
 					<Plus />
 					<span class="sr-only">Add Project</span>
 				</Sidebar.GroupAction>
-				<Sidebar.Menu>
+				<Sidebar.Menu
+					data-state={sidebar.open ? "expanded" : "closed"}
+					class="data-[state=expanded]:gap-0"
+				>
 					{#each await getMyIntegrations() as integration (`anintegration${integration.id}`)}
 						<Sidebar.MenuButton
 							tooltipContent={integration.prettyName}
-							class="text-muted-foreground hover:bg-ring/10 hover:text-foreground"
+							class="text-muted-foreground hover:bg-secondary hover:text-foreground h-10"
 							onclick={() => {
 								if (sidebar.openMobile) {
 									sidebar.setOpenMobile(false);
@@ -151,7 +169,9 @@
 							{:else}
 								<RefreshCw />
 							{/if}
-							<span class="flex-1 truncate">{integration.prettyName}</span>
+							<Mono class="flex-1 truncate ml-1 text-muted-foreground"
+								>{integration.prettyName}</Mono
+							>
 							<StatusBadge status={integration.status} />
 						</Sidebar.MenuButton>
 					{/each}
