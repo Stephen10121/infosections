@@ -28,7 +28,7 @@ func UpdateEventInstances(app *pocketbase.PocketBase) {
 			"user", users[i].GetString("name"),
 		)
 		functions.GetAndStoreNextThreeEvents(users[i].Id, app)
-		planningcenter.FetchAndSaveServiceTypesForUser(users[i].Id, app)
+		planningcenter.FetchFutureServices(users[i].Id, app)
 
 		integration, err := app.FindFirstRecordByFilter(
 			"integration",

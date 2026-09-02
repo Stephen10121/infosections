@@ -165,6 +165,5 @@ func SaveServiceTypes(userId string, service_types []ServiceTypeRaw, app *pocket
 			}
 		}
 	}
-
 	return nil
 }
