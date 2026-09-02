@@ -32,7 +32,7 @@ export const getPlansByServiceType = query(v.string(), async (serviceID) => {
 	if (!locals.user) return plans;
 
 	try {
-		plans = await locals.pb.collection("calendars").getFullList({
+		plans = await locals.pb.collection("plan").getFullList({
 			filter: `owner="${locals.user.id}" && service_type="${serviceID}"`,
 			headers: {
 				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
