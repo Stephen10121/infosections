@@ -4,11 +4,12 @@ import (
 	"time"
 
 	"github.com/Stephen10121/infosections/functions"
+	"github.com/Stephen10121/infosections/planningcenter"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 )
 
-// This function gets called every 12 hours and it just fetches the events for any user that is subscribed.
+// This function gets called every hour and it just fetches the events for any user that is subscribed.
 func UpdateEventInstances(app *pocketbase.PocketBase) {
 	app.Logger().Info("Updating the event instances for every subscribed user.")
 	users, err := app.FindAllRecords("users")
@@ -27,6 +28,7 @@ func UpdateEventInstances(app *pocketbase.PocketBase) {
 			"user", users[i].GetString("name"),
 		)
 		functions.GetAndStoreNextThreeEvents(users[i].Id, app)
+		planningcenter.FetchAndSaveServiceTypesForUser(users[i].Id, app)
 
 		integration, err := app.FindFirstRecordByFilter(
 			"integration",
