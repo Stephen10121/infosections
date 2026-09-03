@@ -44,3 +44,27 @@ export interface PlanDBModel extends RecordModel {
 	created: string;
 	updated: string;
 }
+
+export interface AServiceDisplaySettings {
+	theme: "minimal" | "bulletin" | "full";
+	show_series_information: boolean;
+	show_service_times: boolean;
+	show_song_list: boolean;
+	show_notes: boolean;
+}
+
+export interface AServiceDBModel extends RecordModel {
+	public_id: string;
+	name: string;
+	description: string;
+	logo: string;
+	service_type: string;
+	owner: string;
+	custom_intro: string;
+	display_settings: AServiceDisplaySettings;
+	views: number;
+	prints: number;
+	shares: number;
+	created: string;
+	updated: string;
+}

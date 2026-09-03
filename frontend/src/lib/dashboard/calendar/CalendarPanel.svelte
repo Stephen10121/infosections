@@ -138,7 +138,7 @@
 <AnimatePresence>
 	{#if open && calendar}
 		<motion.div
-			key="backdrop"
+			key="calendar-backdrop"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
@@ -147,7 +147,7 @@
 			onclick={close}
 		/>
 		<motion.div
-			key="panel"
+			key="calendar-panel"
 			initial={{ x: "100%" }}
 			animate={{ x: 0 }}
 			exit={{ x: "100%" }}

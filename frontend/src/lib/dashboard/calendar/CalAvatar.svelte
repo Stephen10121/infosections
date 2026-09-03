@@ -79,7 +79,11 @@
 		</div>
 		<div class="flex-1 space-y-3">
 			<div class="flex gap-2">
-				<Button variant="outline" class="relative bg-transparent">
+				<Button
+					variant="outline"
+					class="relative py-1.5 border border-border text-[10px] font-mono text-muted-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+					style="font-family: 'JetBrains Mono', monospace"
+				>
 					<Upload class="h-4 w-4 mr-2" />
 					Upload Image
 					<input
@@ -94,7 +98,12 @@
 					/>
 				</Button>
 				{#if uploadNewAvatar}
-					<Button variant="outline" onclick={handleRemoveAvatar} class="bg-transparent">
+					<Button
+						variant="outline"
+						onclick={handleRemoveAvatar}
+						class="py-1.5 border border-border text-[10px] font-mono text-muted-foreground hover:border-primary hover:text-primary transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+						style="font-family: 'JetBrains Mono', monospace"
+					>
 						Remove
 					</Button>
 				{/if}

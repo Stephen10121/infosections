@@ -11,7 +11,8 @@
 		Link2,
 		Flag,
 		RefreshCw,
-		Plus
+		Plus,
+		BookOpen
 	} from "@lucide/svelte";
 	import { getMyIntegrations } from "../../routes/(mainWebsite)/dashboard/backend.remote";
 	import { capitalizeFirstLetter, type IntegrationModel, type UserModel } from "@/utils";
@@ -49,7 +50,8 @@
 		{ title: "Calendars", icon: Calendar, url: "/dashboard/calendars" },
 		{ title: "Image Feeds", icon: GalleryHorizontalEnd, url: "/dashboard/image-feeds" },
 		{ title: "Event Lists", icon: LayoutList, url: "/dashboard/event-lists" },
-		{ title: "Dynamic URLs", url: "/dashboard/dynamic-urls", icon: Link2 }
+		{ title: "Dynamic URLs", url: "/dashboard/dynamic-urls", icon: Link2 },
+		{ title: "Services", url: "/dashboard/services", icon: BookOpen }
 	];
 
 	let userAccountDropdownOpen = $state(false);

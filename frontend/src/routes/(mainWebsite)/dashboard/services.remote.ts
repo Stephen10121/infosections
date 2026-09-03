@@ -1,7 +1,8 @@
-import type { PlanDBModel, ServiceTypeDBModel } from "@/service.util";
+import type { AServiceDBModel, PlanDBModel, ServiceTypeDBModel } from "@/service.util";
 import { getRequestEvent, query } from "$app/server";
 import { config } from "dotenv";
 import * as v from "valibot";
+import { redirect } from "@sveltejs/kit";
 
 config();
 
@@ -44,4 +45,48 @@ export const getPlansByServiceType = query(v.string(), async (serviceID) => {
 	}
 
 	return plans;
+});
+
+export const getMyServices = query(async () => {
+	const { locals } = getRequestEvent();
+	let services: AServiceDBModel[] = [];
+
+	if (!locals.user) return services;
+
+	try {
+		services = await locals.pb.collection("services").getFullList({
+			filter: `owner="${locals.user.id}"`,
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch services.", err);
+	}
+
+	return services;
+});
+
+export const getServiceById = query(v.string(), async (id) => {
+	const { locals } = getRequestEvent();
+	let service: AServiceDBModel | undefined;
+
+	if (!locals.user) return redirect(303, "/dashboard/services");
+
+	try {
+		service = await locals.pb.collection("services").getOne(id, {
+			headers: {
+				Authorization: "Bearer " + process.env["POCKETBASE_TOKEN"]!
+			}
+		});
+	} catch (err) {
+		console.log("Failed to fetch service.", err);
+		return redirect(303, "/dashboard/services");
+	}
+
+	if (!service) return redirect(303, "/dashboard/services");
+
+	if (service.owner !== locals.user.id) return redirect(303, "/dashboard/services");
+
+	return service;
 });
