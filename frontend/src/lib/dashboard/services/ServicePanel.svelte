@@ -32,7 +32,10 @@
 		service?.public_id ? `https://infosections.com/service/${service.public_id}` : ""
 	);
 
-	function close() {}
+	function close() {
+		serviceID = undefined;
+		open = false;
+	}
 
 	const tabs: ServicePanelTab[] = ["basic", "plan", "customize", "share"];
 </script>
@@ -45,7 +48,7 @@
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
-			onClick={close}
+			onclick={close}
 		/>
 		<motion.div
 			key="service-panel"
