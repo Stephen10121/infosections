@@ -14,16 +14,25 @@
 	let today = $state(Temporal.Now.zonedDateTimeISO(timeZone).startOfDay());
 
 	let eventIdUsed: string[] = [];
+	let listFrame = $state<HTMLElement>();
 
 	$effect(() => {
-		const observer = new ResizeObserver(() => {
+		const frame = listFrame;
+		if (!frame) return;
+
+		const postHeight = () => {
 			window.parent.postMessage(
-				{ height: document.body.scrollHeight, frameId: "iframe" + data.id },
+				{
+					height: Math.ceil(frame.getBoundingClientRect().height),
+					frameId: "iframe" + data.id
+				},
 				"*"
 			);
-		});
+		};
 
-		observer.observe(document.body);
+		const observer = new ResizeObserver(postHeight);
+		observer.observe(frame);
+		postHeight();
 
 		return () => observer.disconnect();
 	});
@@ -69,7 +78,7 @@
 
 <svelte:window onmessage={parentSentMessage} />
 
-<main style={displaySettings.setTransparentBackground ? "" : "background: #fff;"}>
+<main bind:this={listFrame} style={displaySettings.setTransparentBackground ? "" : "background: #fff;"}>
 	<div class="mx-auto">
 		{#if displaySettings.showUpcomingEventsTextAndDesc}
 			<div class="mb-3">
@@ -91,6 +100,12 @@
 </main>
 
 <style>
+	:global(html),
+	:global(body.min-h-screen) {
+		height: auto;
+		min-height: 0;
+	}
+
 	:global(body) {
 		background: none transparent;
 	}
