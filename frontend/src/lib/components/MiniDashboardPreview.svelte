@@ -5,7 +5,7 @@
 
 <div>
 	<div class="flex items-center justify-between px-4 py-2.5 border-b border-border bg-card/80">
-		<Mono class="text-[10px] text-primary font-semibold">infosections · dashboard</Mono>
+		<Mono class="text-[10px] text-primary font-semibold">Public Lobby · dashboard</Mono>
 		<div class="flex gap-1.5">
 			<div class="w-2.5 h-2.5 rounded-full bg-destructive/50"></div>
 			<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
@@ -13,7 +13,7 @@
 		</div>
 	</div>
 	<div class="grid grid-cols-3 border-b border-border">
-		{#each [["EVENTS", "2,847"], ["VIEWS", "54.2k"], ["ACTIVE", "38"]] as label, val (label)}
+		{#each [["EVENTS", "2,847"], ["VIEWS", "54.2k"], ["ACTIVE", "38"]] as [label, val] (label)}
 			<div class="px-4 py-3 border-r border-border last:border-r-0">
 				<Mono class="text-[9px] text-muted-foreground block">{label}</Mono>
 				<span

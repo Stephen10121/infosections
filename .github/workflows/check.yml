@@ -23,3 +23,8 @@ jobs:
         # This executes the "check" script defined in your package.json
         run: bun run check
         working-directory: ./frontend
+
+      - name: Run tests
+        # This executes the "test" script defined in your package.json (bun test)
+        run: bun run test
+        working-directory: ./frontend
