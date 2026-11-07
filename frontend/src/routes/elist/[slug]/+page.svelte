@@ -91,6 +91,7 @@
 	:global(body.min-h-screen) {
 		height: auto;
 		min-height: 0;
+		color-scheme: light !important;
 	}
 
 	:global(body) {
