@@ -55,7 +55,7 @@ func GetIncludedStructs(included []IncludedType) ([]EventItself, []EventTime, []
 }
 
 func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
-	year, month, day := time.Now().AddDate(0, 0, -30).Date()
+	year, month, day := time.Now().AddDate(0, 0, -7).Date()
 
 	strMonth := str(int(month))
 	if len(strMonth) < 2 {
