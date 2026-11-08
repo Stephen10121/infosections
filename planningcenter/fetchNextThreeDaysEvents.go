@@ -68,6 +68,33 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 
 	apiURL := "https://api.planningcenteronline.com/calendar/v2/event_instances?include=event%2Cevent_times%2Cresource_bookings%2Ctags&order=starts_at&per_page=100&where[starts_at][gt]=" + str(year) + "-" + strMonth + "-" + strDay
 
+	resources, err := FetchResources(userId, app)
+	if err != nil {
+		app.Logger().Error(
+			"Failed to fetch resources",
+			"id", userId,
+			"error", err,
+		)
+		return []Event{}, err
+	}
+
+	SaveResources(userId, resources, app)
+
+	// Planning Center returns at most 100 instances per request. Two pages is 200 events.
+	var fetchedEvents []Event
+	for page := 0; page < 2 && apiURL != ""; page++ {
+		pageEvents, nextURL, err := fetchEventInstancePage(userId, apiURL, app)
+		if err != nil {
+			return []Event{}, err
+		}
+		fetchedEvents = append(fetchedEvents, pageEvents...)
+		apiURL = nextURL
+	}
+
+	return fetchedEvents, nil
+}
+
+func fetchEventInstancePage(userId string, apiURL string, app *pocketbase.PocketBase) ([]Event, string, error) {
 	app.Logger().Info(
 		"Fetching events from this URL.",
 		"URL", apiURL,
@@ -82,7 +109,7 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 		app,
 	)
 	if err != nil {
-		return []Event{}, err
+		return []Event{}, "", err
 	}
 
 	responseJson := new(NewEventInstancesResponseType)
@@ -90,31 +117,22 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 	err = json.Unmarshal([]byte(resBody), &responseJson)
 
 	if err != nil {
-		return []Event{}, err
+		return []Event{}, "", err
 	}
 
 	events, eventTimes, resourceBookings, allTags := GetIncludedStructs(responseJson.Included)
 
 	SaveTags(userId, allTags, app)
 
-	resources, err := FetchResources(userId, app)
-
-	if err != nil {
-		app.Logger().Error(
-			"Failed to fetch resources",
-			"id", userId,
-			"error", err,
-		)
-		return []Event{}, err
-	}
-
-	SaveResources(userId, resources, app)
-
 	var fetchedEvents []Event
 
 	for i := 0; i < len(responseJson.Data); i++ {
 		eventTime := ParseEventTimes(responseJson.Data[i].Relationships.EventTimes, eventTimes)
-		resources := ParseResourceBookings(responseJson.Data[i].Relationships.ResourceBookings, resourceBookings, userId)
+		if len(eventTime) == 0 {
+			fmt.Println("No event times found for this event instance:", responseJson.Data[i].Id)
+			continue
+		}
+		bookedResources := ParseResourceBookings(responseJson.Data[i].Relationships.ResourceBookings, resourceBookings, userId)
 		tags := ParseTags(responseJson.Data[i].Relationships.Tags, userId)
 		eventItself, ok := ParseEventItself(responseJson.Data[i].Relationships.Event, events)
 		if !ok {
@@ -136,7 +154,7 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 			Name:                 eventItself.Name,
 			Location:             responseJson.Data[i].Attributes.Location,
 			Times:                eventTime,
-			Resources:            resources,
+			Resources:            bookedResources,
 			Tags:                 tags,
 			Description:          eventItself.Summary,
 			Recurrence:           responseJson.Data[i].Attributes.Recurrence,
@@ -147,5 +165,5 @@ func EventFetcher(userId string, app *pocketbase.PocketBase) ([]Event, error) {
 		})
 	}
 
-	return fetchedEvents, nil
+	return fetchedEvents, responseJson.Links["next"], nil
 }
