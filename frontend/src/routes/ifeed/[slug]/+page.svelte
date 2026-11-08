@@ -169,6 +169,13 @@
 		user-select: none; /* Standard syntax */
 	}
 
+	:global(html),
+	:global(body.min-h-screen) {
+		height: auto;
+		min-height: 0;
+		color-scheme: light !important;
+	}
+
 	:global(body) {
 		margin: 0;
 		padding: 0;
