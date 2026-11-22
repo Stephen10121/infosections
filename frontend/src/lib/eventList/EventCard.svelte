@@ -64,7 +64,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					More Info
+					Register
 				</Button>
 				<!-- {#if displaySettings.displayStyle === "expanded"}
                         <Button class="sharebutton{displaySettings.displayStyle}" variant="outline">
@@ -86,7 +86,10 @@
 	.card {
 		display: grid;
 		grid-template-columns: 1fr;
-		grid-template-rows: 61fr 39fr;
+		/* Stacked (mobile) layout: size rows to their content. Using 61fr/39fr here
+		   forced the image row to 61/39 of the text height, leaving a big empty
+		   gap under the 16:9 image. */
+		grid-template-rows: auto auto;
 		overflow: hidden;
 		border: 1px solid #000000;
 		grid-template-areas:
@@ -180,11 +183,15 @@
 
 	:global(.buttonexpanded) {
 		background-color: #000000;
+		/* Explicit text color: the default comes from --primary-foreground, which is
+		   near-black (#0c0c0a) when ModeWatcher applies .dark (phone in dark mode),
+		   making the label invisible on this black background. */
+		color: #ffffff;
 		border-radius: 10px;
-		font-weight: bold;
+		/* Match the "FEATURED EVENT" badge typography (Inter 500, normal tracking). */
+		font-weight: 500;
 		width: 150px;
 		height: 40px;
-		letter-spacing: 0.15ch;
 	}
 
 	:global(.sharebuttonexpanded) {
