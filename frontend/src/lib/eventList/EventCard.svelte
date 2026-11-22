@@ -40,7 +40,10 @@
 			</h2>
 		{/if}
 
-		<div class="flex items-center gap-2 text-sm text-muted-foreground">
+		<div
+			class="flex items-center gap-2 text-sm text-muted-foreground"
+			class:event-date-with-button={!!event.registrationURL && displaySettings.showEventRegistration}
+		>
 			<p class="mt-3 flex gap-3 items-center">
 				{#if displaySettings.displayStyle === "expanded"}
 					<Calendar class="w-5 h-5" />
@@ -64,7 +67,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					Register
+					REGISTER HERE
 				</Button>
 				<!-- {#if displaySettings.displayStyle === "expanded"}
                         <Button class="sharebutton{displaySettings.displayStyle}" variant="outline">
@@ -175,9 +178,18 @@
 		width: 100%;
 	}
 
+	/* Center the registration button in the content column, and
+	   (when a button is present) center the date on the same axis. */
+	.event-date-with-button {
+		justify-content: center;
+		width: 100%;
+	}
+
 	.buttonparentexpanded {
 		margin-top: 20px;
 		display: flex;
+		justify-content: center;
+		width: 100%;
 		gap: 10px;
 	}
 
