@@ -64,7 +64,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					More Info
+					Register
 				</Button>
 				<!-- {#if displaySettings.displayStyle === "expanded"}
                         <Button class="sharebutton{displaySettings.displayStyle}" variant="outline">
